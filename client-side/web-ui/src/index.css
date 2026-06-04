@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Default Theme: Old Yellow Paper (warm parchment, whiter/less red) */
+  --bg-primary: #FCFBF7;
+  --bg-secondary: #F6F4EE;
+  --bg-tertiary: #EBE7DD;
+  
+  --text-primary: #2D2D2D;
+  --text-secondary: #5C5C5C;
+  --text-tertiary: #8C8C8C;
+
+  --border-color: #1E1E1E; /* Deep charcoal for black borders */
+  --border-light: rgba(30, 30, 30, 0.1);
+
+  --accent-primary: #D97757; /* A subtle terra-cotta/rust accent */
+  --accent-hover: #C56142;
+  --accent-color: #6366f1; /* LINKSTAR brand indigo for assistant messages */
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* VS Code Diff colors (adapted for light background) */
+  --diff-add-bg: rgba(46, 160, 67, 0.15);
+  --diff-add-text: #1a7f37;
+  --diff-del-bg: rgba(248, 81, 73, 0.15);
+  --diff-del-text: #d1242f;
+
+  /* Global Top Header (Black with White text) */
+  --header-bg: #1A1A1A;
+  --header-text: #FFFFFF;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #1E1E1E;
+  --bg-secondary: #252526;
+  --bg-tertiary: #333333;
+  
+  --text-primary: #D4D4D4;
+  --text-secondary: #A0A0A0;
+  --text-tertiary: #6E6E6E;
+
+  --border-color: #000000;
+  --border-light: rgba(255, 255, 255, 0.1);
+
+  --accent-primary: #E2B068;
+  --accent-hover: #D09A4D;
+  --accent-color: #818cf8; /* LINKSTAR brand indigo (light variant for dark bg) */
+
+  --diff-add-bg: rgba(46, 160, 67, 0.25);
+  --diff-add-text: #3fb950;
+  --diff-del-bg: rgba(248, 81, 73, 0.25);
+  --diff-del-text: #f85149;
+}
+
+[data-theme='light'] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --bg-tertiary: #EAEAEA;
+  
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-tertiary: #777777;
+
+  --border-color: #222222;
+  --border-light: rgba(0, 0, 0, 0.1);
+
+  --accent-primary: #0F62FE;
+  --accent-hover: #0043CE;
+  --accent-color: #4f46e5; /* LINKSTAR brand indigo for light theme */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden; /* App is a desktop-like terminal, no global scroll */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar for IDE feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Shimmer / Glow effect for the thinking text */
+@keyframes thinking-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.thinking-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--text-tertiary) 0%,
+    var(--accent-color) 25%,
+    var(--accent-primary) 50%,
+    var(--accent-color) 75%,
+    var(--text-tertiary) 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: thinking-shimmer 2.5s infinite linear;
+  font-weight: 600;
+  display: inline-block;
+  text-shadow: 0 0 10px rgba(129, 140, 248, 0.1);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: var(--accent-color);
+}

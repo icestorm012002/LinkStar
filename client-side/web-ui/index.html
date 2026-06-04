@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LINKSTAR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#958ea0",
+                        "background": "#111317",
+                        "tertiary": "#ffafd3",
+                        "secondary": "#89ceff",
+                        "surface-variant": "#333539",
+                        "on-primary": "#3c0091",
+                        "on-surface": "#e2e2e8",
+                        "surface-container-lowest": "#0c0e12",
+                        "tertiary-container": "#e364a7",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#004c6e",
+                        "surface-container": "#1e2024",
+                        "inverse-surface": "#e2e2e8",
+                        "on-secondary-container": "#00344e",
+                        "tertiary-fixed": "#ffd8e7",
+                        "on-primary-container": "#340080",
+                        "on-primary-fixed": "#23005c",
+                        "primary": "#d0bcff",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#111317",
+                        "surface-container-low": "#1a1c20",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#89ceff",
+                        "on-primary-fixed-variant": "#5516be",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-secondary": "#00344d",
+                        "on-tertiary": "#620040",
+                        "tertiary-fixed-dim": "#ffafd3",
+                        "inverse-on-surface": "#2f3035",
+                        "surface-container-highest": "#333539",
+                        "outline-variant": "#494454",
+                        "primary-container": "#a078ff",
+                        "on-secondary-fixed": "#001e2f",
+                        "on-background": "#e2e2e8",
+                        "on-tertiary-fixed": "#3d0026",
+                        "primary-fixed": "#e9ddff",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-tertiary-fixed-variant": "#85145a",
+                        "surface-bright": "#37393e",
+                        "secondary-container": "#00a2e6",
+                        "on-tertiary-container": "#560038",
+                        "primary-fixed-dim": "#d0bcff",
+                        "surface-container-high": "#282a2e",
+                        "inverse-primary": "#6d3bd7",
+                        "error-container": "#93000a",
+                        "surface-tint": "#d0bcff",
+                        "surface": "#111317"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "xs": "4px",
+                        "xl": "48px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Geist"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "label-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background-color: rgba(30, 32, 36, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-active {
+            box-shadow: 0 0 24px rgba(208, 188, 255, 0.15);
+        }
+        .bg-tech-blue { color: #89ceff; }
+        .text-tech-blue { color: #89ceff; }
+        .bg-glow-blue { background-color: rgba(137, 206, 255, 0.1); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
