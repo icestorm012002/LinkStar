@@ -22,7 +22,7 @@ import { execFileNoThrowWithCwd } from '../execFileNoThrow.js'
 import { getPlatform } from '../platform.js'
 import { jsonStringify } from '../slowOperations.js'
 import {
-  Claude_IN_CHROME_MCP_SERVER_NAME,
+  CLAUDE_IN_CHROME_MCP_SERVER_NAME,
   getAllBrowserDataPaths,
   getAllNativeMessagingHostsDirs,
   getAllWindowsRegistryKeys,
@@ -100,7 +100,7 @@ export function setupClaudeInChrome(): {
 
   const env: Record<string, string> = {}
   if (getSessionBypassPermissionsMode()) {
-    env.Claude_CHROME_PERMISSION_MODE = 'skip_all_permission_checks'
+    env.CLAUDE_CHROME_PERMISSION_MODE = 'skip_all_permission_checks'
   }
   const hasEnv = Object.keys(env).length > 0
 
@@ -123,7 +123,7 @@ export function setupClaudeInChrome(): {
 
     return {
       mcpConfig: {
-        [Claude_IN_CHROME_MCP_SERVER_NAME]: {
+        [CLAUDE_IN_CHROME_MCP_SERVER_NAME]: {
           type: 'stdio' as const,
           command: process.execPath,
           args: ['--Claude-in-chrome-mcp'],
@@ -153,7 +153,7 @@ export function setupClaudeInChrome(): {
       )
 
     const mcpConfig = {
-      [Claude_IN_CHROME_MCP_SERVER_NAME]: {
+      [CLAUDE_IN_CHROME_MCP_SERVER_NAME]: {
         type: 'stdio' as const,
         command: process.execPath,
         args: [`${cliPath}`, '--Claude-in-chrome-mcp'],

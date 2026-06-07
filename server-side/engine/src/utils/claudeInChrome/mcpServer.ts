@@ -89,15 +89,15 @@ export function createChromeContext(
   const chromeBridgeUrl = getChromeBridgeUrl()
   logger.info(`Bridge URL: ${chromeBridgeUrl ?? 'none (using native socket)'}`)
   const rawPermissionMode =
-    env?.Claude_CHROME_PERMISSION_MODE ??
-    process.env.Claude_CHROME_PERMISSION_MODE
+    env?.CLAUDE_CHROME_PERMISSION_MODE ??
+    process.env.CLAUDE_CHROME_PERMISSION_MODE
   let initialPermissionMode: PermissionMode | undefined
   if (rawPermissionMode) {
     if (isPermissionMode(rawPermissionMode)) {
       initialPermissionMode = rawPermissionMode
     } else {
       logger.warn(
-        `Invalid Claude_CHROME_PERMISSION_MODE "${rawPermissionMode}". Valid values: ${PERMISSION_MODES.join(', ')}`,
+        `Invalid CLAUDE_CHROME_PERMISSION_MODE "${rawPermissionMode}". Valid values: ${PERMISSION_MODES.join(', ')}`,
       )
     }
   }
