@@ -164,8 +164,8 @@ import {
   shouldIncludeFirstPartyOnlyBetas,
   shouldUseGlobalCacheScope,
 } from 'src/utils/betas.js'
-import { Claude_IN_CHROME_MCP_SERVER_NAME } from 'src/utils/ClaudeInChrome/common.js'
-import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from 'src/utils/ClaudeInChrome/prompt.js'
+import { Claude_IN_CHROME_MCP_SERVER_NAME } from 'src/utils/claudeInChrome/common.js'
+import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from 'src/utils/claudeInChrome/prompt.js'
 import { getMaxThinkingTokensForModel } from 'src/utils/context.js'
 import { logForDebugging } from 'src/utils/debug.js'
 import { logForDiagnosticsNoPII } from 'src/utils/diagLogs.js'

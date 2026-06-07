@@ -245,7 +245,7 @@ export function getAllBaseTools(): Tools {
     ListMcpResourcesTool,
     ReadMcpResourceTool,
     // Include ToolSearchTool when tool search might be enabled (optimistic check)
-    // The actual decision to defer tools happens at request time in Claude.ts
+    // The actual decision to defer tools happens at request time in claude.ts
     ...(isToolSearchEnabledOptimistic() ? [ToolSearchTool] : []),
   ]
 }

@@ -30,7 +30,7 @@ import {
 } from '../../utils/platform.js'
 import type { CoreUserData } from 'src/utils/user.js'
 import { getAgentContext } from '../../utils/agentContext.js'
-import type { EnvironmentMetadata } from '../../types/generated/events_mono/Claude_code/v1/Claude_code_internal_event.js'
+import type { EnvironmentMetadata } from '../../types/generated/events_mono/claude_code/v1/claude_code_internal_event.js'
 import type { PublicApiAuth } from '../../types/generated/events_mono/common/v1/auth.js'
 import { jsonStringify } from '../../utils/slowOperations.js'
 import {
@@ -815,7 +815,7 @@ export function to1PEventFormat(
   // parallel type previously let #11318, #13924, #19448, and coworker_type all
   // ship fields that never reached BQ.
   // Adding a field? Update the monorepo proto first (go/cc-logging):
-  //   event_schemas/.../Claude_code/v1/Claude_code_internal_event.proto
+  //   event_schemas/.../claude_code/v1/claude_code_internal_event.proto
   // then run `bun run generate:proto` here.
   const env: EnvironmentMetadata = {
     platform: envContext.platform,

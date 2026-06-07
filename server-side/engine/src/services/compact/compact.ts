@@ -101,7 +101,7 @@ import {
 import {
   getMaxOutputTokensForModel,
   queryModelWithStreaming,
-} from '../api/Claude.js'
+} from '../api/claude.js'
 import {
   getPromptTooLongTokenGap,
   PROMPT_TOO_LONG_ERROR_MESSAGE,
@@ -1183,7 +1183,7 @@ async function streamCompactSummary({
         // DO NOT set maxOutputTokens here. The fork piggybacks on the main thread's
         // prompt cache by sending identical cache-key params (system, tools, model,
         // messages prefix, thinking config). Setting maxOutputTokens would clamp
-        // budget_tokens via Math.min(budget, maxOutputTokens-1) in Claude.ts,
+        // budget_tokens via Math.min(budget, maxOutputTokens-1) in claude.ts,
         // creating a thinking config mismatch that invalidates the cache.
         // The streaming fallback path (below) can safely set maxOutputTokensOverride
         // since it doesn't share cache with the main thread.

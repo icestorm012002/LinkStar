@@ -3,7 +3,7 @@ import {
   createClaudeForChromeMcpServer,
   type Logger,
   type PermissionMode,
-} from '@ant/Claude-for-chrome-mcp'
+} from '@ant/claude-for-chrome-mcp'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { format } from 'util'
 import { shutdownDatadog } from '../../services/analytics/datadog.js'
@@ -161,7 +161,7 @@ export function createChromeContext(
     // users never see the tools advertised. Three independent gates.
     //
     // Types inlined: AnthropicMessagesRequest/Response live in
-    // @ant/Claude-for-chrome-mcp@0.4.0 which isn't published yet. CI installs
+    // @ant/claude-for-chrome-mcp@0.4.0 which isn't published yet. CI installs
     // 0.3.0. The callAnthropicMessages field is also 0.4.0-only, but spreading
     // an extra property into ClaudeForChromeContext is fine against either
     // version — 0.3.0 sees an unknown field (allowed in spread), 0.4.0 sees a

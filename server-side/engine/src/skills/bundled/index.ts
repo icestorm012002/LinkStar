@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import { shouldAutoEnableClaudeInChrome } from 'src/utils/ClaudeInChrome/setup.js'
+import { shouldAutoEnableClaudeInChrome } from 'src/utils/claudeInChrome/setup.js'
 import { registerBatchSkill } from './batch.js'
 import { registerClaudeInChromeSkill } from './ClaudeInChrome.js'
 import { registerDebugSkill } from './debug.js'

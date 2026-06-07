@@ -623,7 +623,7 @@ export type DeferredToolsDeltaScanContext = {
 
 /**
  * True → announce deferred tools via persisted delta attachments.
- * False → Claude.ts keeps its per-call <available-deferred-tools>
+ * False → claude.ts keeps its per-call <available-deferred-tools>
  * header prepend (the attachment does not fire).
  */
 export function isDeferredToolsDeltaEnabled(): boolean {

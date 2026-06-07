@@ -578,7 +578,7 @@ export type GlobalConfig = {
   // Additional model options for the model picker (fetched during bootstrap).
   additionalModelOptionsCache?: ModelOption[]
 
-  // Disk cache for /api/Claude_code/organizations/metrics_enabled.
+  // Disk cache for /api/claude_code/organizations/metrics_enabled.
   // Org-level settings change rarely; persisting across processes avoids a
   // cold API call on every `Claude -p` invocation.
   metricsStatusCache?: {
@@ -986,7 +986,7 @@ let configCacheHits = 0
 let configCacheMisses = 0
 // Session-total count of actual disk writes to the global config file.
 // Exposed for ant-only dev diagnostics (see inc-4552) so anomalous write
-// rates surface in the UI before they corrupt ~/.Claude.json.
+// rates surface in the UI before they corrupt ~/.claude.json.
 let globalConfigWriteCount = 0
 
 export function getGlobalConfigWriteCount(): number {
@@ -1325,7 +1325,7 @@ function saveConfigWithLock<A extends object>(
     const currentConfig = getConfig(file, createDefault)
     if (file === getGlobalClaudeFile() && wouldLoseAuthState(currentConfig)) {
       logForDebugging(
-        'saveConfigWithLock: re-read config is missing auth that cache has; refusing to write to avoid wiping ~/.Claude.json. See GH #3117.',
+        'saveConfigWithLock: re-read config is missing auth that cache has; refusing to write to avoid wiping ~/.claude.json. See GH #3117.',
         { level: 'error' },
       )
       logEvent('tengu_config_auth_loss_prevented', {})

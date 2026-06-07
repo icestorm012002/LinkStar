@@ -172,8 +172,8 @@ import {
   isMcpInstructionsDeltaEnabled,
   type ClientSideInstruction,
 } from './mcpInstructionsDelta.js'
-import { Claude_IN_CHROME_MCP_SERVER_NAME } from './ClaudeInChrome/common.js'
-import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from './ClaudeInChrome/prompt.js'
+import { Claude_IN_CHROME_MCP_SERVER_NAME } from './claudeInChrome/common.js'
+import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from './claudeInChrome/prompt.js'
 import type { MCPServerConnection } from '../services/mcp/types.js'
 import type {
   HookEvent,

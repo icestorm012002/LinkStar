@@ -229,13 +229,13 @@ function getMcpToolTimeoutMs(): number {
   )
 }
 
-import { isClaudeInChromeMCPServer } from '../../utils/ClaudeInChrome/common.js'
+import { isClaudeInChromeMCPServer } from '../../utils/claudeInChrome/common.js'
 
 // Lazy: toolRendering.tsx pulls React/ink; only needed when Claude-in-Chrome MCP server is connected
 /* eslint-disable @typescript-eslint/no-require-imports */
 const ClaudeInChromeToolRendering =
-  (): typeof import('../../utils/ClaudeInChrome/toolRendering.js') =>
-    require('../../utils/ClaudeInChrome/toolRendering.js')
+  (): typeof import('../../utils/claudeInChrome/toolRendering.js') =>
+    require('../../utils/claudeInChrome/toolRendering.js')
 // Lazy: wrapper.tsx → hostAdapter.ts → executor.ts pulls both native modules
 // (@ant/computer-use-input + @ant/computer-use-swift). Runtime-gated by
 // GrowthBook tengu_malort_pedway (see gates.ts).
@@ -909,10 +909,10 @@ export const connectToServer = memoize(
       ) {
         // Run the Chrome MCP server in-process to avoid spawning a ~325 MB subprocess
         const { createChromeContext } = await import(
-          '../../utils/ClaudeInChrome/mcpServer.js'
+          '../../utils/claudeInChrome/mcpServer.js'
         )
         const { createClaudeForChromeMcpServer } = await import(
-          '@ant/Claude-for-chrome-mcp'
+          '@ant/claude-for-chrome-mcp'
         )
         const { createLinkedTransportPair } = await import(
           './InProcessTransport.js'

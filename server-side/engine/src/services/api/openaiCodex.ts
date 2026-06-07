@@ -17,7 +17,7 @@ import { getOpenAICodexModelName } from '../../utils/model/providers.js'
 import { getProxyFetchOptions } from '../../utils/proxy.js'
 import { endQueryProfile, queryCheckpoint } from '../../utils/queryProfiler.js'
 import { getOpenAICodexAuthInfo } from './openaiCodexAuth.js'
-import type { Options } from './Claude.js'
+import type { Options } from './claude.js'
 
 type OpenAICodexTool = {
   type: 'function'

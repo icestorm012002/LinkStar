@@ -2165,7 +2165,7 @@ export function normalizeMessagesForAPI(
           // Must be a sibling, NOT inside tool_result.content — mixing text with
           // tool_reference inside the block is a server ValueError.
           // Idempotent: query.ts calls this per-tool-result; the output flows
-          // back through here via Claude.ts on the next API request. The first
+          // back through here via claude.ts on the next API request. The first
           // pass's sibling gets a \n[id:xxx] suffix from appendMessageTag below,
           // so startsWith matches both bare and tagged forms.
           //
@@ -5130,7 +5130,7 @@ export function stripSignatureBlocks(messages: Message[]): Message[] {
     if (filtered.length === content.length) return msg
 
     // Strip to [] even for thinking-only messages. Streaming yields each
-    // content block as a separate same-id AssistantMessage (Claude.ts:2150),
+    // content block as a separate same-id AssistantMessage (claude.ts:2150),
     // so a thinking-only singleton here is usually a split sibling that
     // mergeAssistantMessages (2232) rejoins with its text/tool_use partner.
     // If we returned the original message, the stale signature would survive

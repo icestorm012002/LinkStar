@@ -571,7 +571,7 @@ function streamedCheckPermissionsAndCallTool(
 
 /**
  * Appended to Zod errors when a deferred tool wasn't in the discovered-tool
- * set — re-runs the Claude.ts schema-filter scan dispatch-time to detect the
+ * set — re-runs the claude.ts schema-filter scan dispatch-time to detect the
  * mismatch. The raw Zod error ("expected array, got string") doesn't tell the
  * model to re-load the tool; this hint does. Null if the schema was sent.
  */
@@ -580,7 +580,7 @@ export function buildSchemaNotSentHint(
   messages: Message[],
   tools: readonly { name: string }[],
 ): string | null {
-  // Optimistic gating — reconstructing Claude.ts's full useToolSearch
+  // Optimistic gating — reconstructing claude.ts's full useToolSearch
   // computation is fragile. These two gates prevent pointing at a ToolSearch
   // that isn't callable; occasional misfires (Haiku, tst-auto below threshold)
   // cost one extra round-trip on an already-failing path.

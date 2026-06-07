@@ -193,7 +193,7 @@ export type QueryParams = {
   // API task_budget (output_config.task_budget, beta task-budgets-2026-03-13).
   // Distinct from the tokenBudget +500k auto-continue feature. `total` is the
   // budget for the whole agentic turn; `remaining` is computed per iteration
-  // from cumulative API usage. See configureTaskBudgetParams in Claude.ts.
+  // from cumulative API usage. See configureTaskBudgetParams in claude.ts.
   taskBudget?: { total: number }
   deps?: QueryDeps
 }

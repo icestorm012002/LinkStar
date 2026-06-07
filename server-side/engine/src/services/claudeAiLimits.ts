@@ -10,7 +10,7 @@ import { getSmallFastModel } from '../utils/model/model.js'
 import { isEssentialTrafficOnly } from '../utils/privacyLevel.js'
 import type { AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS } from './analytics/index.js'
 import { logEvent } from './analytics/index.js'
-import { getAPIMetadata } from './api/Claude.js'
+import { getAPIMetadata } from './api/claude.js'
 import { getAnthropicClient } from './api/client.js'
 import {
   processRateLimitHeaders,
@@ -233,7 +233,7 @@ export async function checkQuotaStatus(
 
   // In non-interactive mode (-p), the real query follows immediately and
   // extractQuotaStatusFromHeaders() will update limits from its response
-  // headers (Claude.ts), so skip this pre-check API call.
+  // headers (claude.ts), so skip this pre-check API call.
   if (!force && getIsNonInteractiveSession()) {
     return
   }
