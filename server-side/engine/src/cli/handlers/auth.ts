@@ -1,0 +1,592 @@
+/* eslint-disable custom-rules/no-process-exit -- CLI subcommand handler intentionally exits */
+
+import {
+  clearAuthRelatedCaches,
+  performLogout,
+} from '../../commands/logout/logout.js'
+import {
+  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+  logEvent,
+} from '../../services/analytics/index.js'
+import { getSSLErrorHint } from '../../services/api/errorUtils.js'
+import { fetchAndStoreClaudeCodeFirstTokenDate } from '../../services/api/firstTokenDate.js'
+import {
+  clearStoredOpenAICodexAuth,
+  getOpenAICodexAuthInfo,
+} from '../../services/api/openaiCodexAuth.js'
+import { OpenAICodexOAuthService } from '../../services/api/openaiCodexLogin.js'
+import {
+  clearStoredGoogleGeminiAuth,
+  getGoogleGeminiAuthInfo,
+} from '../../services/api/googleGeminiAuth.js'
+import {
+  getApiKeyProviderDefinition,
+  type ApiKeyProviderId,
+} from '../../services/api/providerCatalog.js'
+import {
+  clearProviderApiKey,
+  getProviderApiKeyStatus,
+  setProviderApiKey,
+} from '../../services/api/providerAuth.js'
+import {
+  createAndStoreApiKey,
+  fetchAndStoreUserRoles,
+  refreshOAuthToken,
+  shouldUseClaudeAIAuth,
+  storeOAuthAccountInfo,
+} from '../../services/oauth/client.js'
+import { getOauthProfileFromOauthToken } from '../../services/oauth/getOauthProfile.js'
+import { OAuthService } from '../../services/oauth/index.js'
+import type { OAuthTokens } from '../../services/oauth/types.js'
+import {
+  clearOAuthTokenCache,
+  getAnthropicApiKeyWithSource,
+  getAuthTokenSource,
+  getOauthAccountInfo,
+  getSubscriptionType,
+  isUsing3PServices,
+  saveOAuthTokensIfNeeded,
+  validateForceLoginOrg,
+} from '../../utils/auth.js'
+import { saveGlobalConfig } from '../../utils/config.js'
+import { logForDebugging } from '../../utils/debug.js'
+import { isRunningOnHomespace } from '../../utils/envUtils.js'
+import { errorMessage } from '../../utils/errors.js'
+import { logError } from '../../utils/log.js'
+import { getAPIProvider } from '../../utils/model/providers.js'
+import { getInitialSettings } from '../../utils/settings/settings.js'
+import { jsonStringify } from '../../utils/slowOperations.js'
+import {
+  buildAccountProperties,
+  buildAPIProviderProperties,
+} from '../../utils/status.js'
+
+type AuthProvider =
+  | 'claude'
+  | 'codex'
+  | ApiKeyProviderId
+
+function isApiKeyProvider(provider: AuthProvider | undefined): provider is ApiKeyProviderId {
+  return provider !== undefined && provider !== 'claude' && provider !== 'codex'
+}
+
+/**
+ * Shared post-token-acquisition logic. Saves tokens, fetches profile/roles,
+ * and sets up the local auth state.
+ */
+export async function installOAuthTokens(tokens: OAuthTokens): Promise<void> {
+  // Clear old state before saving new credentials
+  await performLogout({ clearOnboarding: false })
+
+  // Reuse pre-fetched profile if available, otherwise fetch fresh
+  const profile =
+    tokens.profile ?? (await getOauthProfileFromOauthToken(tokens.accessToken))
+  if (profile) {
+    storeOAuthAccountInfo({
+      accountUuid: profile.account.uuid,
+      emailAddress: profile.account.email,
+      organizationUuid: profile.organization.uuid,
+      displayName: profile.account.display_name || undefined,
+      hasExtraUsageEnabled:
+        profile.organization.has_extra_usage_enabled ?? undefined,
+      billingType: profile.organization.billing_type ?? undefined,
+      subscriptionCreatedAt:
+        profile.organization.subscription_created_at ?? undefined,
+      accountCreatedAt: profile.account.created_at,
+    })
+  } else if (tokens.tokenAccount) {
+    // Fallback to token exchange account data when profile endpoint fails
+    storeOAuthAccountInfo({
+      accountUuid: tokens.tokenAccount.uuid,
+      emailAddress: tokens.tokenAccount.emailAddress,
+      organizationUuid: tokens.tokenAccount.organizationUuid,
+    })
+  }
+
+  const storageResult = saveOAuthTokensIfNeeded(tokens)
+  clearOAuthTokenCache()
+
+  if (storageResult.warning) {
+    logEvent('tengu_oauth_storage_warning', {
+      warning:
+        storageResult.warning as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    })
+  }
+
+  // Roles and first-token-date may fail for limited-scope tokens (e.g.
+  // inference-only from setup-token). They're not required for core auth.
+  await fetchAndStoreUserRoles(tokens.accessToken).catch(err =>
+    logForDebugging(String(err), { level: 'error' }),
+  )
+
+  if (shouldUseClaudeAIAuth(tokens.scopes)) {
+    await fetchAndStoreClaudeCodeFirstTokenDate().catch(err =>
+      logForDebugging(String(err), { level: 'error' }),
+    )
+  } else {
+    // API key creation is critical for Console users — let it throw.
+    const apiKey = await createAndStoreApiKey(tokens.accessToken)
+    if (!apiKey) {
+      throw new Error(
+        'Unable to create API key. The server accepted the request but did not return a key.',
+      )
+    }
+  }
+
+  await clearAuthRelatedCaches()
+}
+
+export async function authLogin({
+  provider,
+  apiKey,
+  email,
+  sso,
+  console: useConsole,
+  claudeai,
+}: {
+  provider?: AuthProvider
+  apiKey?: string
+  email?: string
+  sso?: boolean
+  console?: boolean
+  claudeai?: boolean
+}): Promise<void> {
+  if (provider === 'google-gemini') {
+    const normalizedApiKey = String(apiKey || '').trim()
+    if (normalizedApiKey) {
+      const result = setProviderApiKey('google-gemini', normalizedApiKey)
+      if (!result.success) {
+        process.stderr.write('Failed to save API key for Google Gemini.\n')
+        process.exit(1)
+      }
+      process.stdout.write(
+        `Saved API key for Google Gemini.${result.warning ? ` ${result.warning}` : ''}\n`,
+      )
+      process.exit(0)
+    }
+    const auth = await getGoogleGeminiAuthInfo()
+    if (auth.status === 'ok') {
+      process.stdout.write(
+        `Gemini CLI login detected${auth.email ? ` (${auth.email})` : ''}.\n`,
+      )
+      process.exit(0)
+    }
+    process.stderr.write(
+      'Gemini CLI login was not found. Install Gemini CLI and complete its Google login first, or supply --api-key.\n',
+    )
+    process.exit(1)
+  }
+
+  if (isApiKeyProvider(provider)) {
+    const definition = getApiKeyProviderDefinition(provider)
+    if (!definition) {
+      process.stderr.write(`Unsupported provider: ${provider}\n`)
+      process.exit(1)
+    }
+    const normalizedKey = String(apiKey || '').trim()
+    if (!normalizedKey) {
+      process.stderr.write(
+        `Missing API key. Run claude auth login --provider ${provider} --api-key <key> or use /login in the interactive UI.\n`,
+      )
+      process.exit(1)
+    }
+    const result = setProviderApiKey(provider, normalizedKey)
+    if (!result.success) {
+      process.stderr.write(`Failed to save API key for ${definition.label}.\n`)
+      process.exit(1)
+    }
+    process.stdout.write(
+      `Saved API key for ${definition.label}.${result.warning ? ` ${result.warning}` : ''}\n`,
+    )
+    process.exit(0)
+  }
+
+  if (provider === 'codex') {
+    const oauthService = new OpenAICodexOAuthService()
+    try {
+      const result = await oauthService.startOAuthFlow(async url => {
+        process.stdout.write('Opening browser to sign in to Codex…\n')
+        process.stdout.write(`If the browser did not open, visit: ${url}\n`)
+      })
+      process.stdout.write(
+        `Login successful${result.email ? ` (${result.email})` : ''}.\n`,
+      )
+      process.exit(0)
+    } catch (err) {
+      logError(err)
+      process.stderr.write(`Login failed: ${errorMessage(err)}\n`)
+      process.exit(1)
+    } finally {
+      oauthService.cleanup()
+    }
+  }
+
+  if (useConsole && claudeai) {
+    process.stderr.write(
+      'Error: --console and --claudeai cannot be used together.\n',
+    )
+    process.exit(1)
+  }
+
+  const settings = getInitialSettings()
+  // forceLoginMethod is a hard constraint (enterprise setting) — matches ConsoleOAuthFlow behavior.
+  // Without it, --console selects Console; --claudeai (or no flag) selects claude.ai.
+  const loginWithClaudeAi = settings.forceLoginMethod
+    ? settings.forceLoginMethod === 'claudeai'
+    : !useConsole
+  const orgUUID = settings.forceLoginOrgUUID
+
+  // Fast path: if a refresh token is provided via env var, skip the browser
+  // OAuth flow and exchange it directly for tokens.
+  const envRefreshToken = process.env.CLAUDE_CODE_OAUTH_REFRESH_TOKEN
+  if (envRefreshToken) {
+    const envScopes = process.env.CLAUDE_CODE_OAUTH_SCOPES
+    if (!envScopes) {
+      process.stderr.write(
+        'CLAUDE_CODE_OAUTH_SCOPES is required when using CLAUDE_CODE_OAUTH_REFRESH_TOKEN.\n' +
+          'Set it to the space-separated scopes the refresh token was issued with\n' +
+          '(e.g. "user:inference" or "user:profile user:inference user:sessions:claude_code user:mcp_servers").\n',
+      )
+      process.exit(1)
+    }
+
+    const scopes = envScopes.split(/\s+/).filter(Boolean)
+
+    try {
+      logEvent('tengu_login_from_refresh_token', {})
+
+      const tokens = await refreshOAuthToken(envRefreshToken, { scopes })
+      await installOAuthTokens(tokens)
+
+      const orgResult = await validateForceLoginOrg()
+      if (!orgResult.valid) {
+        process.stderr.write((orgResult as { valid: false; message: string }).message + '\n')
+        process.exit(1)
+      }
+
+      // Mark onboarding complete — interactive paths handle this via
+      // the Onboarding component, but the env var path skips it.
+      saveGlobalConfig(current => {
+        if (current.hasCompletedOnboarding) return current
+        return { ...current, hasCompletedOnboarding: true }
+      })
+
+      logEvent('tengu_oauth_success', {
+        loginWithClaudeAi: shouldUseClaudeAIAuth(tokens.scopes),
+      })
+      process.stdout.write('Login successful.\n')
+      process.exit(0)
+    } catch (err) {
+      logError(err)
+      const sslHint = getSSLErrorHint(err)
+      process.stderr.write(
+        `Login failed: ${errorMessage(err)}\n${sslHint ? sslHint + '\n' : ''}`,
+      )
+      process.exit(1)
+    }
+  }
+
+  const resolvedLoginMethod = sso ? 'sso' : undefined
+
+  const oauthService = new OAuthService()
+
+  try {
+    logEvent('tengu_oauth_flow_start', { loginWithClaudeAi })
+
+    const result = await oauthService.startOAuthFlow(
+      async (manualUrl, automaticUrl, directUrl) => {
+        process.stdout.write('Opening browser to sign in…\n')
+        process.stdout.write(`Manual (paste code flow): ${manualUrl}\n`)
+        if (automaticUrl) {
+          process.stdout.write(`Automatic (localhost redirect): ${automaticUrl}\n`)
+        }
+        if (directUrl) {
+          process.stdout.write(`Alternate (direct claude.ai): ${directUrl}\n`)
+        }
+      },
+      {
+        loginWithClaudeAi,
+        loginHint: email,
+        loginMethod: resolvedLoginMethod,
+        orgUUID,
+      },
+    )
+
+    await installOAuthTokens(result)
+
+    const orgResult = await validateForceLoginOrg()
+    if (!orgResult.valid) {
+      process.stderr.write((orgResult as { valid: false; message: string }).message + '\n')
+      process.exit(1)
+    }
+
+    logEvent('tengu_oauth_success', { loginWithClaudeAi })
+
+    process.stdout.write('Login successful.\n')
+    process.exit(0)
+  } catch (err) {
+    logError(err)
+    const sslHint = getSSLErrorHint(err)
+    process.stderr.write(
+      `Login failed: ${errorMessage(err)}\n${sslHint ? sslHint + '\n' : ''}`,
+    )
+    process.exit(1)
+  } finally {
+    oauthService.cleanup()
+  }
+}
+
+export async function authStatus(opts: {
+  provider?: AuthProvider
+  json?: boolean
+  text?: boolean
+}): Promise<void> {
+  if (isApiKeyProvider(opts.provider)) {
+    const definition = getApiKeyProviderDefinition(opts.provider)
+    if (opts.provider === 'google-gemini') {
+      const oauth = await getGoogleGeminiAuthInfo()
+      const apiKeyStatus = getProviderApiKeyStatus(opts.provider)
+      const loggedIn = oauth.status === 'ok' || apiKeyStatus === 'configured'
+      if (opts.text) {
+        if (oauth.status === 'ok') {
+          process.stdout.write(
+            `Logged in to Google Gemini using ${oauth.source === 'external' ? 'Gemini CLI' : 'internal'} auth.\n`,
+          )
+          if (oauth.email) process.stdout.write(`Email: ${oauth.email}\n`)
+          if (oauth.projectId) process.stdout.write(`Project: ${oauth.projectId}\n`)
+        } else if (apiKeyStatus === 'configured') {
+          process.stdout.write('Google Gemini API key is configured.\n')
+        } else {
+          process.stdout.write(
+            'Google Gemini is not configured. Log in through Gemini CLI first or supply --api-key.\n',
+          )
+        }
+      } else {
+        process.stdout.write(
+          jsonStringify(
+            {
+              loggedIn,
+              provider: 'google-gemini',
+              authMethod:
+                oauth.status === 'ok'
+                  ? 'oauth'
+                  : apiKeyStatus === 'configured'
+                    ? 'api_key'
+                    : 'none',
+              status: oauth.status === 'ok' ? oauth.status : apiKeyStatus,
+              email: oauth.email ?? null,
+              projectId: oauth.projectId ?? null,
+            },
+            null,
+            2,
+          ) + '\n',
+        )
+      }
+      process.exit(loggedIn ? 0 : 1)
+    }
+    const status = getProviderApiKeyStatus(opts.provider)
+    const loggedIn = status === 'configured'
+    if (opts.text) {
+      process.stdout.write(
+        loggedIn
+          ? `${definition?.label ?? opts.provider} API key is configured.\n`
+          : `${definition?.label ?? opts.provider} API key is not configured. Run claude auth login --provider ${opts.provider} --api-key <key>.\n`,
+      )
+    } else {
+      process.stdout.write(
+        jsonStringify(
+          {
+            loggedIn,
+            provider: opts.provider,
+            authMethod: loggedIn ? 'api_key' : 'none',
+            status,
+          },
+          null,
+          2,
+        ) + '\n',
+      )
+    }
+    process.exit(loggedIn ? 0 : 1)
+  }
+
+  if (opts.provider === 'codex') {
+    const auth = await getOpenAICodexAuthInfo()
+    const loggedIn = auth.status === 'ok'
+
+    if (opts.text) {
+      if (loggedIn) {
+        process.stdout.write(
+          `Logged in to Codex using ChatGPT (${auth.source}).\n`,
+        )
+        if (auth.email) {
+          process.stdout.write(`Email: ${auth.email}\n`)
+        }
+        if (auth.planType) {
+          process.stdout.write(`Plan: ${auth.planType}\n`)
+        }
+      } else {
+        process.stdout.write(
+          'Not logged in to Codex. Run claude auth login --provider codex to authenticate.\n',
+        )
+      }
+    } else {
+      process.stdout.write(
+        jsonStringify(
+          {
+            loggedIn,
+            provider: 'codex',
+            authMethod: loggedIn ? 'chatgpt' : 'none',
+            authSource: auth.source,
+            email: auth.email ?? null,
+            accountId: auth.accountId ?? null,
+            planType: auth.planType ?? null,
+            authPath: auth.authPath,
+            status: auth.status,
+          },
+          null,
+          2,
+        ) + '\n',
+      )
+    }
+    process.exit(loggedIn ? 0 : 1)
+  }
+
+  const { source: authTokenSource, hasToken } = getAuthTokenSource()
+  const { source: apiKeySource } = getAnthropicApiKeyWithSource()
+  const hasApiKeyEnvVar =
+    !!process.env.ANTHROPIC_API_KEY && !isRunningOnHomespace()
+  const oauthAccount = getOauthAccountInfo()
+  const subscriptionType = getSubscriptionType()
+  const using3P = isUsing3PServices()
+  const loggedIn =
+    hasToken || apiKeySource !== 'none' || hasApiKeyEnvVar || using3P
+
+  // Determine auth method
+  let authMethod: string = 'none'
+  if (using3P) {
+    authMethod = 'third_party'
+  } else if (authTokenSource === 'claude.ai') {
+    authMethod = 'claude.ai'
+  } else if (authTokenSource === 'apiKeyHelper') {
+    authMethod = 'api_key_helper'
+  } else if (authTokenSource !== 'none') {
+    authMethod = 'oauth_token'
+  } else if (apiKeySource === 'ANTHROPIC_API_KEY' || hasApiKeyEnvVar) {
+    authMethod = 'api_key'
+  } else if (apiKeySource === '/login managed key') {
+    authMethod = 'claude.ai'
+  }
+
+  if (opts.text) {
+    const properties = [
+      ...buildAccountProperties(),
+      ...buildAPIProviderProperties(),
+    ]
+    let hasAuthProperty = false
+    for (const prop of properties) {
+      const value =
+        typeof prop.value === 'string'
+          ? prop.value
+          : Array.isArray(prop.value)
+            ? prop.value.join(', ')
+            : null
+      if (value === null || value === 'none') {
+        continue
+      }
+      hasAuthProperty = true
+      if (prop.label) {
+        process.stdout.write(`${prop.label}: ${value}\n`)
+      } else {
+        process.stdout.write(`${value}\n`)
+      }
+    }
+    if (!hasAuthProperty && hasApiKeyEnvVar) {
+      process.stdout.write('API key: ANTHROPIC_API_KEY\n')
+    }
+    if (!loggedIn) {
+      process.stdout.write(
+        'Not logged in. Run claude auth login to authenticate.\n',
+      )
+    }
+  } else {
+    const apiProvider = getAPIProvider()
+    const resolvedApiKeySource =
+      apiKeySource !== 'none'
+        ? apiKeySource
+        : hasApiKeyEnvVar
+          ? 'ANTHROPIC_API_KEY'
+          : null
+    const output: Record<string, string | boolean | null> = {
+      loggedIn,
+      authMethod,
+      apiProvider,
+    }
+    if (resolvedApiKeySource) {
+      output.apiKeySource = resolvedApiKeySource
+    }
+    if (authMethod === 'claude.ai') {
+      output.email = oauthAccount?.emailAddress ?? null
+      output.orgId = oauthAccount?.organizationUuid ?? null
+      output.orgName = oauthAccount?.organizationName ?? null
+      output.subscriptionType = subscriptionType ?? null
+    }
+
+    process.stdout.write(jsonStringify(output, null, 2) + '\n')
+  }
+  process.exit(loggedIn ? 0 : 1)
+}
+
+export async function authLogout(opts?: {
+  provider?: AuthProvider
+}): Promise<void> {
+  if (isApiKeyProvider(opts?.provider)) {
+    const definition = getApiKeyProviderDefinition(opts.provider)
+    if (opts.provider === 'google-gemini') {
+      const [removedOauth, removedApiKey] = await Promise.all([
+        clearStoredGoogleGeminiAuth(),
+        Promise.resolve(clearProviderApiKey(opts.provider)),
+      ])
+      const success = removedOauth || removedApiKey
+      process.stdout.write(
+        success
+          ? `Cleared Google Gemini credentials.${removedOauth && removedApiKey ? ' Removed OAuth login and API key.' : ''}\n`
+          : 'No Google Gemini credentials were configured.\n',
+      )
+      process.exit(success ? 0 : 1)
+    }
+    const removed = clearProviderApiKey(opts.provider)
+    process.stdout.write(
+      removed
+        ? `Cleared API key for ${definition?.label ?? opts.provider}.\n`
+        : `Failed to clear API key for ${definition?.label ?? opts.provider}.\n`,
+    )
+    process.exit(removed ? 0 : 1)
+  }
+
+  if (opts?.provider === 'codex') {
+    const auth = await getOpenAICodexAuthInfo()
+    if (auth.source === 'external') {
+      process.stdout.write(
+        'Codex auth is currently coming from an external Codex install. No internal Codex login was removed.\n',
+      )
+      process.exit(0)
+    }
+
+    const removed = await clearStoredOpenAICodexAuth()
+    process.stdout.write(
+      removed
+        ? 'Successfully logged out from your Codex account.\n'
+        : 'No internal Codex login found.\n',
+    )
+    process.exit(0)
+  }
+
+  try {
+    await performLogout({ clearOnboarding: false })
+  } catch {
+    process.stderr.write('Failed to log out.\n')
+    process.exit(1)
+  }
+  process.stdout.write('Successfully logged out from your Anthropic account.\n')
+  process.exit(0)
+}
