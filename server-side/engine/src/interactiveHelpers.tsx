@@ -291,7 +291,7 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
   if (claudeInChrome && !getGlobalConfig().hasCompletedClaudeInChromeOnboarding) {
     const {
       ClaudeInChromeOnboarding
-    } = await import('./components/ClaudeInChromeOnboarding.js');
+    } = await import('./components/claudeInChromeOnboarding.js');
     await showSetupDialog(root, done => <ClaudeInChromeOnboarding onDone={done} />);
   }
   return onboardingShown;
