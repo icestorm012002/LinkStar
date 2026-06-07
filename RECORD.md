@@ -246,9 +246,9 @@ Bundled 5326 modules in 491ms
    - 统一注入环境变量 `CLAUDE_CONFIG_DIR = {userDir}/.claude` 到子进程，结合底层原生的 `switchSession(config.sessionId)`，实现了原生会话存储中聊天记录的完美持久化与无缝断点续接。
 3. **安全过滤与跨目录白名单**：
    - 前端设置面板的 “安全与权限” 选项，会随 WebSocket `auth` 鉴权握手事件在 `envOverrides` 中自动传递：
-     - `LINKSTAR_SAFETY_LEVEL`: `full` (免审模式) | `ask` (交互审计) | `sandbox` (沙箱隔离)
-     - `LINKSTAR_SANDBOX_ENABLED`: `true` | `false`
-     - `LINKSTAR_PATH_WHITELIST`: 半角逗号或分号分隔的物理路径白名单（如 `E:\Shared;D:\Library`）
+     - `CLAUDE_SAFETY_LEVEL`: `full` (免审模式) | `ask` (交互审计) | `sandbox` (沙箱隔离)
+     - `CLAUDE_SANDBOX_ENABLED`: `true` | `false`
+     - `CLAUDE_PATH_WHITELIST`: 半角逗号或分号分隔的物理路径白名单（如 `E:\Shared;D:\Library`）
    - 后端服务及本地 `bridge.exe` 守护进程会自动识别这些参数并进行命令阻断与文件代理路径的穿越比对放行。
 
 ## 八、本地直连模式与路径规范化修复（2026-05-27 ~ 2026-05-28）
@@ -258,21 +258,21 @@ Bundled 5326 modules in 491ms
 在本轮修复前，系统存在以下三个关键 Bug：
 
 1. **路径拼装错误**：前端 project path 存储为相对路径（如 `./GTP5.5`），后端 orchestrator 检测到非绝对路径后 fallback 到影子目录 `{dataRoot}/{userId}/projects/GTP5.5/workspace`，导致 AI 的 CWD 落入空的影子目录而非用户的物理工作区 `E:\clawd-home\GTP5.5`。
-2. **品牌化路径污染**：UI 层的 `sanitizeBrand` 正则替换将所有 `claude` 替换为 `LINKSTAR`，导致文件路径中的 `claude-code` 被错误渲染为 `LINKSTAR-code`。
+2. **品牌化路径污染**：UI 层的 `sanitizeBrand` 正则替换将所有 `claude` 替换为 `CLAUDE`，导致文件路径中的 `claude-code` 被错误渲染为 `CLAUDE-code`。
 3. **Linux 风格 Windows 路径**：默认项目路径 `/e/Unreal/A1workhouse` 未被转换为 Windows 标准格式 `E:\Unreal\A1workhouse`。
 
 ### 8.2 新增/修改文件及修改点
 
 | 变更类型 | 文件路径 | 修改行号 | 修改点说明 |
 |:---|:---|:---|:---|
-| **[MODIFY]** | `apps/client/src/services/CloudSyncService.ts` | L35-97, L136-157 | 1. 新增 `currentProjectId` 属性，用于检测项目切换并触发 WebSocket 重连；2. `connect()` 中增加 projectId 变化检测；3. `onopen` 中增加双层路径规范化：(a) 将相对路径 `./xxx` 结合 `linkstar_workspace_base_dir` 扩展为绝对路径, (b) 将 Linux 风格 `/e/xxx` 转换为 `E:\xxx` |
-| **[MODIFY]** | `apps/claude-code/src/multi-tenant/ws-gateway.ts` | L180-212 | `handleAuth` 中新增后端侧路径规范化（与前端双层保障）：(a) 相对路径 `./xxx` → 结合 `LINKSTAR_WORKSPACE_BASE` 环境变量或 `envOverrides` 中的基目录扩展为绝对路径, (b) Linux 风格 `/e/xxx` → `E:\xxx` |
+| **[MODIFY]** | `apps/client/src/services/CloudSyncService.ts` | L35-97, L136-157 | 1. 新增 `currentProjectId` 属性，用于检测项目切换并触发 WebSocket 重连；2. `connect()` 中增加 projectId 变化检测；3. `onopen` 中增加双层路径规范化：(a) 将相对路径 `./xxx` 结合 `claude_workspace_base_dir` 扩展为绝对路径, (b) 将 Linux 风格 `/e/xxx` 转换为 `E:\xxx` |
+| **[MODIFY]** | `apps/claude-code/src/multi-tenant/ws-gateway.ts` | L180-212 | `handleAuth` 中新增后端侧路径规范化（与前端双层保障）：(a) 相对路径 `./xxx` → 结合 `CLAUDE_WORKSPACE_BASE` 环境变量或 `envOverrides` 中的基目录扩展为绝对路径, (b) Linux 风格 `/e/xxx` → `E:\xxx` |
 | **[MODIFY]** | `apps/client/src/components/chat/ChatArea.tsx` | L170 | `useEffect` 依赖数组增加 `activeProjectId`，确保项目切换时重新注册 CloudSyncService 监听器并触发重连 |
 | **[MODIFY]** | `apps/client/src/store/useAppStore.ts` | (前轮已改) | 移除了 UI 层 `sanitizeBrand` 正则，恢复原始消息存储 |
-| **[MODIFY]** | `apps/claude-code/src/headless-server.ts` | L100-118, L260-271 | 1. 当 `remoteCwd` 为绝对路径时，跳过 `applyMonkeyPatches`，直接在本地物理目录执行；2. 注入 `systemBrandingInstruction` 到 prompt 开头，让 AI 模型原生自称 LINKSTAR |
+| **[MODIFY]** | `apps/claude-code/src/headless-server.ts` | L100-118, L260-271 | 1. 当 `remoteCwd` 为绝对路径时，跳过 `applyMonkeyPatches`，直接在本地物理目录执行；2. 注入 `systemBrandingInstruction` 到 prompt 开头，让 AI 模型原生自称 CLAUDE |
 | **[MODIFY]** | `apps/claude-code/src/multi-tenant/orchestrator.ts` | L186-191 | 将 `options.workspacePath` 透传为 `remoteCwd`（如为绝对路径则直接使用） |
-| **[MODIFY]** | `apps/client/src/components/sidebar/SettingsPanel.tsx` | L26-28, L78 | 新增 "Workspace Base Directory" 配置输入（localStorage key: `linkstar_workspace_base_dir`） |
-| **[MODIFY]** | `apps/client/src/components/sidebar/Sidebar.tsx` | L20-22 | `handleOpenFolder` 使用 `linkstar_workspace_base_dir` 拼接绝对路径 |
+| **[MODIFY]** | `apps/client/src/components/sidebar/SettingsPanel.tsx` | L26-28, L78 | 新增 "Workspace Base Directory" 配置输入（localStorage key: `claude_workspace_base_dir`） |
+| **[MODIFY]** | `apps/client/src/components/sidebar/Sidebar.tsx` | L20-22 | `handleOpenFolder` 使用 `claude_workspace_base_dir` 拼接绝对路径 |
 
 ### 8.3 路径规范化数据流
 
@@ -293,6 +293,6 @@ headless-server.injectSessionEnvironment
 
 ### 8.4 品牌化策略变更
 
-- **移除**：UI 层的 `sanitizeBrand` 正则替换（`replace(/\bclaude\b/gi, 'LINKSTAR')`），该方法导致路径中的 `claude-code` 被误替换为 `LINKSTAR-code`。
-- **新增**：在 `headless-server.ts` 中通过 `systemBrandingInstruction` 原生注入到 AI prompt 开头，让模型自然自称 LINKSTAR，不依赖后处理替换。
+- **移除**：UI 层的 `sanitizeBrand` 正则替换（`replace(/\bclaude\b/gi, 'CLAUDE')`），该方法导致路径中的 `claude-code` 被误替换为 `CLAUDE-code`。
+- **新增**：在 `headless-server.ts` 中通过 `systemBrandingInstruction` 原生注入到 AI prompt 开头，让模型自然自称 CLAUDE，不依赖后处理替换。
 

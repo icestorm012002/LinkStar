@@ -20,7 +20,7 @@ function translatePaths(content: string, cloudPath: string | null, localPath: st
   return content.replace(regex, localPath);
 }
 
-// LINKSTAR 支持的斜杠命令列表
+// CLAUDE 支持的斜杠命令列表
 const SLASH_COMMANDS = [
   { name: '/help', desc: 'Show available commands' },
   { name: '/status', desc: 'Show current session status' },
@@ -269,13 +269,13 @@ export function ChatArea() {
   const handleSend = () => {
     if (!input.trim() || !activeConversationId) return;
 
-    const token = localStorage.getItem('linkstar_token');
+    const token = localStorage.getItem('claude_token');
     if (!token) {
-      window.dispatchEvent(new Event('linkstar_require_login'));
+      window.dispatchEvent(new Event('claude_require_login'));
       return;
     }
 
-    const apiKey = localStorage.getItem('linkstar_api_key');
+    const apiKey = localStorage.getItem('claude_api_key');
     if (!apiKey) {
       addMessage(activeConversationId, {
         id: Date.now().toString(),
@@ -302,7 +302,7 @@ export function ChatArea() {
       addMessage(activeConversationId, {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: '⚠️ Not connected to backend. Please check if the server is running on port 9800.',
+        content: '⚠️ Not connected to backend. Please check if the Gateway server is running.',
       });
     }
 
@@ -460,7 +460,7 @@ export function ChatArea() {
                 textTransform: 'uppercase',
                 fontWeight: 600
               }}>
-                {msg.role === 'user' ? 'You' : msg.role === 'system' ? 'System' : 'LINKSTAR'}
+                {msg.role === 'user' ? 'You' : msg.role === 'system' ? 'System' : 'LinkStar'}
               </div>
               <div style={{
                 backgroundColor: msg.role === 'user' ? 'var(--bg-tertiary)' : msg.role === 'system' ? 'rgba(245, 158, 11, 0.1)' : (msg.role === 'assistant' ? 'transparent' : 'var(--bg-secondary)'),
@@ -487,7 +487,7 @@ export function ChatArea() {
         {isThinking && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.5rem 0', fontSize: '0.85rem' }}>
             <Loader2 size={16} className="spin" />
-            <span className="thinking-shimmer-text">LINKSTAR is thinking...</span>
+            <span className="thinking-shimmer-text">LinkStar is thinking...</span>
           </div>
         )}
 

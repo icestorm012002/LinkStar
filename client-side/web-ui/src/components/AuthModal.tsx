@@ -90,7 +90,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
           </button>
         )}
         <div style={styles.header}>
-          <h2 style={{ margin: 0 }}>LINKSTAR OS</h2>
+          <h2 style={{ margin: 0 }}>LinkStar OS</h2>
           <p style={{ margin: '8px 0 0 0', color: 'var(--text-secondary)' }}>
             Welcome back, Developer.
           </p>

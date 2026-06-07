@@ -16,7 +16,7 @@ export function FolderBrowserDialog({ onClose, onSelect }: FolderBrowserDialogPr
 
   useEffect(() => {
     // start with base directory
-    const startPath = localStorage.getItem('linkstar_workspace_base_dir') || 'E:\\';
+    const startPath = localStorage.getItem('claude_workspace_base_dir') || 'E:\\';
     loadDirectory(startPath);
     
     CloudSyncService.getSystemPaths().then(res => {

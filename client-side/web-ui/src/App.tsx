@@ -7,9 +7,9 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleLoginSuccess = (newToken: string, userId: string, username: string) => {
-    localStorage.setItem('linkstar_token', newToken);
-    localStorage.setItem('linkstar_display_name', username);
-    localStorage.setItem('linkstar_user_id', userId);
+    localStorage.setItem('claude_token', newToken);
+    localStorage.setItem('claude_display_name', username);
+    localStorage.setItem('claude_user_id', userId);
     setShowAuthModal(false);
     
     // Auto-reconnect websocket with new token
@@ -19,7 +19,7 @@ function App() {
   };
 
   const handleLogout = useCallback(async () => {
-    const currentToken = localStorage.getItem('linkstar_token');
+    const currentToken = localStorage.getItem('claude_token');
     
     // Call backend to invalidate token (best-effort)
     if (currentToken) {
@@ -40,9 +40,9 @@ function App() {
     CloudSyncService.disconnect();
 
     // Clear all auth-related localStorage entries
-    localStorage.removeItem('linkstar_token');
-    localStorage.removeItem('linkstar_user_id');
-    localStorage.removeItem('linkstar_display_name');
+    localStorage.removeItem('claude_token');
+    localStorage.removeItem('claude_user_id');
+    localStorage.removeItem('claude_display_name');
 
     // Reset state to show AuthModal
     setShowAuthModal(true);
@@ -53,12 +53,12 @@ function App() {
     const onLogout = () => handleLogout();
     const onRequireLogin = () => setShowAuthModal(true);
     
-    window.addEventListener('linkstar_logout', onLogout);
-    window.addEventListener('linkstar_require_login', onRequireLogin);
+    window.addEventListener('claude_logout', onLogout);
+    window.addEventListener('claude_require_login', onRequireLogin);
     
     return () => {
-      window.removeEventListener('linkstar_logout', onLogout);
-      window.removeEventListener('linkstar_require_login', onRequireLogin);
+      window.removeEventListener('claude_logout', onLogout);
+      window.removeEventListener('claude_require_login', onRequireLogin);
     };
   }, [handleLogout]);
 

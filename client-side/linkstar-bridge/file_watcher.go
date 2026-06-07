@@ -17,7 +17,7 @@ var ignoredDirs = map[string]bool{
 	"bin":          true,
 	"obj":          true,
 	".git":         true,
-	".linkstar_home": true,
+	".claude_home": true,
 	".scratch":     true,
 	".agents":      true,
 }

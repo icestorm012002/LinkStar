@@ -15,7 +15,7 @@
 
   --accent-primary: #D97757; /* A subtle terra-cotta/rust accent */
   --accent-hover: #C56142;
-  --accent-color: #6366f1; /* LINKSTAR brand indigo for assistant messages */
+  --accent-color: #6366f1; /* CLAUDE brand indigo for assistant messages */
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -45,7 +45,7 @@
 
   --accent-primary: #E2B068;
   --accent-hover: #D09A4D;
-  --accent-color: #818cf8; /* LINKSTAR brand indigo (light variant for dark bg) */
+  --accent-color: #818cf8; /* CLAUDE brand indigo (light variant for dark bg) */
 
   --diff-add-bg: rgba(46, 160, 67, 0.25);
   --diff-add-text: #3fb950;
@@ -67,7 +67,7 @@
 
   --accent-primary: #0F62FE;
   --accent-hover: #0043CE;
-  --accent-color: #4f46e5; /* LINKSTAR brand indigo for light theme */
+  --accent-color: #4f46e5; /* CLAUDE brand indigo for light theme */
 }
 
 * {

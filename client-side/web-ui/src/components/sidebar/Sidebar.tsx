@@ -49,7 +49,7 @@ export function Sidebar() {
           borderBottom: '1px solid var(--border-color)',
           letterSpacing: '0.02em'
         }}>
-          LINKSTAR
+          LinkStar
         </div>
 
         {/* Main Nav */}
@@ -206,7 +206,7 @@ export function Sidebar() {
           </button>
 
           {/* User Profile Bar */}
-          {localStorage.getItem('linkstar_token') ? (
+          {localStorage.getItem('claude_token') ? (
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -222,18 +222,18 @@ export function Sidebar() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 600, fontSize: '0.8rem', flexShrink: 0
               }}>
-                {(localStorage.getItem('linkstar_display_name') || '?')[0].toUpperCase()}
+                {(localStorage.getItem('claude_display_name') || '?')[0].toUpperCase()}
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 <div style={{
                   fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-primary)',
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                 }}>
-                  {localStorage.getItem('linkstar_display_name') || 'Unknown'}
+                  {localStorage.getItem('claude_display_name') || 'Unknown'}
                 </div>
               </div>
               <button
-                onClick={() => window.dispatchEvent(new Event('linkstar_logout'))}
+                onClick={() => window.dispatchEvent(new Event('claude_logout'))}
                 title="Sign Out"
                 style={{
                   background: 'transparent', border: 'none', cursor: 'pointer',
@@ -252,7 +252,7 @@ export function Sidebar() {
             </div>
           ) : (
             <button
-              onClick={() => window.dispatchEvent(new Event('linkstar_require_login'))}
+              onClick={() => window.dispatchEvent(new Event('claude_require_login'))}
               style={{
                 width: '100%',
                 padding: '0.6rem',

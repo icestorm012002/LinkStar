@@ -78,7 +78,11 @@ func RunClaudeTurn(ctx context.Context, sessionID, userID, workspacePath, prompt
 	}
 	configBytes, _ := json.Marshal(configMap)
 
-	claudeCodeDir := "e:/Unreal/A1workhouse/server-side/engine"
+	claudeCodeDir := os.Getenv("ENGINE_DIR")
+	if claudeCodeDir == "" {
+		// 动态获取相对路径，兼容 Linux 和 Windows 部署
+		claudeCodeDir = "../engine"
+	}
 	cmd := exec.CommandContext(cmdCtx, "bun", "run", "src/headless-server.ts", string(configBytes))
 	cmd.Dir = claudeCodeDir
 
@@ -89,9 +93,10 @@ func RunClaudeTurn(ctx context.Context, sessionID, userID, workspacePath, prompt
 	}
 	cmd.Env = env
 
-	// 5. 防泄漏机制 (Windows 进程树强制击杀)
+	// 5. 防泄漏机制 (兼容 Windows 和 Linux)
 	defer func() {
 		if cmd.Process != nil {
+			// Windows 下强制杀进程树，Linux 下依靠进程组或直接 Kill
 			_ = exec.Command("taskkill", "/T", "/F", "/PID", fmt.Sprintf("%d", cmd.Process.Pid)).Run()
 			_ = cmd.Process.Kill()
 		}

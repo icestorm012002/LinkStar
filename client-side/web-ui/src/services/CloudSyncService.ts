@@ -52,9 +52,9 @@ class CloudSyncServiceImpl {
   }
 
   private buildUrl(): string {
-    // 强制使用当前页面的地址（通过 Vite 代理），避免 localStorage 里的 9800 旧配置干扰
-    const wsHost = window.location.hostname;
-    const wsPort = window.location.port;
+    // 强制使用咱们真实的云端服务器 IP
+    const wsHost = import.meta.env.VITE_WS_HOST || '143.198.189.242';
+    const wsPort = import.meta.env.VITE_WS_PORT || '8080'; // 默认后端端口
     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
     let base = `${protocol}${wsHost}${wsPort ? `:${wsPort}` : ''}/ws`;
 
@@ -64,12 +64,12 @@ class CloudSyncServiceImpl {
 
     const state = useAppStore.getState();
     let sessionId = state.activeConversationId || 'conv-1';
-    const userId = localStorage.getItem('linkstar_user_id') || 'anonymous';
+    const userId = localStorage.getItem('claude_user_id') || 'anonymous';
     if (!sessionId.endsWith(`_${userId}`)) {
       sessionId = `${sessionId}_${userId}`;
     }
-    const token = localStorage.getItem('linkstar_token') || '';
-    const workspaceId = localStorage.getItem('linkstar_workspace_id') || 'default';
+    const token = localStorage.getItem('claude_token') || '';
+    const workspaceId = localStorage.getItem('claude_workspace_id') || 'default';
 
     return `${base}?session_id=${sessionId}&user_id=${userId}&token=${token}&workspace_id=${workspaceId}&client_type=web`;
   }
@@ -84,7 +84,7 @@ class CloudSyncServiceImpl {
   connect(): void {
     const state = useAppStore.getState();
     let targetSessionId = state.activeConversationId || 'conv-1';
-    const userId = localStorage.getItem('linkstar_user_id') || 'anonymous';
+    const userId = localStorage.getItem('claude_user_id') || 'anonymous';
     if (!targetSessionId.endsWith(`_${userId}`)) {
       targetSessionId = `${targetSessionId}_${userId}`;
     }
@@ -112,16 +112,16 @@ class CloudSyncServiceImpl {
       console.log('[CloudSync] Connected to backend');
       
       // Automatically send auth (even if API key is not entered yet)
-      const apiKey = localStorage.getItem('linkstar_api_key') || '';
-      const displayName = localStorage.getItem('linkstar_display_name') || 'anonymous';
-      const apiProvider = localStorage.getItem('linkstar_api_provider') || 'anthropic';
-      const baseUrl = localStorage.getItem('linkstar_base_url') || '';
+      const apiKey = localStorage.getItem('claude_api_key') || '';
+      const displayName = localStorage.getItem('claude_display_name') || 'anonymous';
+      const apiProvider = localStorage.getItem('claude_api_provider') || 'anthropic';
+      const baseUrl = localStorage.getItem('claude_base_url') || '';
       
       const clientOS = this.detectClientOS();
       const envOverrides: Record<string, string> = {
-        LINKSTAR_SAFETY_LEVEL: localStorage.getItem('linkstar_safety_level') || 'full',
-        LINKSTAR_SANDBOX_ENABLED: localStorage.getItem('linkstar_sandbox_enabled') || 'true',
-        LINKSTAR_PATH_WHITELIST: localStorage.getItem('linkstar_path_whitelist') || '',
+        CLAUDE_SAFETY_LEVEL: localStorage.getItem('claude_safety_level') || 'full',
+        CLAUDE_SANDBOX_ENABLED: localStorage.getItem('claude_sandbox_enabled') || 'true',
+        CLAUDE_PATH_WHITELIST: localStorage.getItem('claude_path_whitelist') || '',
       };
       
       if (apiKey) {
@@ -149,7 +149,7 @@ class CloudSyncServiceImpl {
       if (apiProvider) {
         envOverrides.CLAUDE_PROVIDER = apiProvider;
       }
-      const targetModel = localStorage.getItem('linkstar_model');
+      const targetModel = localStorage.getItem('claude_model');
       if (targetModel) {
         envOverrides.CLAUDE_MODEL = targetModel;
       }

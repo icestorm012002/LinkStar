@@ -7,28 +7,28 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
   const { setApiModel } = useAppStore();
 
   // Settings state (will be persisted to localStorage)
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('linkstar_api_key') || '');
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('claude_api_key') || '');
   const [apiProvider, setApiProvider] = useState<'anthropic' | 'bedrock' | 'vertex' | 'gemini' | 'codex' | 'deepseek' | 'openai'>(
-    () => (localStorage.getItem('linkstar_api_provider') as any) || 'anthropic'
+    () => (localStorage.getItem('claude_api_provider') as any) || 'anthropic'
   );
-  const [baseUrl, setBaseUrl] = useState(() => localStorage.getItem('linkstar_base_url') || '');
-  const [wsHost, setWsHost] = useState(() => localStorage.getItem('linkstar_ws_host') || 'localhost');
-  const [wsPort, setWsPort] = useState(() => localStorage.getItem('linkstar_ws_port') || '9800');
-  const [displayName] = useState(() => localStorage.getItem('linkstar_display_name') || '');
-  const [model, setModel] = useState(() => localStorage.getItem('linkstar_model') || 'claude-sonnet-4-20250514');
+  const [baseUrl, setBaseUrl] = useState(() => localStorage.getItem('claude_base_url') || '');
+  const [wsHost, setWsHost] = useState(() => localStorage.getItem('claude_ws_host') || '143.198.189.242');
+  const [wsPort, setWsPort] = useState(() => localStorage.getItem('claude_ws_port') || '9800');
+  const [displayName] = useState(() => localStorage.getItem('claude_display_name') || '');
+  const [model, setModel] = useState(() => localStorage.getItem('claude_model') || 'claude-sonnet-4-20250514');
   const [activeSection, setActiveSection] = useState<'api' | 'server' | 'user' | 'security'>('api');
   const [safetyLevel, setSafetyLevel] = useState<'full' | 'ask' | 'sandbox'>(
-    () => (localStorage.getItem('linkstar_safety_level') as any) || 'full'
+    () => (localStorage.getItem('claude_safety_level') as any) || 'full'
   );
   const [pathWhitelist, setPathWhitelist] = useState<string>(
-    () => localStorage.getItem('linkstar_path_whitelist') || ''
+    () => localStorage.getItem('claude_path_whitelist') || ''
   );
   const [workspaceBaseDir, setWorkspaceBaseDir] = useState<string>(
-    () => localStorage.getItem('linkstar_workspace_base_dir') || 'E:\\clawd-home'
+    () => localStorage.getItem('claude_workspace_base_dir') || 'E:\\clawd-home'
   );
   const [saved, setSaved] = useState(false);
   const [connectionState, setConnectionState] = useState(() => CloudSyncService.state);
-  
+
   // Real-time API Probing Test state
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<null | { success: boolean; status: number; message: string }>(null);
@@ -38,7 +38,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
       if (msg.type === 'auth_ok') {
         setConnectionState('connected');
       }
-      
+
       // Listen for actual remote endpoint connection handshake results
       if (msg.type === 'test_connection_result') {
         setTesting(false);
@@ -68,21 +68,21 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
   };
 
   const handleSave = () => {
-    localStorage.setItem('linkstar_api_key', apiKey);
-    localStorage.setItem('linkstar_ws_host', wsHost);
-    localStorage.setItem('linkstar_ws_port', wsPort);
-    localStorage.setItem('linkstar_display_name', displayName);
-    localStorage.setItem('linkstar_safety_level', safetyLevel);
-    localStorage.setItem('linkstar_sandbox_enabled', String(safetyLevel === 'sandbox'));
-    localStorage.setItem('linkstar_path_whitelist', pathWhitelist);
-    localStorage.setItem('linkstar_workspace_base_dir', workspaceBaseDir);
+    localStorage.setItem('claude_api_key', apiKey);
+    localStorage.setItem('claude_ws_host', wsHost);
+    localStorage.setItem('claude_ws_port', wsPort);
+    localStorage.setItem('claude_display_name', displayName);
+    localStorage.setItem('claude_safety_level', safetyLevel);
+    localStorage.setItem('claude_sandbox_enabled', String(safetyLevel === 'sandbox'));
+    localStorage.setItem('claude_path_whitelist', pathWhitelist);
+    localStorage.setItem('claude_workspace_base_dir', workspaceBaseDir);
 
     // Sync to global Zustand store (which internally sets localStorage for provider/model/baseUrl too)
     setApiModel(apiProvider, model, baseUrl);
 
     // Reconnect WebSocket with new settings
     CloudSyncService.disconnect();
-    
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -269,14 +269,14 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                   </select>
                 </SettingGroup>
 
-                <SettingGroup 
-                  label={apiProvider === 'codex' ? 'Session Token' : 'API Key'} 
+                <SettingGroup
+                  label={apiProvider === 'codex' ? 'Session Token' : 'API Key'}
                   hint={
                     apiProvider === 'anthropic' ? 'Your API key (sk-ant-...)' :
-                    apiProvider === 'gemini' ? 'Your Gemini API key (AIzaSy...)' :
-                    apiProvider === 'codex' ? 'Your OpenAI Codex Session Token' :
-                    apiProvider === 'deepseek' ? 'Your DeepSeek API key' :
-                    'Cloud platform credentials'
+                      apiProvider === 'gemini' ? 'Your Gemini API key (AIzaSy...)' :
+                        apiProvider === 'codex' ? 'Your OpenAI Codex Session Token' :
+                          apiProvider === 'deepseek' ? 'Your DeepSeek API key' :
+                            'Cloud platform credentials'
                   }
                 >
                   <input
@@ -285,10 +285,10 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                     onChange={(e) => { clearTestResult(); setApiKey(e.target.value); }}
                     placeholder={
                       apiProvider === 'anthropic' ? 'sk-ant-api03-...' :
-                      apiProvider === 'gemini' ? 'AIzaSy...' :
-                      apiProvider === 'codex' ? 'Codex Session Token' :
-                      apiProvider === 'deepseek' ? 'sk-...' :
-                      'Enter credentials'
+                        apiProvider === 'gemini' ? 'AIzaSy...' :
+                          apiProvider === 'codex' ? 'Codex Session Token' :
+                            apiProvider === 'deepseek' ? 'sk-...' :
+                              'Enter credentials'
                     }
                     style={inputStyle}
                   />
@@ -301,9 +301,9 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                     onChange={(e) => { clearTestResult(); setBaseUrl(e.target.value); }}
                     placeholder={
                       apiProvider === 'anthropic' ? 'https://api.anthropic.com' :
-                      apiProvider === 'gemini' ? 'https://generativelanguage.googleapis.com/v1beta/openai' :
-                      apiProvider === 'deepseek' ? 'https://api.deepseek.com' :
-                      'https://...'
+                        apiProvider === 'gemini' ? 'https://generativelanguage.googleapis.com/v1beta/openai' :
+                          apiProvider === 'deepseek' ? 'https://api.deepseek.com' :
+                            'https://...'
                     }
                     style={inputStyle}
                   />
@@ -361,13 +361,13 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                   </select>
                 </SettingGroup>
 
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
                   <style>{`
                     @keyframes spin {
                       to { transform: rotate(360deg); }
                     }
                   `}</style>
-                  
+
                   <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button onClick={handleConnect} style={{
                       padding: '0.6rem 1rem',
@@ -445,11 +445,11 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                     userSelect: 'none'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                      <span style={{ 
-                        display: 'inline-block', 
-                        width: '8px', 
-                        height: '8px', 
-                        borderRadius: '50%', 
+                      <span style={{
+                        display: 'inline-block',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
                         backgroundColor: connectionState === 'connected' ? '#22c55e' : connectionState === 'connecting' ? '#f59e0b' : '#ef4444',
                         boxShadow: connectionState === 'connected' ? '0 0 8px #22c55e' : 'none',
                         transition: 'all 0.3s ease'
@@ -496,7 +496,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                     type="text"
                     value={wsHost}
                     onChange={(e) => setWsHost(e.target.value)}
-                    placeholder="localhost"
+                    placeholder="143.198.189.242"
                     style={inputStyle}
                   />
                 </SettingGroup>
@@ -534,30 +534,30 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
 
             {activeSection === 'security' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <SettingGroup 
-                  label="Terminal Safety Level" 
+                <SettingGroup
+                  label="Terminal Safety Level"
                   hint="Determine terminal execution safety when AI executes code (e.g. npm, git, rm, cargo)"
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
                     {[
-                      { 
-                        value: 'full', 
-                        title: 'Full Mode (免审模式)', 
-                        desc: '允许文件读写、常规包安装及环境测试一通到底，无繁琐弹窗阻碍，高危破坏性系统操作仍由底层静默拦截。' 
+                      {
+                        value: 'full',
+                        title: 'Full Mode (免审模式)',
+                        desc: '允许文件读写、常规包安装及环境测试一通到底，无繁琐弹窗阻碍，高危破坏性系统操作仍由底层静默拦截。'
                       },
-                      { 
-                        value: 'ask', 
-                        title: 'Ask Mode (交互审计)', 
-                        desc: 'AI 读写文件直接通过，但执行任何可能有副作用的终端命令（如 npm install 等）时必须经过你弹窗批准。' 
+                      {
+                        value: 'ask',
+                        title: 'Ask Mode (交互审计)',
+                        desc: 'AI 读写文件直接通过，但执行任何可能有副作用的终端命令（如 npm install 等）时必须经过你弹窗批准。'
                       },
-                      { 
-                        value: 'sandbox', 
-                        title: 'Sandbox Mode (沙箱隔离)', 
-                        desc: '物理上将 AI 绝对限制在当前项目根目录内，禁止任何越出该目录的文件修改或越权命令，安全系数最高。' 
+                      {
+                        value: 'sandbox',
+                        title: 'Sandbox Mode (沙箱隔离)',
+                        desc: '物理上将 AI 绝对限制在当前项目根目录内，禁止任何越出该目录的文件修改或越权命令，安全系数最高。'
                       }
                     ].map(opt => (
-                      <label 
-                        key={opt.value} 
+                      <label
+                        key={opt.value}
                         style={{
                           display: 'flex',
                           alignItems: 'flex-start',
@@ -592,8 +592,8 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
                   </div>
                 </SettingGroup>
 
-                <SettingGroup 
-                  label="Allowed Paths Whitelist" 
+                <SettingGroup
+                  label="Allowed Paths Whitelist"
                   hint="Allow AI to tunnel access to these specific folders outside the sandbox (separated by commas or semicolons)"
                 >
                   <textarea
@@ -663,7 +663,7 @@ function ProfileSection() {
 
   // Fetch profile on mount
   useEffect(() => {
-    const token = localStorage.getItem('linkstar_token');
+    const token = localStorage.getItem('claude_token');
     if (!token) return;
     fetch('/api/auth/profile', {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -677,11 +677,11 @@ function ProfileSection() {
           setAvatarColor(data.user.avatar || AVATAR_COLORS[0]);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const handleSaveProfile = async () => {
-    const token = localStorage.getItem('linkstar_token');
+    const token = localStorage.getItem('claude_token');
     if (!token) return;
     setSaving(true);
     setSaveMsg('');
@@ -694,7 +694,7 @@ function ProfileSection() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Update failed');
       setProfile(data.user);
-      localStorage.setItem('linkstar_display_name', displayName);
+      localStorage.setItem('claude_display_name', displayName);
       setSaveMsg('✓ Profile saved');
       setTimeout(() => setSaveMsg(''), 2500);
     } catch (err: any) {
@@ -707,7 +707,7 @@ function ProfileSection() {
   const handleChangePassword = async () => {
     if (newPw !== confirmPw) { setPwMsg('Passwords do not match'); return; }
     if (newPw.length < 4) { setPwMsg('Password must be at least 4 characters'); return; }
-    const token = localStorage.getItem('linkstar_token');
+    const token = localStorage.getItem('claude_token');
     if (!token) return;
     setPwSaving(true);
     setPwMsg('');
@@ -730,7 +730,7 @@ function ProfileSection() {
   };
 
   const handleLogout = () => {
-    window.dispatchEvent(new Event('linkstar_logout'));
+    window.dispatchEvent(new Event('claude_logout'));
   };
 
   const initial = (profile?.display_name || profile?.username || '?')[0].toUpperCase();
@@ -807,13 +807,13 @@ function ProfileSection() {
         {showPwChange && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem', paddingLeft: '1rem' }}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <input type={showPws ? 'text' : 'password'} value={oldPw} onChange={(e) => setOldPw(e.target.value)} placeholder="Current password" style={{...inputStyle, paddingRight: '36px', width: '100%'}} />
+              <input type={showPws ? 'text' : 'password'} value={oldPw} onChange={(e) => setOldPw(e.target.value)} placeholder="Current password" style={{ ...inputStyle, paddingRight: '36px', width: '100%' }} />
             </div>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <input type={showPws ? 'text' : 'password'} value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password" style={{...inputStyle, paddingRight: '36px', width: '100%'}} />
+              <input type={showPws ? 'text' : 'password'} value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password" style={{ ...inputStyle, paddingRight: '36px', width: '100%' }} />
             </div>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <input type={showPws ? 'text' : 'password'} value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" style={{...inputStyle, paddingRight: '36px', width: '100%'}} />
+              <input type={showPws ? 'text' : 'password'} value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" style={{ ...inputStyle, paddingRight: '36px', width: '100%' }} />
               <button
                 type="button"
                 onClick={() => setShowPws(!showPws)}
@@ -851,8 +851,8 @@ function ProfileSection() {
           background: 'transparent', color: '#ef4444', fontWeight: 500, fontSize: '0.85rem',
           cursor: 'pointer', transition: 'all 0.2s',
         }}
-        onMouseOver={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
-        onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
+          onMouseOver={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
+          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
         >
           Sign Out
         </button>

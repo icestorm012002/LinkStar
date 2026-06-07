@@ -22,40 +22,40 @@ async function runTest() {
 
     console.log('[E2E Test] Preparing connection settings in localStorage...');
     const testConfig = await page.evaluate((env) => {
-      if (env.LINKSTAR_API_KEY) {
-        localStorage.setItem('linkstar_api_key', env.LINKSTAR_API_KEY);
+      if (env.CLAUDE_API_KEY) {
+        localStorage.setItem('claude_api_key', env.CLAUDE_API_KEY);
       }
-      if (env.LINKSTAR_API_PROVIDER) {
-        localStorage.setItem('linkstar_api_provider', env.LINKSTAR_API_PROVIDER);
+      if (env.CLAUDE_API_PROVIDER) {
+        localStorage.setItem('claude_api_provider', env.CLAUDE_API_PROVIDER);
       }
-      if (env.LINKSTAR_MODEL) {
-        localStorage.setItem('linkstar_model', env.LINKSTAR_MODEL);
+      if (env.CLAUDE_MODEL) {
+        localStorage.setItem('claude_model', env.CLAUDE_MODEL);
       }
-      if (env.LINKSTAR_BASE_URL) {
-        localStorage.setItem('linkstar_base_url', env.LINKSTAR_BASE_URL);
+      if (env.CLAUDE_BASE_URL) {
+        localStorage.setItem('claude_base_url', env.CLAUDE_BASE_URL);
       }
 
-      if (!localStorage.getItem('linkstar_ws_host')) {
-        localStorage.setItem('linkstar_ws_host', 'localhost');
+      if (!localStorage.getItem('claude_ws_host')) {
+        localStorage.setItem('claude_ws_host', 'localhost');
       }
-      if (!localStorage.getItem('linkstar_ws_port')) {
-        localStorage.setItem('linkstar_ws_port', '9800');
+      if (!localStorage.getItem('claude_ws_port')) {
+        localStorage.setItem('claude_ws_port', '9800');
       }
       
-      localStorage.setItem('linkstar_active_session_id', 'conv-e2e');
-      localStorage.setItem('linkstar_display_name', 'e2e_test_user');
+      localStorage.setItem('claude_active_session_id', 'conv-e2e');
+      localStorage.setItem('claude_display_name', 'e2e_test_user');
 
       return {
-        provider: localStorage.getItem('linkstar_api_provider') || 'anthropic',
-        model: localStorage.getItem('linkstar_model') || 'unknown',
-        hasKey: !!localStorage.getItem('linkstar_api_key'),
-        baseUrl: localStorage.getItem('linkstar_base_url') || 'default'
+        provider: localStorage.getItem('claude_api_provider') || 'anthropic',
+        model: localStorage.getItem('claude_model') || 'unknown',
+        hasKey: !!localStorage.getItem('claude_api_key'),
+        baseUrl: localStorage.getItem('claude_base_url') || 'default'
       };
     }, {
-      LINKSTAR_API_KEY: process.env.LINKSTAR_API_KEY || process.env.DEEPSEEK_API_KEY,
-      LINKSTAR_API_PROVIDER: process.env.LINKSTAR_API_PROVIDER || (process.env.DEEPSEEK_API_KEY ? 'deepseek' : ''),
-      LINKSTAR_MODEL: process.env.LINKSTAR_MODEL || (process.env.DEEPSEEK_API_KEY ? 'deepseek/deepseek-chat' : ''),
-      LINKSTAR_BASE_URL: process.env.LINKSTAR_BASE_URL || (process.env.DEEPSEEK_API_KEY ? 'https://api.deepseek.com' : '')
+      CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || process.env.DEEPSEEK_API_KEY,
+      CLAUDE_API_PROVIDER: process.env.CLAUDE_API_PROVIDER || (process.env.DEEPSEEK_API_KEY ? 'deepseek' : ''),
+      CLAUDE_MODEL: process.env.CLAUDE_MODEL || (process.env.DEEPSEEK_API_KEY ? 'deepseek/deepseek-chat' : ''),
+      CLAUDE_BASE_URL: process.env.CLAUDE_BASE_URL || (process.env.DEEPSEEK_API_KEY ? 'https://api.deepseek.com' : '')
     });
 
     console.log(`[E2E Test] Target Connection Config:`);
@@ -86,7 +86,7 @@ async function runTest() {
     const existingMessages = await page.evaluate(() => {
       const divs = Array.from(document.querySelectorAll('div'));
       const assistantHeaders = divs.filter(
-        div => div.textContent === 'LINKSTAR' && window.getComputedStyle(div).fontSize === '12px'
+        div => div.textContent === 'CLAUDE' && window.getComputedStyle(div).fontSize === '12px'
       );
       return assistantHeaders.map(header => {
         const bubble = header.nextElementSibling as HTMLElement;
@@ -104,7 +104,7 @@ async function runTest() {
       (oldMsgs) => {
         const divs = Array.from(document.querySelectorAll('div'));
         const assistantHeaders = divs.filter(
-          div => div.textContent === 'LINKSTAR' && window.getComputedStyle(div).fontSize === '12px'
+          div => div.textContent === 'CLAUDE' && window.getComputedStyle(div).fontSize === '12px'
         );
         for (const header of assistantHeaders) {
           const bubble = header.nextElementSibling as HTMLElement;
@@ -123,7 +123,7 @@ async function runTest() {
     const aiResponse = await page.evaluate((oldMsgs) => {
       const divs = Array.from(document.querySelectorAll('div'));
       const assistantHeaders = divs.filter(
-        div => div.textContent === 'LINKSTAR' && window.getComputedStyle(div).fontSize === '12px'
+        div => div.textContent === 'CLAUDE' && window.getComputedStyle(div).fontSize === '12px'
       );
       for (const header of assistantHeaders) {
         const bubble = header.nextElementSibling as HTMLElement;

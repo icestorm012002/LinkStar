@@ -179,13 +179,13 @@ export const useAppStore = create<AppState>()(
     };
   }),
 
-  apiProvider: localStorage.getItem('linkstar_api_provider') || 'anthropic',
-  model: localStorage.getItem('linkstar_model') || 'claude-sonnet-4-20250514',
-  baseUrl: localStorage.getItem('linkstar_base_url') || 'https://api.anthropic.com',
+  apiProvider: localStorage.getItem('claude_api_provider') || 'anthropic',
+  model: localStorage.getItem('claude_model') || 'claude-sonnet-4-20250514',
+  baseUrl: localStorage.getItem('claude_base_url') || 'https://api.anthropic.com',
   setApiModel: (provider, model, baseUrl = '') => {
-    localStorage.setItem('linkstar_api_provider', provider);
-    localStorage.setItem('linkstar_model', model);
-    localStorage.setItem('linkstar_base_url', baseUrl);
+    localStorage.setItem('claude_api_provider', provider);
+    localStorage.setItem('claude_model', model);
+    localStorage.setItem('claude_base_url', baseUrl);
     set({ apiProvider: provider, model, baseUrl });
   },
 
@@ -196,7 +196,7 @@ export const useAppStore = create<AppState>()(
   setActiveModule: (module) => set({ activeModule: module })
     }),
     {
-      name: 'linkstar-app-storage',
+      name: 'claude-app-storage',
     }
   )
 );

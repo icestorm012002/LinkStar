@@ -28,7 +28,6 @@ logs/
 *.log
 
 # Project specific
-apps/
 bridge-linux
 test_*.js
 test_serverless.ts

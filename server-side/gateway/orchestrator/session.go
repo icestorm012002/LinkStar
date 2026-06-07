@@ -109,7 +109,7 @@ func (sm *SessionManager) GetOrCreate(ctx context.Context, sessionID, userID, wo
 	} else {
 		// New Session
 		if workspacePath == "" || workspacePath == "/workspace" {
-			workspacePath = filepath.Join(os.TempDir(), "linkstar_workspaces", userID, sessionID)
+			workspacePath = filepath.Join(os.TempDir(), "claude_workspaces", userID, sessionID)
 			_ = os.MkdirAll(workspacePath, 0755)
 		}
 		s = &Session{

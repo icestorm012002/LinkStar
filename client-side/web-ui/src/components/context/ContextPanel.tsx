@@ -238,7 +238,7 @@ export function ContextPanel() {
                 language="typescript"
                 theme={theme === 'dark' ? 'vs-dark' : 'light'}
                 original={`function sayHello() {\n  console.log("Hello");\n}`}
-                modified={`function sayHello() {\n  console.log("Hello LINKSTAR");\n}`}
+                modified={`function sayHello() {\n  console.log("Hello CLAUDE");\n}`}
                 options={{
                   renderSideBySide: false, // Use inline diff for small sidebars, or set to true for split view
                   minimap: { enabled: false },
