@@ -492,7 +492,7 @@ export async function runHeadless(
 ): Promise<void> {
   if (
     process.env.USER_TYPE === 'ant' &&
-    isEnvTruthy(process.env.Claude_CODE_EXIT_AFTER_FIRST_RENDER)
+    isEnvTruthy(process.env.CLAUDE_)
   ) {
     process.stderr.write(
       `\nStartup time: ${Math.round(process.uptime() * 1000)}ms\n`,
@@ -508,7 +508,7 @@ export async function runHeadless(
   // enabledPlugins.
   if (
     feature('DOWNLOAD_USER_SETTINGS') &&
-    (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
+    (isEnvTruthy(process.env.CLAUDE_) || getIsRemoteMode())
   ) {
     void downloadUserSettings()
   }
@@ -532,13 +532,13 @@ export async function runHeadless(
 
   // Proactive activation is now handled in main.tsx before getTools() so
   // SleepTool passes isEnabled() filtering. This fallback covers the case
-  // where Claude_CODE_PROACTIVE is set but main.tsx's check didn't fire
+  // where CLAUDE_ is set but main.tsx's check didn't fire
   // (e.g. env was injected by the SDK transport after argv parsing).
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
     proactiveModule &&
     !proactiveModule.isProactiveActive() &&
-    isEnvTruthy(process.env.Claude_CODE_PROACTIVE)
+    isEnvTruthy(process.env.CLAUDE_)
   ) {
     proactiveModule.activateProactive('command')
   }
@@ -850,11 +850,11 @@ export async function runHeadless(
   const needsFullArray = options.outputFormat === 'json' && options.verbose
   const messages: SDKMessage[] = []
   let lastMessage: SDKMessage | undefined
-  // Streamlined mode transforms messages when Claude_CODE_STREAMLINED_OUTPUT=true and using stream-json
+  // Streamlined mode transforms messages when CLAUDE_=true and using stream-json
   // Build flag gates this out of external builds; env var is the runtime opt-in for ant builds
   const transformToStreamlined =
     feature('STREAMLINED_OUTPUT') &&
-    isEnvTruthy(process.env.Claude_CODE_STREAMLINED_OUTPUT) &&
+    isEnvTruthy(process.env.CLAUDE_) &&
     options.outputFormat === 'stream-json'
       ? createStreamlinedTransformer()
       : null
@@ -1168,7 +1168,7 @@ function runHeadlessStreaming(
   // Auto-resume interrupted turns on restart so CC continues from where it
   // left off without requiring the SDK to re-send the prompt.
   const resumeInterruptedTurnEnv =
-    process.env.Claude_CODE_RESUME_INTERRUPTED_TURN
+    process.env.CLAUDE_
   if (
     turnInterruptionState &&
     turnInterruptionState.kind !== 'none' &&
@@ -1708,7 +1708,7 @@ function runHeadlessStreaming(
       // its promise so this awaits the same in-flight request.
       await Promise.all([
         feature('DOWNLOAD_USER_SETTINGS') &&
-        (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
+        (isEnvTruthy(process.env.CLAUDE_) || getIsRemoteMode())
           ? withDiagnosticsTiming('headless_user_settings_download', () =>
               downloadUserSettings(),
             )
@@ -1730,13 +1730,13 @@ function runHeadlessStreaming(
 
   // Background plugin installation for all headless users
   // Installs marketplaces from extraKnownMarketplaces and missing enabled plugins
-  // Claude_CODE_SYNC_PLUGIN_INSTALL=true: resolved in run() before the first
+  // CLAUDE_=true: resolved in run() before the first
   // query so plugins are guaranteed available on the first ask().
   let pluginInstallPromise: Promise<void> | null = null
   // --bare / SIMPLE: skip plugin install. Scripted calls don't add plugins
   // mid-session; the next interactive run reconciles.
   if (!isBareMode()) {
-    if (isEnvTruthy(process.env.Claude_CODE_SYNC_PLUGIN_INSTALL)) {
+    if (isEnvTruthy(process.env.CLAUDE_)) {
       pluginInstallPromise = installPluginsAndApplyMcpInBackground()
     } else {
       void installPluginsAndApplyMcpInBackground()
@@ -1751,7 +1751,7 @@ function runHeadlessStreaming(
   let currentAgents = agents
 
   // Clear all plugin-related caches, reload commands/agents/hooks.
-  // Called after Claude_CODE_SYNC_PLUGIN_INSTALL completes (before first query)
+  // Called after CLAUDE_ completes (before first query)
   // and after non-sync background install finishes.
   // refreshActivePlugins calls clearAllCaches() which is required because
   // loadAllPlugins() may have run during main.tsx startup BEFORE managed
@@ -1878,14 +1878,14 @@ function runHeadlessStreaming(
     await updateSdkMcp()
     headlessProfilerCheckpoint('after_updateSdkMcp')
 
-    // Resolve deferred plugin installation (Claude_CODE_SYNC_PLUGIN_INSTALL).
+    // Resolve deferred plugin installation (CLAUDE_).
     // The promise was started eagerly so installation overlaps with other init.
     // Awaiting here guarantees plugins are available before the first ask().
-    // If Claude_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS is set, races against that
+    // If CLAUDE_ is set, races against that
     // deadline and proceeds without plugins on timeout (logging an error).
     if (pluginInstallPromise) {
       const timeoutMs = parseInt(
-        process.env.Claude_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS || '',
+        process.env.CLAUDE_ || '',
         10,
       )
       if (timeoutMs > 0) {
@@ -1894,7 +1894,7 @@ function runHeadlessStreaming(
         if (result === 'timeout') {
           logError(
             new Error(
-              `Claude_CODE_SYNC_PLUGIN_INSTALL: plugin installation timed out after ${timeoutMs}ms`,
+              `CLAUDE_: plugin installation timed out after ${timeoutMs}ms`,
             ),
           )
           logEvent('tengu_sync_plugin_install_timeout', {
@@ -2275,7 +2275,7 @@ function runHeadlessStreaming(
           // Generate and emit prompt suggestion for SDK consumers
           if (
             options.promptSuggestions &&
-            !isEnvDefinedFalsy(process.env.Claude_CODE_ENABLE_PROMPT_SUGGESTION)
+            !isEnvDefinedFalsy(process.env.CLAUDE_)
           ) {
             // TS narrows suggestionState to never in the while loop body;
             // cast via unknown to reset narrowing.
@@ -3067,7 +3067,7 @@ function runHeadlessStreaming(
           try {
             if (
               feature('DOWNLOAD_USER_SETTINGS') &&
-              (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
+              (isEnvTruthy(process.env.CLAUDE_) || getIsRemoteMode())
             ) {
               // Re-pull user settings so enabledPlugins pushed from the
               // user's local CLI take effect before the cache sweep.
@@ -5050,7 +5050,7 @@ async function loadInitialMessages(
       }
 
       // Hydrate local transcript from remote before loading
-      if (isEnvTruthy(process.env.Claude_CODE_USE_CCR_V2)) {
+      if (isEnvTruthy(process.env.CLAUDE_)) {
         // Await restore alongside hydration so SSE catchup lands on
         // restored state, not a fresh default.
         const [, metadata] = await Promise.all([
@@ -5089,7 +5089,7 @@ async function loadInitialMessages(
         // For URL-based or CCR v2 resume, start with empty session (it was hydrated but empty)
         if (
           parsedSessionId.isUrl ||
-          isEnvTruthy(process.env.Claude_CODE_USE_CCR_V2)
+          isEnvTruthy(process.env.CLAUDE_)
         ) {
           // Execute SessionStart hooks for startup since we're starting a new session
           return {

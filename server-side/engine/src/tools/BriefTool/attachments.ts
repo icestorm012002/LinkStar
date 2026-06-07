@@ -87,12 +87,12 @@ export async function resolveAttachments(
   // outside remain in the build even if never called".
   if (feature('BRIDGE_MODE')) {
     // Headless/SDK callers never set appState.replBridgeEnabled (only the TTY
-    // REPL does, at main.tsx init). Claude_CODE_BRIEF_UPLOAD lets a host that
+    // REPL does, at main.tsx init). CLAUDE_ lets a host that
     // runs the CLI as a subprocess opt in — e.g. the cowork desktop bridge,
-    // which already passes Claude_CODE_OAUTH_TOKEN for auth.
+    // which already passes CLAUDE_ for auth.
     const shouldUpload =
       uploadCtx.replBridgeEnabled ||
-      isEnvTruthy(process.env.Claude_CODE_BRIEF_UPLOAD)
+      isEnvTruthy(process.env.CLAUDE_)
     const { uploadBriefAttachment } = await import('./upload.js')
     const uuids = await Promise.all(
       stated.map(a =>

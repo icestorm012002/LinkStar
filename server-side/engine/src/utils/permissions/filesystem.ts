@@ -7,9 +7,9 @@ import { join, normalize, posix, sep } from 'path'
 import { hasAutoMemPathOverride, isAutoMemPath } from 'src/memdir/paths.js'
 import { isAgentMemoryPath } from 'src/tools/AgentTool/agentMemory.js'
 import {
-  Claude_FOLDER_PERMISSION_PATTERN,
+  CLAUDE_,
   FILE_EDIT_TOOL_NAME,
-  GLOBAL_Claude_FOLDER_PERMISSION_PATTERN,
+  GLOBAL_CLAUDE_,
 } from 'src/tools/FileEditTool/constants.js'
 import type { z } from 'zod/v4'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
@@ -326,11 +326,11 @@ export function getClaudeTempDirName(): string {
  * resolution, paths like /tmp/Claude-{uid}/... wouldn't match /private/tmp/Claude-{uid}/...
  */
 // Memoized: called per-tool from permission checks (yoloClassifier, sandbox-adapter)
-// and per-turn from BashTool prompt. Inputs (Claude_CODE_TMPDIR env + platform) are
+// and per-turn from BashTool prompt. Inputs (CLAUDE_ env + platform) are
 // fixed at startup, and the realpath of the system tmp dir does not change mid-session.
 export const getClaudeTempDir = memoize(function getClaudeTempDir(): string {
   const baseTmpDir =
-    process.env.Claude_CODE_TMPDIR ||
+    process.env.CLAUDE_ ||
     (getPlatform() === 'windows' ? tmpdir() : '/tmp')
 
   // Resolve symlinks in the base temp directory (e.g., /tmp -> /private/tmp on macOS)
@@ -1281,9 +1281,9 @@ export function checkWritePermissionForTool<Input extends AnyObject>(
     const ruleContent = ClaudeFolderAllowRule.ruleValue.ruleContent
     if (
       ruleContent &&
-      (ruleContent.startsWith(Claude_FOLDER_PERMISSION_PATTERN.slice(0, -2)) ||
+      (ruleContent.startsWith(CLAUDE_.slice(0, -2)) ||
         ruleContent.startsWith(
-          GLOBAL_Claude_FOLDER_PERMISSION_PATTERN.slice(0, -2),
+          GLOBAL_CLAUDE_.slice(0, -2),
         )) &&
       !ruleContent.includes('..') &&
       ruleContent.endsWith('/**')
@@ -1519,7 +1519,7 @@ export function checkEditableInternalPath(
   // sides handles the macOS /tmp → /private/tmp case where the config dir
   // lives under a symlinked root.
   if (feature('TEMPLATES')) {
-    const jobDir = process.env.Claude_JOB_DIR
+    const jobDir = process.env.CLAUDE_
     if (jobDir) {
       const jobsRoot = join(getClaudeConfigHomeDir(), 'jobs')
       const jobDirForms = getPathsForPermissionCheck(jobDir).map(normalize)
@@ -1565,7 +1565,7 @@ export function checkEditableInternalPath(
 
   // Memdir directory (persistent memory for cross-session learning)
   // This pre-safety-check carve-out exists because the default path is under
-  // ~/.Claude/, which is in DANGEROUS_DIRECTORIES. The Claude_COWORK_MEMORY_PATH_OVERRIDE
+  // ~/.Claude/, which is in DANGEROUS_DIRECTORIES. The CLAUDE_
   // override is an arbitrary caller-designated directory with no such conflict,
   // so it gets NO special permission treatment here — writes go through normal
   // permission flow (step 5 → ask). SDK callers who want silent memory should

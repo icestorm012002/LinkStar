@@ -538,7 +538,7 @@ export async function initBridgeCore(
   // Adapter over either HybridTransport (v1: WS reads + POST writes to
   // Session-Ingress) or SSETransport+CCRClient (v2: SSE reads + POST
   // writes to CCR /worker/*). The v1/v2 choice is made in onWorkReceived:
-  // server-driven via secret.use_code_sessions, with Claude_BRIDGE_USE_CCR_V2
+  // server-driven via secret.use_code_sessions, with CLAUDE_
   // as an ant-dev override.
   let transport: ReplBridgeTransport | null = null
   // Bumped on every onWorkReceived. Captured in createV2ReplTransport's .then()
@@ -1132,12 +1132,12 @@ export async function initBridgeCore(
       // override for forcing v2 before the server flag is on for your user —
       // requires ccr_v2_compat_enabled server-side or registerWorker 404s.
       //
-      // Kept separate from Claude_CODE_USE_CCR_V2 (the child-SDK transport
+      // Kept separate from CLAUDE_ (the child-SDK transport
       // selector set by sessionRunner/environment-manager) to avoid the
       // inheritance hazard in spawn mode where the parent's orchestrator
       // var would leak into a v1 child.
       const useCcrV2 =
-        serverUseCcrV2 || isEnvTruthy(process.env.Claude_BRIDGE_USE_CCR_V2)
+        serverUseCcrV2 || isEnvTruthy(process.env.CLAUDE_)
 
       // Auth is the one place v1 and v2 diverge hard:
       //

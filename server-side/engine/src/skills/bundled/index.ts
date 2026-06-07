@@ -61,7 +61,7 @@ export function initBundledSkills(): void {
     /* eslint-enable @typescript-eslint/no-require-imports */
     registerScheduleRemoteAgentsSkill()
   }
-  if (feature('BUILDING_Claude_APPS')) {
+  if (feature('BUILDING_CLAUDE_')) {
     /* eslint-disable @typescript-eslint/no-require-imports */
     const { registerClaudeApiSkill } = require('./ClaudeApi.js')
     /* eslint-enable @typescript-eslint/no-require-imports */

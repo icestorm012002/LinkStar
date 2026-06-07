@@ -9,9 +9,9 @@ export const getManagedFilePath = memoize(function (): string {
   // Allow override for testing/demos (Ant-only, eliminated from external builds)
   if (
     process.env.USER_TYPE === 'ant' &&
-    process.env.Claude_CODE_MANAGED_SETTINGS_PATH
+    process.env.CLAUDE_
   ) {
-    return process.env.Claude_CODE_MANAGED_SETTINGS_PATH
+    return process.env.CLAUDE_
   }
 
   switch (getPlatform()) {

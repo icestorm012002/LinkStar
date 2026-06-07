@@ -173,7 +173,7 @@ export function isMemoryDirectory(dirPath: string): boolean {
   ) {
     return true
   }
-  // Check the auto-memory path override (Claude_COWORK_MEMORY_PATH_OVERRIDE)
+  // Check the auto-memory path override (CLAUDE_)
   if (isAutoMemoryEnabled()) {
     const autoMemPath = getAutoMemPath()
     const autoMemDirCmp = toComparable(autoMemPath.replace(/[/\\]+$/, ''))

@@ -3,7 +3,7 @@
  *
  * 职责：
  *   1. 接收来自编排器（orchestrator）的会话配置（JSON via stdin 或 CLI args）
- *   2. 通过 Claude_CONFIG_DIR 等环境变量实现用户级隔离
+ *   2. 通过 CLAUDE_ 等环境变量实现用户级隔离
  *   3. 复用 Claude-code 的 init → getTools → QueryEngine 链路
  *   4. 将 QueryEngine 产生的 SDKMessage 流序列化为 NDJSON 输出到 stdout
  *   5. 编排器负责捕获 stdout 并通过 WebSocket 转发到用户本地客户端
@@ -86,23 +86,23 @@ function injectSessionEnvironment(config: HeadlessSessionConfig): void {
     console.error('[Headless] Failed to copy global settings.json:', e)
   }
 
-  process.env.Claude_CONFIG_DIR = configDir
+  process.env.CLAUDE_ = configDir
 
   // 标记为无头/RPC 模式
-  process.env.Claude_CODE_ENTRYPOINT = 'headless-rpc'
+  process.env.CLAUDE_ = 'headless-rpc'
 
   // 标记为非交互式会话（跳过 trust dialog 等 UI 流程）
-  process.env.Claude_CODE_IS_NONINTERACTIVE = '1'
+  process.env.CLAUDE_ = '1'
 
   // SIMPLE/BARE 模式：跳过 keychain、hooks、LSP、plugin sync 等不需要的初始化
-  process.env.Claude_CODE_SIMPLE = '1'
+  process.env.CLAUDE_ = '1'
 
   // 注入用户客户端系统信息——让 AI 产生正确的命令
   if (config.clientOS) {
-    process.env.Claude_CLIENT_OS = config.clientOS
+    process.env.CLAUDE_ = config.clientOS
   }
   if (config.clientShell) {
-    process.env.Claude_CLIENT_SHELL = config.clientShell
+    process.env.CLAUDE_ = config.clientShell
   }
 
   // 用户自带 API key / provider 配置
@@ -112,8 +112,8 @@ function injectSessionEnvironment(config: HeadlessSessionConfig): void {
     }
     
     // 如果前端指定了 provider 或 model，强制在沙箱的 config.json 中写入，避免回退到默认 Anthropic
-    const provider = config.envOverrides['Claude_PROVIDER']
-    const targetModel = config.envOverrides['Claude_MODEL']
+    const provider = config.envOverrides['CLAUDE_']
+    const targetModel = config.envOverrides['CLAUDE_']
     
     if (provider && provider.toLowerCase() !== 'anthropic' || targetModel) {
       // 纯透传：前端传了什么模型就是什么模型，服务端绝不硬编码模型名字
@@ -299,7 +299,7 @@ async function runSession(config: HeadlessSessionConfig): Promise<number> {
       getAppState: () => store.getState(),
       setAppState: store.setState,
       readFileCache,
-      userSpecifiedModel: config.model || (config.envOverrides ? config.envOverrides['Claude_MODEL'] : undefined),
+      userSpecifiedModel: config.model || (config.envOverrides ? config.envOverrides['CLAUDE_'] : undefined),
       maxTurns: config.maxTurns,
       maxBudgetUsd: config.maxBudgetUsd,
       verbose: true,

@@ -311,7 +311,7 @@ export class QueryEngine {
     }
 
     // When an SDK caller provides a custom system prompt AND has set
-    // Claude_COWORK_MEMORY_PATH_OVERRIDE, inject the memory-mechanics prompt.
+    // CLAUDE_, inject the memory-mechanics prompt.
     // The env var is an explicit opt-in signal — the caller has wired up
     // a memory directory and needs Claude to know how to use it (which
     // Write/Edit tools to call, MEMORY.md filename, loading semantics).
@@ -457,8 +457,8 @@ export class QueryEngine {
       } else {
         await transcriptPromise
         if (
-          isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-          isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+          isEnvTruthy(process.env.CLAUDE_) ||
+          isEnvTruthy(process.env.CLAUDE_)
         ) {
           await flushSessionStorage()
         }
@@ -531,8 +531,8 @@ export class QueryEngine {
 
     headlessProfilerCheckpoint('before_skills_plugins')
     // Cache-only: headless/SDK/CCR startup must not block on network for
-    // ref-tracked plugins. CCR populates the cache via Claude_CODE_SYNC_PLUGIN_INSTALL
-    // (headlessPluginInstall) or Claude_CODE_PLUGIN_SEED_DIR before this runs;
+    // ref-tracked plugins. CCR populates the cache via CLAUDE_
+    // (headlessPluginInstall) or CLAUDE_ before this runs;
     // SDK callers that need fresh source can call /reload-plugins.
     const [skills, { enabled: enabledPlugins }] = await Promise.all([
       getSlashCommandToolSkills(getCwd()),
@@ -612,8 +612,8 @@ export class QueryEngine {
       if (persistSession) {
         await recordTranscript(messages)
         if (
-          isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-          isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+          isEnvTruthy(process.env.CLAUDE_) ||
+          isEnvTruthy(process.env.CLAUDE_)
         ) {
           await flushSessionStorage()
         }
@@ -861,8 +861,8 @@ export class QueryEngine {
           else if (attachment.type === 'max_turns_reached') {
             if (persistSession) {
               if (
-                isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-                isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+                isEnvTruthy(process.env.CLAUDE_) ||
+                isEnvTruthy(process.env.CLAUDE_)
               ) {
                 await flushSessionStorage()
               }
@@ -997,8 +997,8 @@ export class QueryEngine {
       if (maxBudgetUsd !== undefined && getTotalCost() >= maxBudgetUsd) {
         if (persistSession) {
           if (
-            isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-            isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+            isEnvTruthy(process.env.CLAUDE_) ||
+            isEnvTruthy(process.env.CLAUDE_)
           ) {
             await flushSessionStorage()
           }
@@ -1040,8 +1040,8 @@ export class QueryEngine {
         if (callsThisQuery >= maxRetries) {
           if (persistSession) {
             if (
-              isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-              isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+              isEnvTruthy(process.env.CLAUDE_) ||
+              isEnvTruthy(process.env.CLAUDE_)
             ) {
               await flushSessionStorage()
             }
@@ -1097,8 +1097,8 @@ export class QueryEngine {
     // result message, so any unflushed writes would be lost.
     if (persistSession) {
       if (
-        isEnvTruthy(process.env.Claude_CODE_EAGER_FLUSH) ||
-        isEnvTruthy(process.env.Claude_CODE_IS_COWORK)
+        isEnvTruthy(process.env.CLAUDE_) ||
+        isEnvTruthy(process.env.CLAUDE_)
       ) {
         await flushSessionStorage()
       }

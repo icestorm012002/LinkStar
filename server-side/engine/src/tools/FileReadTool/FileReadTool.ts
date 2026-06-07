@@ -575,7 +575,7 @@ export const FileReadTool = buildTool({
     // Discover skills from this file's path (fire-and-forget, non-blocking)
     // Skip in simple mode - no skills available
     const cwd = getCwd()
-    if (!isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+    if (!isEnvTruthy(process.env.CLAUDE_)) {
       const newSkillDirs = await discoverSkillDirsForPaths([fullFilePath], cwd)
       if (newSkillDirs.length > 0) {
         // Store discovered dirs for attachment display

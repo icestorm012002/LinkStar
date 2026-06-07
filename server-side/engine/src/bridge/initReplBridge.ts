@@ -161,7 +161,7 @@ export async function initReplBridge(
     return null
   }
 
-  // When Claude_BRIDGE_OAUTH_TOKEN is set (ant-only local dev), the bridge
+  // When CLAUDE_ is set (ant-only local dev), the bridge
   // uses that token directly via getBridgeAccessToken() — keychain state is
   // irrelevant. Skip 2b/2c to preserve that decoupling: an expired keychain
   // token shouldn't block a bridge connection that doesn't use it.
@@ -401,7 +401,7 @@ export async function initReplBridge(
   // on env-based.
   //
   // NAMING: "env-less" is distinct from "CCR v2" (the /worker/* transport).
-  // The env-based path below can ALSO use CCR v2 via Claude_CODE_USE_CCR_V2.
+  // The env-based path below can ALSO use CCR v2 via CLAUDE_.
   // tengu_bridge_repl_v2 gates env-less (no poll loop), not transport version.
   //
   // perpetual (assistant-mode session continuity via bridge-pointer.json) is
@@ -466,8 +466,8 @@ export async function initReplBridge(
   const gitRepoUrl = await getRemoteUrl()
   const sessionIngressUrl =
     process.env.USER_TYPE === 'ant' &&
-    process.env.Claude_BRIDGE_SESSION_INGRESS_URL
-      ? process.env.Claude_BRIDGE_SESSION_INGRESS_URL
+    process.env.CLAUDE_
+      ? process.env.CLAUDE_
       : baseUrl
 
   // Assistant-mode sessions advertise a distinct worker_type so the web UI

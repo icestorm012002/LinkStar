@@ -274,7 +274,7 @@ const MAX_DOWNLOAD_RETRIES = 3
 
 function getStallTimeoutMs(): number {
   return (
-    Number(process.env.Claude_CODE_STALL_TIMEOUT_MS_FOR_TESTING) ||
+    Number(process.env.CLAUDE_) ||
     DEFAULT_STALL_TIMEOUT_MS
   )
 }

@@ -19,11 +19,11 @@ export function logDebug(message: string): void {
 }
 
 /**
- * Get the environment kind from Claude_CODE_ENVIRONMENT_KIND.
+ * Get the environment kind from CLAUDE_.
  * Returns null if not set or not a recognized value.
  */
 export function getEnvironmentKind(): EnvironmentKind | null {
-  const kind = process.env.Claude_CODE_ENVIRONMENT_KIND
+  const kind = process.env.CLAUDE_
   if (kind === 'byoc' || kind === 'anthropic_cloud') {
     return kind
   }

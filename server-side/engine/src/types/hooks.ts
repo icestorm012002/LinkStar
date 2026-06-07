@@ -213,7 +213,7 @@ export type HookCallback = {
     input: HookInput,
     toolUseID: string | null,
     abort: AbortSignal | undefined,
-    /** Hook index for SessionStart hooks to compute Claude_ENV_FILE path */
+    /** Hook index for SessionStart hooks to compute CLAUDE_ path */
     hookIndex?: number,
     /** Optional context for accessing app state */
     context?: HookCallbackContext,

@@ -52,7 +52,7 @@ export type UserIdentity = {
   displayName?: string
   clientOS: 'win32' | 'darwin' | 'linux'
   clientShell?: string
-  /** 用户自带的 API 配置（如 ANTHROPIC_API_KEY, Claude_CODE_USE_BEDROCK 等） */
+  /** 用户自带的 API 配置（如 ANTHROPIC_API_KEY, CLAUDE_ 等） */
   envOverrides?: Record<string, string>
 }
 
@@ -216,7 +216,7 @@ export class SessionOrchestrator extends EventEmitter {
       env: {
         ...process.env,
         // 覆盖关键隔离变量
-        Claude_CONFIG_DIR: join(userDir, '.Claude'),
+        CLAUDE_: join(userDir, '.Claude'),
         HOME: userDir,
         USERPROFILE: userDir,
       },

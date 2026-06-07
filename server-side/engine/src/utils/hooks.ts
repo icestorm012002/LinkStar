@@ -175,7 +175,7 @@ const TOOL_HOOK_EXECUTION_TIMEOUT_MS = 10 * 60 * 1000
  */
 const SESSION_END_HOOK_TIMEOUT_MS_DEFAULT = 1500
 export function getSessionEndHookTimeoutMs(): number {
-  const raw = process.env.Claude_CODE_SESSIONEND_HOOKS_TIMEOUT_MS
+  const raw = process.env.CLAUDE_
   const parsed = raw ? parseInt(raw, 10) : NaN
   return Number.isFinite(parsed) && parsed > 0
     ? parsed
@@ -824,7 +824,7 @@ function processHookJSONOutput({
  *
  * Shell resolution: hook.shell → 'bash'. PowerShell hooks spawn pwsh
  * with -NoProfile -NonInteractive -Command and skip bash-specific prep
- * (POSIX path conversion, .sh auto-prepend, Claude_CODE_SHELL_PREFIX).
+ * (POSIX path conversion, .sh auto-prepend, CLAUDE_).
  * See docs/design/ps-shell-selection.md §5.1.
  */
 async function execCommandHook(
@@ -893,14 +893,14 @@ async function execCommandHook(
       ? (p: string) => windowsPathToPosixPath(p)
       : (p: string) => p
 
-  // Set Claude_PROJECT_DIR to the stable project root (not the worktree path).
+  // Set CLAUDE_ to the stable project root (not the worktree path).
   // getProjectRoot() is never updated when entering a worktree, so hooks that
-  // reference $Claude_PROJECT_DIR always resolve relative to the real repo root.
+  // reference $CLAUDE_ always resolve relative to the real repo root.
   const projectDir = getProjectRoot()
 
-  // Substitute ${Claude_PLUGIN_ROOT} and ${user_config.X} in the command string.
+  // Substitute ${CLAUDE_} and ${user_config.X} in the command string.
   // Order matches MCP/LSP (plugin vars FIRST, then user config) so a user-
-  // entered value containing the literal text ${Claude_PLUGIN_ROOT} is treated
+  // entered value containing the literal text ${CLAUDE_} is treated
   // as opaque — not re-interpreted as a template.
   let command = hook.command
   let pluginOpts: ReturnType<typeof loadPluginOptions> | undefined
@@ -925,10 +925,10 @@ async function execCommandHook(
     // form .replace() so paths containing $ aren't mangled by $-pattern
     // interpretation (rare but possible: \\server\c$\plugin).
     const rootPath = toHookPath(pluginRoot)
-    command = command.replace(/\$\{Claude_PLUGIN_ROOT\}/g, () => rootPath)
+    command = command.replace(/\$\{CLAUDE_\}/g, () => rootPath)
     if (pluginId) {
       const dataPath = toHookPath(getPluginDataDir(pluginId))
-      command = command.replace(/\$\{Claude_PLUGIN_DATA\}/g, () => dataPath)
+      command = command.replace(/\$\{CLAUDE_\}/g, () => dataPath)
     }
     if (pluginId) {
       pluginOpts = loadPluginOptions(pluginId)
@@ -948,13 +948,13 @@ async function execCommandHook(
     }
   }
 
-  // Claude_CODE_SHELL_PREFIX wraps the command via POSIX quoting
+  // CLAUDE_ wraps the command via POSIX quoting
   // (formatShellPrefixCommand uses shell-quote). This makes no sense for
   // PowerShell — see design §8.1. For now PS hooks ignore the prefix;
-  // a Claude_CODE_PS_SHELL_PREFIX (or shell-aware prefix) is a follow-up.
+  // a CLAUDE_ (or shell-aware prefix) is a follow-up.
   const finalCommand =
-    !isPowerShell && process.env.Claude_CODE_SHELL_PREFIX
-      ? formatShellPrefixCommand(process.env.Claude_CODE_SHELL_PREFIX, command)
+    !isPowerShell && process.env.CLAUDE_
+      ? formatShellPrefixCommand(process.env.CLAUDE_, command)
       : command
 
   const hookTimeoutMs = hook.timeout
@@ -964,27 +964,27 @@ async function execCommandHook(
   // Build env vars — all paths go through toHookPath for Windows POSIX conversion
   const envVars: NodeJS.ProcessEnv = {
     ...subprocessEnv(),
-    Claude_PROJECT_DIR: toHookPath(projectDir),
+    CLAUDE_: toHookPath(projectDir),
   }
 
   // Some plugin workers shell out to "Claude" again for their own agent
   // sessions. When this session is running under an alternate entrypoint such
-  // as Claudex, leaving Claude_CODE_PATH unset makes those workers rediscover
+  // as Claudex, leaving CLAUDE_ unset makes those workers rediscover
   // the system "Claude" binary and lose the current auth namespace. Re-enter
   // through the current executable/script unless the user already pinned one.
   const currentCliPath =
-    envVars.Claude_CODE_PATH ||
+    envVars.CLAUDE_ ||
     (isInBundledMode() ? process.execPath : process.argv[1])
   if (currentCliPath) {
-    envVars.Claude_CODE_PATH = toHookPath(currentCliPath)
+    envVars.CLAUDE_ = toHookPath(currentCliPath)
   }
 
-  // Plugin and skill hooks both set Claude_PLUGIN_ROOT (skills use the same
+  // Plugin and skill hooks both set CLAUDE_ (skills use the same
   // name for consistency — skills can migrate to plugins without code changes)
   if (pluginRoot) {
-    envVars.Claude_PLUGIN_ROOT = toHookPath(pluginRoot)
+    envVars.CLAUDE_ = toHookPath(pluginRoot)
     if (pluginId) {
-      envVars.Claude_PLUGIN_DATA = toHookPath(getPluginDataDir(pluginId))
+      envVars.CLAUDE_ = toHookPath(getPluginDataDir(pluginId))
     }
   }
   // Expose plugin options as env vars too, so hooks can read them without
@@ -996,14 +996,14 @@ async function execCommandHook(
       // at schemas.ts:611 now constrains keys to /^[A-Za-z_]\w*$/ so this is
       // belt-and-suspenders, but cheap insurance if someone bypasses the schema.
       const envKey = key.replace(/[^A-Za-z0-9_]/g, '_').toUpperCase()
-      envVars[`Claude_PLUGIN_OPTION_${envKey}`] = String(value)
+      envVars[`CLAUDE_${envKey}`] = String(value)
     }
   }
   if (skillRoot) {
-    envVars.Claude_PLUGIN_ROOT = toHookPath(skillRoot)
+    envVars.CLAUDE_ = toHookPath(skillRoot)
   }
 
-  // Claude_ENV_FILE points to a .sh file that the hook writes env var
+  // CLAUDE_ points to a .sh file that the hook writes env var
   // definitions into; getSessionEnvironmentScript() concatenates them and
   // bashProvider injects the content into bash commands. A PS hook would
   // naturally write PS syntax ($env:FOO = 'bar'), which bash can't parse.
@@ -1017,7 +1017,7 @@ async function execCommandHook(
       hookEvent === 'FileChanged') &&
     hookIndex !== undefined
   ) {
-    envVars.Claude_ENV_FILE = await getHookEnvFilePath(hookEvent, hookIndex)
+    envVars.CLAUDE_ = await getHookEnvFilePath(hookEvent, hookIndex)
   }
 
   // When agent worktrees are removed, getCwd() may return a deleted path via
@@ -1542,7 +1542,7 @@ function isInternalHook(matched: MatchedHook): boolean {
  * Settings-file hooks (no pluginRoot/skillRoot) share the '' prefix so the
  * same command defined in user/project/local still collapses to one — the
  * original intent of the dedup. Plugin/skill hooks get their root as the
- * prefix, so two plugins sharing an unexpanded `${Claude_PLUGIN_ROOT}/hook.sh`
+ * prefix, so two plugins sharing an unexpanded `${CLAUDE_}/hook.sh`
  * template don't collapse: after expansion they point to different files.
  */
 function hookDedupKey(m: MatchedHook, payload: string): string {
@@ -2074,7 +2074,7 @@ async function* executeHooks({
     return
   }
 
-  if (isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     return
   }
 
@@ -3109,7 +3109,7 @@ async function executeHooksOutsideREPL({
   signal?: AbortSignal
   timeoutMs: number
 }): Promise<HookOutsideReplResult[]> {
-  if (isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     return []
   }
 

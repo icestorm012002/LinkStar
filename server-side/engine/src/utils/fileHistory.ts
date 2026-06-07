@@ -66,14 +66,14 @@ export function fileHistoryEnabled(): boolean {
   }
   return (
     getGlobalConfig().fileCheckpointingEnabled !== false &&
-    !isEnvTruthy(process.env.Claude_CODE_DISABLE_FILE_CHECKPOINTING)
+    !isEnvTruthy(process.env.CLAUDE_)
   )
 }
 
 function fileHistoryEnabledSdk(): boolean {
   return (
-    isEnvTruthy(process.env.Claude_CODE_ENABLE_SDK_FILE_CHECKPOINTING) &&
-    !isEnvTruthy(process.env.Claude_CODE_DISABLE_FILE_CHECKPOINTING)
+    isEnvTruthy(process.env.CLAUDE_) &&
+    !isEnvTruthy(process.env.CLAUDE_)
   )
 }
 

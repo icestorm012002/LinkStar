@@ -380,7 +380,7 @@ export class WsGateway {
       // 构建环境变量，注入对应的 API 密钥和基准地址
       const testEnv: Record<string, string> = {
         ...process.env,
-        Claude_CONFIG_DIR: join(userDir, '.Claude'),
+        CLAUDE_: join(userDir, '.Claude'),
         HOME: userDir,
         USERPROFILE: userDir,
       }

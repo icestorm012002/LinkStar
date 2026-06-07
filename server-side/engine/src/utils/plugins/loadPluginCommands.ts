@@ -238,7 +238,7 @@ function createPluginCommand(
         isSkill ? 'Plugin skill' : 'Plugin command',
       )
 
-    // Substitute ${Claude_PLUGIN_ROOT} in allowed-tools before parsing
+    // Substitute ${CLAUDE_} in allowed-tools before parsing
     const rawAllowedTools = frontmatter['allowed-tools']
     const substitutedAllowedTools =
       typeof rawAllowedTools === 'string'
@@ -336,7 +336,7 @@ function createPluginCommand(
           argumentNames,
         )
 
-        // Replace ${Claude_PLUGIN_ROOT} and ${Claude_PLUGIN_DATA} with their paths
+        // Replace ${CLAUDE_} and ${CLAUDE_} with their paths
         finalContent = substitutePluginVariables(finalContent, {
           path: pluginPath,
           source: sourceName,
@@ -353,10 +353,10 @@ function createPluginCommand(
           )
         }
 
-        // Replace ${Claude_SKILL_DIR} with this specific skill's directory.
-        // Distinct from ${Claude_PLUGIN_ROOT}: a plugin can contain multiple
-        // skills, so Claude_PLUGIN_ROOT points to the plugin root while
-        // Claude_SKILL_DIR points to the individual skill's subdirectory.
+        // Replace ${CLAUDE_} with this specific skill's directory.
+        // Distinct from ${CLAUDE_}: a plugin can contain multiple
+        // skills, so CLAUDE_ points to the plugin root while
+        // CLAUDE_ points to the individual skill's subdirectory.
         if (config.isSkillMode) {
           const rawSkillDir = dirname(file.filePath)
           const skillDir =
@@ -364,14 +364,14 @@ function createPluginCommand(
               ? rawSkillDir.replace(/\\/g, '/')
               : rawSkillDir
           finalContent = finalContent.replace(
-            /\$\{Claude_SKILL_DIR\}/g,
+            /\$\{CLAUDE_\}/g,
             skillDir,
           )
         }
 
-        // Replace ${Claude_SESSION_ID} with the current session ID
+        // Replace ${CLAUDE_} with the current session ID
         finalContent = finalContent.replace(
-          /\$\{Claude_SESSION_ID\}/g,
+          /\$\{CLAUDE_\}/g,
           getSessionId(),
         )
 

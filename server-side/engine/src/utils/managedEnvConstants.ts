@@ -2,7 +2,7 @@
  * Environment variables that control inference routing: which provider to use,
  * which endpoint to hit, and which model IDs to send.
  *
- * When Claude_CODE_PROVIDER_MANAGED_BY_HOST is truthy in the spawn env, these
+ * When CLAUDE_ is truthy in the spawn env, these
  * are stripped from settings-sourced env so the host's routing config isn't
  * overridden by a user's ~/.Claude/settings.json — e.g. a Bedrock setup for
  * terminal CLI that would break a host that only supports first-party auth.
@@ -13,11 +13,11 @@
  */
 const PROVIDER_MANAGED_ENV_VARS = new Set([
   // The flag itself — settings can't unset it once the host set it
-  'Claude_CODE_PROVIDER_MANAGED_BY_HOST',
+  'CLAUDE_',
   // Provider selection
-  'Claude_CODE_USE_BEDROCK',
-  'Claude_CODE_USE_VERTEX',
-  'Claude_CODE_USE_FOUNDRY',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
   // Endpoint config (base URLs, project/resource identifiers)
   'ANTHROPIC_BASE_URL',
   'ANTHROPIC_BEDROCK_BASE_URL',
@@ -30,12 +30,12 @@ const PROVIDER_MANAGED_ENV_VARS = new Set([
   // Auth
   'ANTHROPIC_API_KEY',
   'ANTHROPIC_AUTH_TOKEN',
-  'Claude_CODE_OAUTH_TOKEN',
+  'CLAUDE_',
   'AWS_BEARER_TOKEN_BEDROCK',
   'ANTHROPIC_FOUNDRY_API_KEY',
-  'Claude_CODE_SKIP_BEDROCK_AUTH',
-  'Claude_CODE_SKIP_VERTEX_AUTH',
-  'Claude_CODE_SKIP_FOUNDRY_AUTH',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
   // Model defaults — often set to provider-specific ID formats
   'ANTHROPIC_MODEL',
   'ANTHROPIC_DEFAULT_HAIKU_MODEL',
@@ -52,7 +52,7 @@ const PROVIDER_MANAGED_ENV_VARS = new Set([
   'ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES',
   'ANTHROPIC_SMALL_FAST_MODEL',
   'ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION',
-  'Claude_CODE_SUBAGENT_MODEL',
+  'CLAUDE_',
 ])
 
 const PROVIDER_MANAGED_ENV_PREFIXES = [
@@ -132,22 +132,22 @@ export const SAFE_ENV_VARS = new Set([
   'BASH_DEFAULT_TIMEOUT_MS',
   'BASH_MAX_OUTPUT_LENGTH',
   'BASH_MAX_TIMEOUT_MS',
-  'Claude_BASH_MAINTAIN_PROJECT_WORKING_DIR',
-  'Claude_CODE_API_KEY_HELPER_TTL_MS',
-  'Claude_CODE_DISABLE_EXPERIMENTAL_BETAS',
-  'Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC',
-  'Claude_CODE_DISABLE_TERMINAL_TITLE',
-  'Claude_CODE_ENABLE_TELEMETRY',
-  'Claude_CODE_EXPERIMENTAL_AGENT_TEAMS',
-  'Claude_CODE_IDE_SKIP_AUTO_INSTALL',
-  'Claude_CODE_MAX_OUTPUT_TOKENS',
-  'Claude_CODE_SKIP_BEDROCK_AUTH',
-  'Claude_CODE_SKIP_FOUNDRY_AUTH',
-  'Claude_CODE_SKIP_VERTEX_AUTH',
-  'Claude_CODE_SUBAGENT_MODEL',
-  'Claude_CODE_USE_BEDROCK',
-  'Claude_CODE_USE_FOUNDRY',
-  'Claude_CODE_USE_VERTEX',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
+  'CLAUDE_',
   'DISABLE_AUTOUPDATER',
   'DISABLE_BUG_COMMAND',
   'DISABLE_COST_WARNINGS',
@@ -179,13 +179,13 @@ export const SAFE_ENV_VARS = new Set([
   'OTEL_METRICS_INCLUDE_VERSION',
   'OTEL_RESOURCE_ATTRIBUTES',
   'USE_BUILTIN_RIPGREP',
-  'VERTEX_REGION_Claude_3_5_HAIKU',
-  'VERTEX_REGION_Claude_3_5_SONNET',
-  'VERTEX_REGION_Claude_3_7_SONNET',
-  'VERTEX_REGION_Claude_4_0_OPUS',
-  'VERTEX_REGION_Claude_4_0_SONNET',
-  'VERTEX_REGION_Claude_4_1_OPUS',
-  'VERTEX_REGION_Claude_4_5_SONNET',
-  'VERTEX_REGION_Claude_4_6_SONNET',
-  'VERTEX_REGION_Claude_HAIKU_4_5',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
+  'VERTEX_REGION_CLAUDE_',
 ])

@@ -5,9 +5,9 @@ import {
 import { sanitizeToolNameForAnalytics } from '../../../services/analytics/metadata.js'
 import type { ToolPermissionContext } from '../../../Tool.js'
 import {
-  Claude_FOLDER_PERMISSION_PATTERN,
+  CLAUDE_,
   FILE_EDIT_TOOL_NAME,
-  GLOBAL_Claude_FOLDER_PERMISSION_PATTERN,
+  GLOBAL_CLAUDE_,
 } from '../../../tools/FileEditTool/constants.js'
 import { env } from '../../../utils/env.js'
 import { generateSuggestions } from '../../../utils/permissions/filesystem.js'
@@ -108,8 +108,8 @@ function handleAcceptSession(
   ) {
     const pattern =
       options.scope === 'global-Claude-folder'
-        ? GLOBAL_Claude_FOLDER_PERMISSION_PATTERN
-        : Claude_FOLDER_PERMISSION_PATTERN
+        ? GLOBAL_CLAUDE_
+        : CLAUDE_
     const suggestions: PermissionUpdate[] = [
       {
         type: 'addRules',

@@ -23,14 +23,14 @@ function sanitizeAgentTypeForPath(agentType: string): string {
 
 /**
  * Returns the local agent memory directory, which is project-specific and not checked into VCS.
- * When Claude_CODE_REMOTE_MEMORY_DIR is set, persists to the mount with project namespacing.
+ * When CLAUDE_ is set, persists to the mount with project namespacing.
  * Otherwise, uses <cwd>/.Claude/agent-memory-local/<agentType>/.
  */
 function getLocalAgentMemoryDir(dirName: string): string {
-  if (process.env.Claude_CODE_REMOTE_MEMORY_DIR) {
+  if (process.env.CLAUDE_) {
     return (
       join(
-        process.env.Claude_CODE_REMOTE_MEMORY_DIR,
+        process.env.CLAUDE_,
         'projects',
         sanitizePath(
           findCanonicalGitRoot(getProjectRoot()) ?? getProjectRoot(),
@@ -82,12 +82,12 @@ export function isAgentMemoryPath(absolutePath: string): boolean {
     return true
   }
 
-  // Local scope: persisted to mount when Claude_CODE_REMOTE_MEMORY_DIR is set, otherwise cwd-based
-  if (process.env.Claude_CODE_REMOTE_MEMORY_DIR) {
+  // Local scope: persisted to mount when CLAUDE_ is set, otherwise cwd-based
+  if (process.env.CLAUDE_) {
     if (
       normalizedPath.includes(sep + 'agent-memory-local' + sep) &&
       normalizedPath.startsWith(
-        join(process.env.Claude_CODE_REMOTE_MEMORY_DIR, 'projects') + sep,
+        join(process.env.CLAUDE_, 'projects') + sep,
       )
     ) {
       return true
@@ -165,7 +165,7 @@ export function loadAgentMemoryPrompt(
   void ensureMemoryDirExists(memoryDir)
 
   const coworkExtraGuidelines =
-    process.env.Claude_COWORK_MEMORY_EXTRA_GUIDELINES
+    process.env.CLAUDE_
   return buildMemoryPrompt({
     displayName: 'Persistent Agent Memory',
     memoryDir,

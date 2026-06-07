@@ -16,7 +16,7 @@ import pickBy from 'lodash-es/pickBy.js'
 import { dirname } from 'path'
 import { getIsInteractive } from '../../bootstrap/state.js'
 import {
-  Claude_AI_INFERENCE_SCOPE,
+  CLAUDE_,
   getOauthConfig,
   OAUTH_BETA_HEADER,
 } from '../../constants/oauth.js'
@@ -216,7 +216,7 @@ function isUsingOAuth(): boolean {
 
   const tokens = getClaudeAIOAuthTokens()
   return Boolean(
-    tokens?.accessToken && tokens.scopes?.includes(Claude_AI_INFERENCE_SCOPE),
+    tokens?.accessToken && tokens.scopes?.includes(CLAUDE_),
   )
 }
 

@@ -1,6 +1,6 @@
 /**
  * Shared bridge auth/URL resolution. Consolidates the ant-only
- * Claude_BRIDGE_* dev overrides that were previously copy-pasted across
+ * CLAUDE_* dev overrides that were previously copy-pasted across
  * a dozen files — inboundAttachments, BriefTool/upload, bridgeMain,
  * initReplBridge, remoteBridgeCore, daemon workers, /rename,
  * /remote-control.
@@ -14,19 +14,19 @@
 import { getOauthConfig } from '../constants/oauth.js'
 import { getClaudeAIOAuthTokens } from '../utils/auth.js'
 
-/** Ant-only dev override: Claude_BRIDGE_OAUTH_TOKEN, else undefined. */
+/** Ant-only dev override: CLAUDE_, else undefined. */
 export function getBridgeTokenOverride(): string | undefined {
   return (
     (process.env.USER_TYPE === 'ant' &&
-      process.env.Claude_BRIDGE_OAUTH_TOKEN) ||
+      process.env.CLAUDE_) ||
     undefined
   )
 }
 
-/** Ant-only dev override: Claude_BRIDGE_BASE_URL, else undefined. */
+/** Ant-only dev override: CLAUDE_, else undefined. */
 export function getBridgeBaseUrlOverride(): string | undefined {
   return (
-    (process.env.USER_TYPE === 'ant' && process.env.Claude_BRIDGE_BASE_URL) ||
+    (process.env.USER_TYPE === 'ant' && process.env.CLAUDE_) ||
     undefined
   )
 }

@@ -46,7 +46,7 @@ export type OfficialMarketplaceSkipReason =
  */
 export function isOfficialMarketplaceAutoInstallDisabled(): boolean {
   return isEnvTruthy(
-    process.env.Claude_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL,
+    process.env.CLAUDE_,
   )
 }
 

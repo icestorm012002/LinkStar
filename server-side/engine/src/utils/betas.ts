@@ -7,7 +7,7 @@ import {
 import { getIsNonInteractiveSession, getSdkBetas } from '../bootstrap/state.js'
 import {
   BEDROCK_EXTRA_PARAMS_HEADERS,
-  Claude_CODE_20250219_BETA_HEADER,
+  CLAUDE_,
   CLI_INTERNAL_BETA_HEADER,
   CONTEXT_1M_BETA_HEADER,
   CONTEXT_MANAGEMENT_BETA_HEADER,
@@ -215,7 +215,7 @@ export function getToolSearchBetaHeader(): string {
 export function shouldIncludeFirstPartyOnlyBetas(): boolean {
   return (
     (getAPIProvider() === 'firstParty' || getAPIProvider() === 'foundry') &&
-    !isEnvTruthy(process.env.Claude_CODE_DISABLE_EXPERIMENTAL_BETAS)
+    !isEnvTruthy(process.env.CLAUDE_)
   )
 }
 
@@ -227,7 +227,7 @@ export function shouldIncludeFirstPartyOnlyBetas(): boolean {
 export function shouldUseGlobalCacheScope(): boolean {
   return (
     getAPIProvider() === 'firstParty' &&
-    !isEnvTruthy(process.env.Claude_CODE_DISABLE_EXPERIMENTAL_BETAS)
+    !isEnvTruthy(process.env.CLAUDE_)
   )
 }
 
@@ -238,10 +238,10 @@ export const getAllModelBetas = memoize((model: string): string[] => {
   const includeFirstPartyOnlyBetas = shouldIncludeFirstPartyOnlyBetas()
 
   if (!isHaiku) {
-    betaHeaders.push(Claude_CODE_20250219_BETA_HEADER)
+    betaHeaders.push(CLAUDE_)
     if (
       process.env.USER_TYPE === 'ant' &&
-      process.env.Claude_CODE_ENTRYPOINT === 'cli'
+      process.env.CLAUDE_ === 'cli'
     ) {
       if (CLI_INTERNAL_BETA_HEADER) {
         betaHeaders.push(CLI_INTERNAL_BETA_HEADER)
@@ -311,7 +311,7 @@ export const getAllModelBetas = memoize((model: string): string[] => {
     betaHeaders.push(CONTEXT_MANAGEMENT_BETA_HEADER)
   }
   // Add strict tool use beta if experiment is enabled.
-  // Gate on includeFirstPartyOnlyBetas: Claude_CODE_DISABLE_EXPERIMENTAL_BETAS
+  // Gate on includeFirstPartyOnlyBetas: CLAUDE_
   // already strips schema.strict from tool bodies at api.ts's choke point, but
   // this header was escaping that kill switch. Proxy gateways that look like
   // firstParty but forward to Vertex reject this header with 400.
@@ -404,12 +404,12 @@ export function getMergedBetas(
   // For non-Haiku models these are already in baseBetas; for Haiku they're
   // excluded by getAllModelBetas() since non-agentic Haiku calls don't need them.
   if (options?.isAgenticQuery) {
-    if (!baseBetas.includes(Claude_CODE_20250219_BETA_HEADER)) {
-      baseBetas.push(Claude_CODE_20250219_BETA_HEADER)
+    if (!baseBetas.includes(CLAUDE_)) {
+      baseBetas.push(CLAUDE_)
     }
     if (
       process.env.USER_TYPE === 'ant' &&
-      process.env.Claude_CODE_ENTRYPOINT === 'cli' &&
+      process.env.CLAUDE_ === 'cli' &&
       CLI_INTERNAL_BETA_HEADER &&
       !baseBetas.includes(CLI_INTERNAL_BETA_HEADER)
     ) {

@@ -106,7 +106,7 @@ export function initializeWarningHandler(): void {
       })
 
       // In debug mode, show all warnings with context
-      if (isEnvTruthy(process.env.Claude_DEBUG)) {
+      if (isEnvTruthy(process.env.CLAUDE_)) {
         const prefix = isInternal ? '[Internal Warning]' : '[Warning]'
         logForDebugging(`${prefix} ${warning.toString()}`, { level: 'warn' })
       }

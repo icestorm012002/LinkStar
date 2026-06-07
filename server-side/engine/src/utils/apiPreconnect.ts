@@ -34,9 +34,9 @@ export function preconnectAnthropicApi(): void {
 
   // Skip if using a cloud provider — different endpoint + auth
   if (
-    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY)
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_)
   ) {
     return
   }
@@ -47,8 +47,8 @@ export function preconnectAnthropicApi(): void {
     process.env.HTTP_PROXY ||
     process.env.http_proxy ||
     process.env.ANTHROPIC_UNIX_SOCKET ||
-    process.env.Claude_CODE_CLIENT_CERT ||
-    process.env.Claude_CODE_CLIENT_KEY
+    process.env.CLAUDE_ ||
+    process.env.CLAUDE_
   ) {
     return
   }

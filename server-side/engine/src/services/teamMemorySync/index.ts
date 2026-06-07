@@ -29,8 +29,8 @@ import { createHash } from 'crypto'
 import { mkdir, readdir, readFile, stat, writeFile } from 'fs/promises'
 import { join, relative, sep } from 'path'
 import {
-  Claude_AI_INFERENCE_SCOPE,
-  Claude_AI_PROFILE_SCOPE,
+  CLAUDE_,
+  CLAUDE_,
   getOauthConfig,
   OAUTH_BETA_HEADER,
 } from '../../constants/oauth.js'
@@ -155,8 +155,8 @@ function isUsingOAuth(): boolean {
   const tokens = getClaudeAIOAuthTokens()
   return Boolean(
     tokens?.accessToken &&
-      tokens.scopes?.includes(Claude_AI_INFERENCE_SCOPE) &&
-      tokens.scopes.includes(Claude_AI_PROFILE_SCOPE),
+      tokens.scopes?.includes(CLAUDE_) &&
+      tokens.scopes.includes(CLAUDE_),
   )
 }
 

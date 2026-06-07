@@ -73,11 +73,11 @@ export function getChromeSystemPrompt(): string {
  * Minimal hint about Claude in Chrome skill availability. This is injected at startup when the extension is installed
  * to guide the model to invoke the skill before using the MCP tools.
  */
-export const Claude_IN_CHROME_SKILL_HINT = `**Browser Automation**: Chrome browser tools are available via the "Claude-in-chrome" skill. CRITICAL: Before using any mcp__Claude-in-chrome__* tools, invoke the skill by calling the Skill tool with skill: "Claude-in-chrome". The skill provides browser automation instructions and enables the tools.`
+export const CLAUDE_ = `**Browser Automation**: Chrome browser tools are available via the "Claude-in-chrome" skill. CRITICAL: Before using any mcp__Claude-in-chrome__* tools, invoke the skill by calling the Skill tool with skill: "Claude-in-chrome". The skill provides browser automation instructions and enables the tools.`
 
 /**
  * Variant when the built-in WebBrowser tool is also available — steer
  * dev-loop tasks to WebBrowser and reserve the extension for the user's
  * authenticated Chrome (logged-in sites, OAuth, computer-use).
  */
-export const Claude_IN_CHROME_SKILL_HINT_WITH_WEBBROWSER = `**Browser Automation**: Use WebBrowser for development (dev servers, JS eval, console, screenshots). Use Claude-in-chrome for the user's real Chrome when you need logged-in sessions, OAuth, or computer-use — invoke Skill(skill: "Claude-in-chrome") before any mcp__Claude-in-chrome__* tool.`
+export const CLAUDE_ = `**Browser Automation**: Use WebBrowser for development (dev servers, JS eval, console, screenshots). Use Claude-in-chrome for the user's real Chrome when you need logged-in sessions, OAuth, or computer-use — invoke Skill(skill: "Claude-in-chrome") before any mcp__Claude-in-chrome__* tool.`

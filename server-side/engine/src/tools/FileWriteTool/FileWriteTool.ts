@@ -343,7 +343,7 @@ export const FileWriteTool = buildTool({
 
     let gitDiff: ToolUseDiff | undefined
     if (
-      isEnvTruthy(process.env.Claude_CODE_REMOTE) &&
+      isEnvTruthy(process.env.CLAUDE_) &&
       getFeatureValue_CACHED_MAY_BE_STALE('tengu_quartz_lantern', false)
     ) {
       const startTime = Date.now()

@@ -16,7 +16,7 @@ function getOauthConfigType(): OauthConfigType {
 }
 
 export function fileSuffixForOauthConfig(): string {
-  if (process.env.Claude_CODE_CUSTOM_OAUTH_URL) {
+  if (process.env.CLAUDE_) {
     return '-custom-oauth'
   }
   switch (getOauthConfigType()) {
@@ -30,21 +30,21 @@ export function fileSuffixForOauthConfig(): string {
   }
 }
 
-export const Claude_AI_INFERENCE_SCOPE = 'user:inference' as const
-export const Claude_AI_PROFILE_SCOPE = 'user:profile' as const
+export const CLAUDE_ = 'user:inference' as const
+export const CLAUDE_ = 'user:profile' as const
 const CONSOLE_SCOPE = 'org:create_api_key' as const
 export const OAUTH_BETA_HEADER = 'oauth-2025-04-20' as const
 
 // Console OAuth scopes - for API key creation via Console
 export const CONSOLE_OAUTH_SCOPES = [
   CONSOLE_SCOPE,
-  Claude_AI_PROFILE_SCOPE,
+  CLAUDE_,
 ] as const
 
 // Claude.ai OAuth scopes - for Claude.ai subscribers (Pro/Max/Team/Enterprise)
-export const Claude_AI_OAUTH_SCOPES = [
-  Claude_AI_PROFILE_SCOPE,
-  Claude_AI_INFERENCE_SCOPE,
+export const CLAUDE_ = [
+  CLAUDE_,
+  CLAUDE_,
   'user:sessions:Claude_code',
   'user:mcp_servers',
   'user:file_upload',
@@ -54,20 +54,20 @@ export const Claude_AI_OAUTH_SCOPES = [
 // When logging in, request all scopes in order to handle both Console -> Claude.ai redirect
 // Ensure that `OAuthConsentPage` in apps repo is kept in sync with this list.
 export const ALL_OAUTH_SCOPES = Array.from(
-  new Set([...CONSOLE_OAUTH_SCOPES, ...Claude_AI_OAUTH_SCOPES]),
+  new Set([...CONSOLE_OAUTH_SCOPES, ...CLAUDE_]),
 )
 
 type OauthConfig = {
   BASE_API_URL: string
   CONSOLE_AUTHORIZE_URL: string
-  Claude_AI_AUTHORIZE_URL: string
+  CLAUDE_: string
   /**
-   * The Claude.ai web origin. Separate from Claude_AI_AUTHORIZE_URL because
+   * The Claude.ai web origin. Separate from CLAUDE_ because
    * that now routes through Claude.com/cai/* for attribution — deriving
    * .origin from it would give Claude.com, breaking links to /code,
    * /settings/connectors, and other Claude.ai web pages.
    */
-  Claude_AI_ORIGIN: string
+  CLAUDE_: string
   TOKEN_URL: string
   API_KEY_URL: string
   ROLES_URL: string
@@ -86,8 +86,8 @@ const PROD_OAUTH_CONFIG = {
   CONSOLE_AUTHORIZE_URL: 'https://platform.Claude.com/oauth/authorize',
   // Bounces through Claude.com/cai/* so CLI sign-ins connect to Claude.com
   // visits for attribution. 307s to Claude.ai/oauth/authorize in two hops.
-  Claude_AI_AUTHORIZE_URL: 'https://Claude.com/cai/oauth/authorize',
-  Claude_AI_ORIGIN: 'https://Claude.ai',
+  CLAUDE_: 'https://Claude.com/cai/oauth/authorize',
+  CLAUDE_: 'https://Claude.ai',
   TOKEN_URL: 'https://platform.Claude.com/v1/oauth/token',
   API_KEY_URL: 'https://api.anthropic.com/api/oauth/Claude_cli/create_api_key',
   ROLES_URL: 'https://api.anthropic.com/api/oauth/Claude_cli/roles',
@@ -121,9 +121,9 @@ const STAGING_OAUTH_CONFIG =
         BASE_API_URL: 'https://api-staging.anthropic.com',
         CONSOLE_AUTHORIZE_URL:
           'https://platform.staging.ant.dev/oauth/authorize',
-        Claude_AI_AUTHORIZE_URL:
+        CLAUDE_:
           'https://Claude-ai.staging.ant.dev/oauth/authorize',
-        Claude_AI_ORIGIN: 'https://Claude-ai.staging.ant.dev',
+        CLAUDE_: 'https://Claude-ai.staging.ant.dev',
         TOKEN_URL: 'https://platform.staging.ant.dev/v1/oauth/token',
         API_KEY_URL:
           'https://api-staging.anthropic.com/api/oauth/Claude_cli/create_api_key',
@@ -147,19 +147,19 @@ const STAGING_OAUTH_CONFIG =
 // scripts/Claude-localhost override if your layout differs.
 function getLocalOauthConfig(): OauthConfig {
   const api =
-    process.env.Claude_LOCAL_OAUTH_API_BASE?.replace(/\/$/, '') ??
+    process.env.CLAUDE_?.replace(/\/$/, '') ??
     'http://localhost:8000'
   const apps =
-    process.env.Claude_LOCAL_OAUTH_APPS_BASE?.replace(/\/$/, '') ??
+    process.env.CLAUDE_?.replace(/\/$/, '') ??
     'http://localhost:4000'
   const consoleBase =
-    process.env.Claude_LOCAL_OAUTH_CONSOLE_BASE?.replace(/\/$/, '') ??
+    process.env.CLAUDE_?.replace(/\/$/, '') ??
     'http://localhost:3000'
   return {
     BASE_API_URL: api,
     CONSOLE_AUTHORIZE_URL: `${consoleBase}/oauth/authorize`,
-    Claude_AI_AUTHORIZE_URL: `${apps}/oauth/authorize`,
-    Claude_AI_ORIGIN: apps,
+    CLAUDE_: `${apps}/oauth/authorize`,
+    CLAUDE_: apps,
     TOKEN_URL: `${api}/v1/oauth/token`,
     API_KEY_URL: `${api}/api/oauth/Claude_cli/create_api_key`,
     ROLES_URL: `${api}/api/oauth/Claude_cli/roles`,
@@ -173,7 +173,7 @@ function getLocalOauthConfig(): OauthConfig {
   }
 }
 
-// Allowed base URLs for Claude_CODE_CUSTOM_OAUTH_URL override.
+// Allowed base URLs for CLAUDE_ override.
 // Only FedStart/PubSec deployments are permitted to prevent OAuth tokens
 // from being sent to arbitrary endpoints.
 const ALLOWED_OAUTH_BASE_URLS = [
@@ -197,20 +197,20 @@ export function getOauthConfig(): OauthConfig {
 
   // Allow overriding all OAuth URLs to point to an approved FedStart deployment.
   // Only allowlisted base URLs are accepted to prevent credential leakage.
-  const oauthBaseUrl = process.env.Claude_CODE_CUSTOM_OAUTH_URL
+  const oauthBaseUrl = process.env.CLAUDE_
   if (oauthBaseUrl) {
     const base = oauthBaseUrl.replace(/\/$/, '')
     if (!ALLOWED_OAUTH_BASE_URLS.includes(base)) {
       throw new Error(
-        'Claude_CODE_CUSTOM_OAUTH_URL is not an approved endpoint.',
+        'CLAUDE_ is not an approved endpoint.',
       )
     }
     config = {
       ...config,
       BASE_API_URL: base,
       CONSOLE_AUTHORIZE_URL: `${base}/oauth/authorize`,
-      Claude_AI_AUTHORIZE_URL: `${base}/oauth/authorize`,
-      Claude_AI_ORIGIN: base,
+      CLAUDE_: `${base}/oauth/authorize`,
+      CLAUDE_: base,
       TOKEN_URL: `${base}/v1/oauth/token`,
       API_KEY_URL: `${base}/api/oauth/Claude_cli/create_api_key`,
       ROLES_URL: `${base}/api/oauth/Claude_cli/roles`,
@@ -222,7 +222,7 @@ export function getOauthConfig(): OauthConfig {
   }
 
   // Allow CLIENT_ID override via environment variable (e.g., for Xcode integration)
-  const clientIdOverride = process.env.Claude_CODE_OAUTH_CLIENT_ID
+  const clientIdOverride = process.env.CLAUDE_
   if (clientIdOverride) {
     config = {
       ...config,

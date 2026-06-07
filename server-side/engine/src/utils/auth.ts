@@ -4,7 +4,7 @@ import { execa } from 'execa'
 import { mkdir, stat } from 'fs/promises'
 import memoize from 'lodash-es/memoize.js'
 import { join } from 'path'
-import { Claude_AI_PROFILE_SCOPE } from 'src/constants/oauth.js'
+import { CLAUDE_ } from 'src/constants/oauth.js'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
@@ -90,8 +90,8 @@ const DEFAULT_API_KEY_HELPER_TTL = 5 * 60 * 1000
  */
 function isManagedOAuthContext(): boolean {
   return (
-    isEnvTruthy(process.env.Claude_CODE_REMOTE) ||
-    process.env.Claude_CODE_ENTRYPOINT === 'Claude-desktop'
+    isEnvTruthy(process.env.CLAUDE_) ||
+    process.env.CLAUDE_ === 'Claude-desktop'
   )
 }
 
@@ -102,20 +102,20 @@ export function isAnthropicAuthEnabled(): boolean {
   if (isBareMode()) return false
 
   // `Claude ssh` remote: ANTHROPIC_UNIX_SOCKET tunnels API calls through a
-  // local auth-injecting proxy. The launcher sets Claude_CODE_OAUTH_TOKEN as a
+  // local auth-injecting proxy. The launcher sets CLAUDE_ as a
   // placeholder iff the local side is a subscriber (so the remote includes the
   // oauth-2025 beta header to match what the proxy will inject). The remote's
   // ~/.Claude settings (apiKeyHelper, settings.env.ANTHROPIC_API_KEY) MUST NOT
   // flip this — they'd cause a header mismatch with the proxy and a bogus
   // "invalid x-api-key" from the API. See src/ssh/sshAuthProxy.ts.
   if (process.env.ANTHROPIC_UNIX_SOCKET) {
-    return !!process.env.Claude_CODE_OAUTH_TOKEN
+    return !!process.env.CLAUDE_
   }
 
   const is3P =
-    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY)
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_)
 
   // Check if user has configured an external API key source
   // This allows externally-provided API keys to work (without requiring proxy configuration)
@@ -124,7 +124,7 @@ export function isAnthropicAuthEnabled(): boolean {
   const hasExternalAuthToken =
     process.env.ANTHROPIC_AUTH_TOKEN ||
     apiKeyHelper ||
-    process.env.Claude_CODE_API_KEY_FILE_DESCRIPTOR
+    process.env.CLAUDE_
 
   // Check if API key is from an external source (not managed by /login)
   const { source: apiKeySource } = getAnthropicApiKeyWithSource({
@@ -165,8 +165,8 @@ export function getAuthTokenSource() {
     return { source: 'ANTHROPIC_AUTH_TOKEN' as const, hasToken: true }
   }
 
-  if (process.env.Claude_CODE_OAUTH_TOKEN) {
-    return { source: 'Claude_CODE_OAUTH_TOKEN' as const, hasToken: true }
+  if (process.env.CLAUDE_) {
+    return { source: 'CLAUDE_' as const, hasToken: true }
   }
 
   // Check for OAuth token from file descriptor (or its CCR disk fallback)
@@ -178,9 +178,9 @@ export function getAuthTokenSource() {
     // doesn't exist. Call sites fall through correctly — the new source is
     // !== 'none' (cli/handlers/auth.ts → oauth_token) and not in the
     // isEnvVarToken set (auth.ts:1844 → generic re-login message).
-    if (process.env.Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR) {
+    if (process.env.CLAUDE_) {
       return {
-        source: 'Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR' as const,
+        source: 'CLAUDE_' as const,
         hasToken: true,
       }
     }
@@ -274,11 +274,11 @@ export function getAnthropicApiKeyWithSource(
 
     if (
       !apiKeyEnv &&
-      !process.env.Claude_CODE_OAUTH_TOKEN &&
-      !process.env.Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR
+      !process.env.CLAUDE_ &&
+      !process.env.CLAUDE_
     ) {
       throw new Error(
-        'ANTHROPIC_API_KEY or Claude_CODE_OAUTH_TOKEN env var is required',
+        'ANTHROPIC_API_KEY or CLAUDE_ env var is required',
       )
     }
 
@@ -429,11 +429,11 @@ export function isAwsCredentialExportFromProjectSettings(): boolean {
 
 /**
  * Calculate TTL in milliseconds for the API key helper cache
- * Uses Claude_CODE_API_KEY_HELPER_TTL_MS env var if set and valid,
+ * Uses CLAUDE_ env var if set and valid,
  * otherwise defaults to 5 minutes
  */
 export function calculateApiKeyHelperTTL(): number {
-  const envTtl = process.env.Claude_CODE_API_KEY_HELPER_TTL_MS
+  const envTtl = process.env.CLAUDE_
 
   if (envTtl) {
     const parsed = parseInt(envTtl, 10)
@@ -441,7 +441,7 @@ export function calculateApiKeyHelperTTL(): number {
       return parsed
     }
     logForDebugging(
-      `Found Claude_CODE_API_KEY_HELPER_TTL_MS env var, but it was not a valid number. Got ${envTtl}`,
+      `Found CLAUDE_ env var, but it was not a valid number. Got ${envTtl}`,
       { level: 'error' },
     )
   }
@@ -1257,10 +1257,10 @@ export const getClaudeAIOAuthTokens = memoize((): OAuthTokens | null => {
   if (isBareMode()) return null
 
   // Check for force-set OAuth token from environment variable
-  if (process.env.Claude_CODE_OAUTH_TOKEN) {
+  if (process.env.CLAUDE_) {
     // Return an inference-only token (unknown refresh and expiry)
     return {
-      accessToken: process.env.Claude_CODE_OAUTH_TOKEN,
+      accessToken: process.env.CLAUDE_,
       refreshToken: null,
       expiresAt: null,
       scopes: ['user:inference'],
@@ -1401,7 +1401,7 @@ export async function getClaudeAIOAuthTokensAsync(): Promise<OAuthTokens | null>
 
   // Env var and FD tokens are sync and don't hit the keychain
   if (
-    process.env.Claude_CODE_OAUTH_TOKEN ||
+    process.env.CLAUDE_ ||
     getOAuthTokenFromFileDescriptor()
   ) {
     return getClaudeAIOAuthTokens()
@@ -1530,7 +1530,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
     logEvent('tengu_oauth_token_refresh_starting', {})
     const refreshedTokens = await refreshOAuthToken(lockedTokens.refreshToken, {
       // For Claude.ai subscribers, omit scopes so the default
-      // Claude_AI_OAUTH_SCOPES applies — this allows scope expansion
+      // CLAUDE_ applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
       scopes: shouldUseClaudeAIAuth(lockedTokens.scopes)
         ? undefined
@@ -1579,7 +1579,7 @@ export function isClaudeAISubscriber(): boolean {
  */
 export function hasProfileScope(): boolean {
   return (
-    getClaudeAIOAuthTokens()?.scopes?.includes(Claude_AI_PROFILE_SCOPE) ?? false
+    getClaudeAIOAuthTokens()?.scopes?.includes(CLAUDE_) ?? false
   )
 }
 
@@ -1592,9 +1592,9 @@ export function is1PApiCustomer(): boolean {
 
   // Exclude Vertex, Bedrock, and Foundry customers
   if (
-    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY)
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_)
   ) {
     return false
   }
@@ -1731,9 +1731,9 @@ export function getSubscriptionName(): string {
 /** Check if using third-party services (Bedrock or Vertex or Foundry) */
 export function isUsing3PServices(): boolean {
   return !!(
-    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-    isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY)
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_) ||
+    isEnvTruthy(process.env.CLAUDE_)
   )
 }
 
@@ -1776,7 +1776,7 @@ export function getOtelHeadersFromHelper(): Record<string, string> {
 
   // Return cached headers if still valid (debounce)
   const debounceMs = parseInt(
-    process.env.Claude_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS ||
+    process.env.CLAUDE_ ||
       DEFAULT_OTEL_HEADERS_DEBOUNCE_MS.toString(),
   )
   if (
@@ -1869,8 +1869,8 @@ export function getAccountInformation() {
   const { source: authTokenSource } = getAuthTokenSource()
   const accountInfo: UserAccountInfo = {}
   if (
-    authTokenSource === 'Claude_CODE_OAUTH_TOKEN' ||
-    authTokenSource === 'Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+    authTokenSource === 'CLAUDE_' ||
+    authTokenSource === 'CLAUDE_'
   ) {
     accountInfo.tokenSource = authTokenSource
   } else if (isClaudeAISubscriber()) {
@@ -1952,8 +1952,8 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
   // in ~/.claude.json is user-writable and cannot be trusted.
   const { source } = getAuthTokenSource()
   const isEnvVarToken =
-    source === 'Claude_CODE_OAUTH_TOKEN' ||
-    source === 'Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+    source === 'CLAUDE_' ||
+    source === 'CLAUDE_'
 
   const profile = await getOauthProfileFromOauthToken(tokens.accessToken)
   if (!profile) {
@@ -1976,9 +1976,9 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
 
   if (isEnvVarToken) {
     const envVarName =
-      source === 'Claude_CODE_OAUTH_TOKEN'
-        ? 'Claude_CODE_OAUTH_TOKEN'
-        : 'Claude_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR'
+      source === 'CLAUDE_'
+        ? 'CLAUDE_'
+        : 'CLAUDE_'
     return {
       valid: false,
       message:

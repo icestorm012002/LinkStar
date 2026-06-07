@@ -206,7 +206,7 @@ export type ParsedPowerShellCommand = {
 // top-level, per Claude.md (globalSettings.env ordering).
 const DEFAULT_PARSE_TIMEOUT_MS = 5_000
 function getParseTimeoutMs(): number {
-  const env = process.env.Claude_CODE_PWSH_PARSE_TIMEOUT_MS
+  const env = process.env.CLAUDE_
   if (env) {
     const parsed = parseInt(env, 10)
     if (!isNaN(parsed) && parsed > 0) return parsed

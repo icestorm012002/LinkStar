@@ -99,7 +99,7 @@ const skillSearchFeatureCheck = feature('EXPERIMENTAL_SKILL_SEARCH')
 import type { OutputStyleConfig } from './outputStyles.js'
 import { CYBER_RISK_INSTRUCTION } from './cyberRiskInstruction.js'
 
-export const Claude_CODE_DOCS_MAP_URL =
+export const CLAUDE_ =
   'https://code.Claude.com/docs/en/Claude_code_docs_map.md'
 
 /**
@@ -118,7 +118,7 @@ export const SYSTEM_PROMPT_DYNAMIC_BOUNDARY =
 const FRONTIER_MODEL_NAME = 'Claude Opus 4.6'
 
 // @[MODEL LAUNCH]: Update the model family IDs below to the latest in each tier.
-const Claude_4_5_OR_4_6_MODEL_IDS = {
+const CLAUDE_ = {
   opus: 'Claude-opus-4-6',
   sonnet: 'Claude-sonnet-4-6',
   haiku: 'Claude-haiku-4-5-20251001',
@@ -447,7 +447,7 @@ export async function getSystemPrompt(
   additionalWorkingDirectories?: string[],
   mcpClients?: MCPServerConnection[],
 ): Promise<string[]> {
-  if (isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     return [
       `You are CLAUDE, a state-of-the-art AI coding assistant developed by A1 Coder.\n\nCWD: ${getCwd()}\nDate: ${getSessionStartDate()}\n\nYou are powered by the AI model: ${model}.\nWhen asked about your model, engine, or identity, always answer honestly based on this model name. You must state that you are running on "${model}". Never refer to yourself as Claude unless you are actually running on a Claude model.`,
     ]
@@ -693,7 +693,7 @@ export async function computeSimpleEnvInfo(
     knowledgeCutoffMessage,
     process.env.USER_TYPE === 'ant' && isUndercover()
       ? null
-      : `The most recent Claude model family is Claude 4.5/4.6. Model IDs — Opus 4.6: '${Claude_4_5_OR_4_6_MODEL_IDS.opus}', Sonnet 4.6: '${Claude_4_5_OR_4_6_MODEL_IDS.sonnet}', Haiku 4.5: '${Claude_4_5_OR_4_6_MODEL_IDS.haiku}'. When building AI applications, default to the latest and most capable Claude models.`,
+      : `The most recent Claude model family is Claude 4.5/4.6. Model IDs — Opus 4.6: '${CLAUDE_.opus}', Sonnet 4.6: '${CLAUDE_.sonnet}', Haiku 4.5: '${CLAUDE_.haiku}'. When building AI applications, default to the latest and most capable Claude models.`,
     process.env.USER_TYPE === 'ant' && isUndercover()
       ? null
       : `Claude is available as a CLI in the terminal, desktop app (Mac/Windows), web app (Claude.ai/code), and IDE extensions (VS Code, JetBrains).`,

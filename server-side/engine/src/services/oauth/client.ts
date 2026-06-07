@@ -6,8 +6,8 @@ import {
 } from 'src/services/analytics/index.js'
 import {
   ALL_OAUTH_SCOPES,
-  Claude_AI_INFERENCE_SCOPE,
-  Claude_AI_OAUTH_SCOPES,
+  CLAUDE_,
+  CLAUDE_,
   getOauthConfig,
 } from '../../constants/oauth.js'
 import {
@@ -36,7 +36,7 @@ import type {
  * @private Only call this if you're OAuth / auth related code!
  */
 export function shouldUseClaudeAIAuth(scopes: string[] | undefined): boolean {
-  return Boolean(scopes?.includes(Claude_AI_INFERENCE_SCOPE))
+  return Boolean(scopes?.includes(CLAUDE_))
 }
 
 export function parseScopes(scopeString?: string): string[] {
@@ -69,7 +69,7 @@ export function buildAuthUrl({
   const authUrlBase =
     authorizeUrlOverride ??
     (loginWithClaudeAi
-      ? getOauthConfig().Claude_AI_AUTHORIZE_URL
+      ? getOauthConfig().CLAUDE_
       : getOauthConfig().CONSOLE_AUTHORIZE_URL)
 
   const authUrl = new URL(authUrlBase)
@@ -83,7 +83,7 @@ export function buildAuthUrl({
       : `http://localhost:${port}/callback`,
   )
   const scopesToUse = inferenceOnly
-    ? [Claude_AI_INFERENCE_SCOPE] // Long-lived inference-only tokens
+    ? [CLAUDE_] // Long-lived inference-only tokens
     : ALL_OAUTH_SCOPES
   authUrl.searchParams.append('scope', scopesToUse.join(' '))
   authUrl.searchParams.append('code_challenge', codeChallenge)
@@ -162,7 +162,7 @@ export async function refreshOAuthToken(
     // registered oauth_scope.
     scope: (requestedScopes?.length
       ? requestedScopes
-      : Claude_AI_OAUTH_SCOPES
+      : CLAUDE_
     ).join(' '),
   }
 
@@ -193,7 +193,7 @@ export async function refreshOAuthToken(
     // Routine refreshes satisfy both, so we cut ~7M req/day fleet-wide.
     //
     // Checking secure storage (not just config) matters for the
-    // Claude_CODE_OAUTH_REFRESH_TOKEN re-login path: installOAuthTokens runs
+    // CLAUDE_ re-login path: installOAuthTokens runs
     // performLogout() AFTER we return, wiping secure storage. If we returned
     // null for subscriptionType here, saveOAuthTokensIfNeeded would persist
     // null ?? (wiped) ?? null = null, and every future refresh would see the
@@ -458,9 +458,9 @@ export async function populateOAuthAccountInfoIfNeeded(): Promise<boolean> {
   // eliminates the race condition where early telemetry events lack account info.
   // NB: If/when adding additional SDK-relevant functionality requiring _other_ OAuth account properties,
   // please reach out to #proj-cowork so the team can add additional env var fallbacks.
-  const envAccountUuid = process.env.Claude_CODE_ACCOUNT_UUID
-  const envUserEmail = process.env.Claude_CODE_USER_EMAIL
-  const envOrganizationUuid = process.env.Claude_CODE_ORGANIZATION_UUID
+  const envAccountUuid = process.env.CLAUDE_
+  const envUserEmail = process.env.CLAUDE_
+  const envOrganizationUuid = process.env.CLAUDE_
   const hasEnvVars = Boolean(
     envAccountUuid && envUserEmail && envOrganizationUuid,
   )

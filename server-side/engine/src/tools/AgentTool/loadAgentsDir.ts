@@ -296,7 +296,7 @@ async function initializeAgentMemorySnapshots(
 export const getAgentDefinitionsWithOverrides = memoize(
   async (cwd: string): Promise<AgentDefinitionsResult> => {
     // Simple mode: skip custom agents, only return built-ins
-    if (isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+    if (isEnvTruthy(process.env.CLAUDE_)) {
       const builtInAgents = getBuiltInAgents()
       return {
         activeAgents: builtInAgents,

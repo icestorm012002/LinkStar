@@ -12,8 +12,8 @@ export function createIdleTimeoutManager(isIdle: () => boolean): {
   start: () => void
   stop: () => void
 } {
-  // Parse Claude_CODE_EXIT_AFTER_STOP_DELAY environment variable
-  const exitAfterStopDelay = process.env.Claude_CODE_EXIT_AFTER_STOP_DELAY
+  // Parse CLAUDE_ environment variable
+  const exitAfterStopDelay = process.env.CLAUDE_
   const delayMs = exitAfterStopDelay ? parseInt(exitAfterStopDelay, 10) : null
   const isValidDelay = delayMs && !isNaN(delayMs) && delayMs > 0
 

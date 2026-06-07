@@ -61,7 +61,7 @@ export function buildEffectiveSystemPrompt({
   // dependency issues during test module loading.
   if (
     feature('COORDINATOR_MODE') &&
-    isEnvTruthy(process.env.Claude_CODE_COORDINATOR_MODE) &&
+    isEnvTruthy(process.env.CLAUDE_) &&
     !mainThreadAgentDefinition
   ) {
     // Lazy require to avoid circular dependency at module load time

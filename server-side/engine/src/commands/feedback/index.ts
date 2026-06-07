@@ -11,9 +11,9 @@ const feedback = {
   argumentHint: '[report]',
   isEnabled: () =>
     !(
-      isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-      isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-      isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
       isEnvTruthy(process.env.DISABLE_FEEDBACK_COMMAND) ||
       isEnvTruthy(process.env.DISABLE_BUG_COMMAND) ||
       isEssentialTrafficOnly() ||

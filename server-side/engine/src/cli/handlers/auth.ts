@@ -238,12 +238,12 @@ export async function authLogin({
 
   // Fast path: if a refresh token is provided via env var, skip the browser
   // OAuth flow and exchange it directly for tokens.
-  const envRefreshToken = process.env.Claude_CODE_OAUTH_REFRESH_TOKEN
+  const envRefreshToken = process.env.CLAUDE_
   if (envRefreshToken) {
-    const envScopes = process.env.Claude_CODE_OAUTH_SCOPES
+    const envScopes = process.env.CLAUDE_
     if (!envScopes) {
       process.stderr.write(
-        'Claude_CODE_OAUTH_SCOPES is required when using Claude_CODE_OAUTH_REFRESH_TOKEN.\n' +
+        'CLAUDE_ is required when using CLAUDE_.\n' +
           'Set it to the space-separated scopes the refresh token was issued with\n' +
           '(e.g. "user:inference" or "user:profile user:inference user:sessions:Claude_code user:mcp_servers").\n',
       )

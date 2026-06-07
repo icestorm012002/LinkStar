@@ -178,5 +178,5 @@ export async function isSignedIn(): Promise<boolean> {
 }
 
 export function getCodeWebUrl(): string {
-  return `${getOauthConfig().Claude_AI_ORIGIN}/code`
+  return `${getOauthConfig().CLAUDE_}/code`
 }

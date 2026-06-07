@@ -223,7 +223,7 @@ async function loadLspServersFromManifest(
 
 /**
  * Resolve environment variables for plugin LSP servers.
- * Handles ${Claude_PLUGIN_ROOT}, ${user_config.X}, and general ${VAR}
+ * Handles ${CLAUDE_}, ${user_config.X}, and general ${VAR}
  * substitution. Tracks missing environment variables for error reporting.
  */
 export function resolvePluginLspEnvironment(
@@ -262,14 +262,14 @@ export function resolvePluginLspEnvironment(
     resolved.args = resolved.args.map(arg => resolveValue(arg))
   }
 
-  // Resolve environment variables and add Claude_PLUGIN_ROOT / Claude_PLUGIN_DATA
+  // Resolve environment variables and add CLAUDE_ / CLAUDE_
   const resolvedEnv: Record<string, string> = {
-    Claude_PLUGIN_ROOT: plugin.path,
-    Claude_PLUGIN_DATA: getPluginDataDir(plugin.source),
+    CLAUDE_: plugin.path,
+    CLAUDE_: getPluginDataDir(plugin.source),
     ...(resolved.env || {}),
   }
   for (const [key, value] of Object.entries(resolvedEnv)) {
-    if (key !== 'Claude_PLUGIN_ROOT' && key !== 'Claude_PLUGIN_DATA') {
+    if (key !== 'CLAUDE_' && key !== 'CLAUDE_') {
       resolvedEnv[key] = resolveValue(value)
     }
   }

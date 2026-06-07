@@ -167,9 +167,9 @@ export function logError(error: unknown): void {
     // Check if error reporting should be disabled
     if (
       // Cloud providers (Bedrock/Vertex/Foundry) always disable features
-      isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) ||
-      isEnvTruthy(process.env.Claude_CODE_USE_VERTEX) ||
-      isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
       process.env.DISABLE_ERROR_REPORTING ||
       isEssentialTrafficOnly()
     ) {

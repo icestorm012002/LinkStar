@@ -162,8 +162,8 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         // Filter bash progress to send only one per minute
         // Only emit for Claude Remote for now
         if (
-          !isEnvTruthy(process.env.Claude_CODE_REMOTE) &&
-          !process.env.Claude_CODE_CONTAINER_ID
+          !isEnvTruthy(process.env.CLAUDE_) &&
+          !process.env.CLAUDE_
         ) {
           break
         }

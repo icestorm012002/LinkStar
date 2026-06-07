@@ -13,8 +13,8 @@
  * - User input waiting time
  *
  * Usage:
- * 1. Enable via Claude_CODE_PERFETTO_TRACE=1 or Claude_CODE_PERFETTO_TRACE=<path>
- * 2. Optionally set Claude_CODE_PERFETTO_WRITE_INTERVAL_S=<positive integer> to write the
+ * 1. Enable via CLAUDE_=1 or CLAUDE_=<path>
+ * 2. Optionally set CLAUDE_=<positive integer> to write the
  *    trace file periodically (default: write only on exit).
  * 3. Run Claude normally
  * 4. Trace file is written to ~/.Claude/traces/trace-<session-id>.json
@@ -251,7 +251,7 @@ function evictOldestEvents(): void {
  * Call this early in the application lifecycle
  */
 export function initializePerfettoTracing(): void {
-  const envValue = process.env.Claude_CODE_PERFETTO_TRACE
+  const envValue = process.env.CLAUDE_
   logForDebugging(
     `[Perfetto] initializePerfettoTracing called, env value: ${envValue}`,
   )
@@ -281,9 +281,9 @@ export function initializePerfettoTracing(): void {
       `[Perfetto] Tracing enabled, will write to: ${tracePath}, isEnabled=${isEnabled}`,
     )
 
-    // Start periodic full-trace write if Claude_CODE_PERFETTO_WRITE_INTERVAL_S is a positive integer
+    // Start periodic full-trace write if CLAUDE_ is a positive integer
     const intervalSec = parseInt(
-      process.env.Claude_CODE_PERFETTO_WRITE_INTERVAL_S ?? '',
+      process.env.CLAUDE_ ?? '',
       10,
     )
     if (intervalSec > 0) {

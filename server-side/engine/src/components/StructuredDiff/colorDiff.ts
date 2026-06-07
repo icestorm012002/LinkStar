@@ -10,13 +10,13 @@ export type ColorModuleUnavailableReason = 'env'
 
 /**
  * Returns a static reason why the color-diff module is unavailable, or null if available.
- * 'env' = disabled via Claude_CODE_SYNTAX_HIGHLIGHT
+ * 'env' = disabled via CLAUDE_
  *
  * The TS port of color-diff works in all build modes, so the only way to
  * disable it is via the env var.
  */
 export function getColorModuleUnavailableReason(): ColorModuleUnavailableReason | null {
-  if (isEnvDefinedFalsy(process.env.Claude_CODE_SYNTAX_HIGHLIGHT)) {
+  if (isEnvDefinedFalsy(process.env.CLAUDE_)) {
     return 'env'
   }
   return null

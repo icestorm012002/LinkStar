@@ -427,7 +427,7 @@ async function fetchSessionLogsFromUrl(
       headers,
       timeout: 20000,
       validateStatus: status => status < 500,
-      params: isEnvTruthy(process.env.Claude_AFTER_LAST_COMPACT)
+      params: isEnvTruthy(process.env.CLAUDE_)
         ? { after_last_compact: true }
         : undefined,
     })

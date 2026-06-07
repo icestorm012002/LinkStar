@@ -36,7 +36,7 @@ export function getPromptVariant(): PromptVariant {
 
 export function shouldEnablePromptSuggestion(): boolean {
   // Env var overrides everything (for testing)
-  const envOverride = process.env.Claude_CODE_ENABLE_PROMPT_SUGGESTION
+  const envOverride = process.env.CLAUDE_
   if (isEnvDefinedFalsy(envOverride)) {
     logEvent('tengu_prompt_suggestion_init', {
       enabled: false,

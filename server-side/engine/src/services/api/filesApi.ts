@@ -32,7 +32,7 @@ const ANTHROPIC_VERSION = '2023-06-01'
 function getDefaultApiBaseUrl(): string {
   return (
     process.env.ANTHROPIC_BASE_URL ||
-    process.env.Claude_CODE_API_BASE_URL ||
+    process.env.CLAUDE_ ||
     'https://api.anthropic.com'
   )
 }

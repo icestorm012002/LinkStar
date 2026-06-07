@@ -74,7 +74,7 @@ import {
 /**
  * Get the agent name to poll for messages.
  * - In-process teammates return undefined (they use waitForNextPromptOrShutdown instead)
- * - Process-based teammates use their Claude_CODE_AGENT_NAME
+ * - Process-based teammates use their CLAUDE_
  * - Team leads use their name from teamContext.teammates
  * - Standalone sessions return undefined
  */

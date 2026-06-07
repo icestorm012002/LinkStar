@@ -55,7 +55,7 @@ export async function logOTelEvent(
   // Workspace directory from the desktop app (host path). Events only —
   // filesystem paths are too high-cardinality for metric dimensions, and
   // the BQ metrics pipeline must never see them.
-  const workspaceDir = process.env.Claude_CODE_WORKSPACE_HOST_PATHS
+  const workspaceDir = process.env.CLAUDE_
   if (workspaceDir) {
     attributes['workspace.host_paths'] = workspaceDir.split('|')
   }

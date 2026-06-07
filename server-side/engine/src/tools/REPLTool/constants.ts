@@ -12,7 +12,7 @@ export const REPL_TOOL_NAME = 'REPL'
 
 /**
  * REPL mode is default-on for ants in the interactive CLI (opt out with
- * Claude_CODE_REPL=0). The legacy Claude_REPL_MODE=1 also forces it on.
+ * CLAUDE_=0). The legacy CLAUDE_=1 also forces it on.
  *
  * SDK entrypoints (sdk-ts, sdk-py, sdk-cli) are NOT defaulted on — SDK
  * consumers script direct tool calls (Bash, Read, etc.) and REPL mode
@@ -21,11 +21,11 @@ export const REPL_TOOL_NAME = 'REPL'
  * of the env the caller passes.
  */
 export function isReplModeEnabled(): boolean {
-  if (isEnvDefinedFalsy(process.env.Claude_CODE_REPL)) return false
-  if (isEnvTruthy(process.env.Claude_REPL_MODE)) return true
+  if (isEnvDefinedFalsy(process.env.CLAUDE_)) return false
+  if (isEnvTruthy(process.env.CLAUDE_)) return true
   return (
     process.env.USER_TYPE === 'ant' &&
-    process.env.Claude_CODE_ENTRYPOINT === 'cli'
+    process.env.CLAUDE_ === 'cli'
   )
 }
 

@@ -239,11 +239,11 @@ const externalTips: Tip[] = [
   {
     id: 'powershell-tool-env',
     content: async () =>
-      'Set Claude_CODE_USE_POWERSHELL_TOOL=1 to enable the PowerShell tool (preview)',
+      'Set CLAUDE_=1 to enable the PowerShell tool (preview)',
     cooldownSessions: 10,
     isRelevant: async () =>
       getPlatform() === 'windows' &&
-      process.env.Claude_CODE_USE_POWERSHELL_TOOL === undefined,
+      process.env.CLAUDE_ === undefined,
   },
   {
     id: 'status-line',

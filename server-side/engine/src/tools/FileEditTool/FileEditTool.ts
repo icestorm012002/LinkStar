@@ -404,7 +404,7 @@ export const FileEditTool = buildTool({
     // Discover skills from this file's path (fire-and-forget, non-blocking)
     // Skip in simple mode - no skills available
     const cwd = getCwd()
-    if (!isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
+    if (!isEnvTruthy(process.env.CLAUDE_)) {
       const newSkillDirs = await discoverSkillDirsForPaths(
         [absoluteFilePath],
         cwd,
@@ -544,7 +544,7 @@ export const FileEditTool = buildTool({
 
     let gitDiff: ToolUseDiff | undefined
     if (
-      isEnvTruthy(process.env.Claude_CODE_REMOTE) &&
+      isEnvTruthy(process.env.CLAUDE_) &&
       getFeatureValue_CACHED_MAY_BE_STALE('tengu_quartz_lantern', false)
     ) {
       const startTime = Date.now()

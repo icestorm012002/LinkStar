@@ -41,11 +41,11 @@ async function createWorkflowFile(
   }
 
   let content = workflowContent
-  if (secretName === 'Claude_CODE_OAUTH_TOKEN') {
+  if (secretName === 'CLAUDE_') {
     // For OAuth tokens, use the Claude_code_oauth_token parameter
     content = workflowContent.replace(
       /anthropic_api_key: \$\{\{ secrets\.ANTHROPIC_API_KEY \}\}/g,
-      `Claude_code_oauth_token: \${{ secrets.Claude_CODE_OAUTH_TOKEN }}`,
+      `Claude_code_oauth_token: \${{ secrets.CLAUDE_ }}`,
     )
   } else if (secretName !== 'ANTHROPIC_API_KEY') {
     // For other custom secret names, keep using anthropic_api_key parameter

@@ -1202,7 +1202,7 @@ async function* queryLoop(
         if (
           capEnabled &&
           maxOutputTokensOverride === undefined &&
-          !process.env.Claude_CODE_MAX_OUTPUT_TOKENS
+          !process.env.CLAUDE_
         ) {
           logEvent('tengu_max_tokens_escalate', {
             escalatedTo: ESCALATED_MAX_TOKENS,

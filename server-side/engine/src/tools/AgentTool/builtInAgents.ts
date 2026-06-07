@@ -2,7 +2,7 @@ import { feature } from 'bun:bundle'
 import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
-import { Claude_CODE_GUIDE_AGENT } from './built-in/claudeCodeGuideAgent.js'
+import { CLAUDE_ } from './built-in/claudeCodeGuideAgent.js'
 import { EXPLORE_AGENT } from './built-in/exploreAgent.js'
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js'
 import { PLAN_AGENT } from './built-in/planAgent.js'
@@ -23,7 +23,7 @@ export function getBuiltInAgents(): AgentDefinition[] {
   // Allow disabling all built-in agents via env var (useful for SDK users who want a blank slate)
   // Only applies in noninteractive mode (SDK/API usage)
   if (
-    isEnvTruthy(process.env.Claude_AGENT_SDK_DISABLE_BUILTIN_AGENTS) &&
+    isEnvTruthy(process.env.CLAUDE_) &&
     getIsNonInteractiveSession()
   ) {
     return []
@@ -33,7 +33,7 @@ export function getBuiltInAgents(): AgentDefinition[] {
   // issues at module init time. The coordinatorMode module depends on tools
   // which depend on AgentTool which imports this file.
   if (feature('COORDINATOR_MODE')) {
-    if (isEnvTruthy(process.env.Claude_CODE_COORDINATOR_MODE)) {
+    if (isEnvTruthy(process.env.CLAUDE_)) {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const { getCoordinatorAgents } =
         require('../../coordinator/workerAgent.js') as typeof import('../../coordinator/workerAgent.js')
@@ -53,12 +53,12 @@ export function getBuiltInAgents(): AgentDefinition[] {
 
   // Include Code Guide agent for non-SDK entrypoints
   const isNonSdkEntrypoint =
-    process.env.Claude_CODE_ENTRYPOINT !== 'sdk-ts' &&
-    process.env.Claude_CODE_ENTRYPOINT !== 'sdk-py' &&
-    process.env.Claude_CODE_ENTRYPOINT !== 'sdk-cli'
+    process.env.CLAUDE_ !== 'sdk-ts' &&
+    process.env.CLAUDE_ !== 'sdk-py' &&
+    process.env.CLAUDE_ !== 'sdk-cli'
 
   if (isNonSdkEntrypoint) {
-    agents.push(Claude_CODE_GUIDE_AGENT)
+    agents.push(CLAUDE_)
   }
 
   if (

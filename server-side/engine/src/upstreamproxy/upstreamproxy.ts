@@ -82,7 +82,7 @@ export async function initUpstreamProxy(opts?: {
   caBundlePath?: string
   ccrBaseUrl?: string
 }): Promise<UpstreamProxyState> {
-  if (!isEnvTruthy(process.env.Claude_CODE_REMOTE)) {
+  if (!isEnvTruthy(process.env.CLAUDE_)) {
     return state
   }
   // CCR evaluates ccr_upstream_proxy_enabled server-side (where GrowthBook is
@@ -93,10 +93,10 @@ export async function initUpstreamProxy(opts?: {
     return state
   }
 
-  const sessionId = process.env.Claude_CODE_REMOTE_SESSION_ID
+  const sessionId = process.env.CLAUDE_
   if (!sessionId) {
     logForDebugging(
-      '[upstreamproxy] Claude_CODE_REMOTE_SESSION_ID unset; proxy disabled',
+      '[upstreamproxy] CLAUDE_ unset; proxy disabled',
       { level: 'warn' },
     )
     return state

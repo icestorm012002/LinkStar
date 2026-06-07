@@ -27,14 +27,14 @@ export const getMTLSConfig = memoize((): MTLSConfig | undefined => {
   // We don't need to manually load it - Node.js appends it to the built-in CAs automatically
 
   // Client certificate
-  if (process.env.Claude_CODE_CLIENT_CERT) {
+  if (process.env.CLAUDE_) {
     try {
       config.cert = getFsImplementation().readFileSync(
-        process.env.Claude_CODE_CLIENT_CERT,
+        process.env.CLAUDE_,
         { encoding: 'utf8' },
       )
       logForDebugging(
-        'mTLS: Loaded client certificate from Claude_CODE_CLIENT_CERT',
+        'mTLS: Loaded client certificate from CLAUDE_',
       )
     } catch (error) {
       logForDebugging(`mTLS: Failed to load client certificate: ${error}`, {
@@ -44,13 +44,13 @@ export const getMTLSConfig = memoize((): MTLSConfig | undefined => {
   }
 
   // Client key
-  if (process.env.Claude_CODE_CLIENT_KEY) {
+  if (process.env.CLAUDE_) {
     try {
       config.key = getFsImplementation().readFileSync(
-        process.env.Claude_CODE_CLIENT_KEY,
+        process.env.CLAUDE_,
         { encoding: 'utf8' },
       )
-      logForDebugging('mTLS: Loaded client key from Claude_CODE_CLIENT_KEY')
+      logForDebugging('mTLS: Loaded client key from CLAUDE_')
     } catch (error) {
       logForDebugging(`mTLS: Failed to load client key: ${error}`, {
         level: 'error',
@@ -59,8 +59,8 @@ export const getMTLSConfig = memoize((): MTLSConfig | undefined => {
   }
 
   // Key passphrase
-  if (process.env.Claude_CODE_CLIENT_KEY_PASSPHRASE) {
-    config.passphrase = process.env.Claude_CODE_CLIENT_KEY_PASSPHRASE
+  if (process.env.CLAUDE_) {
+    config.passphrase = process.env.CLAUDE_
     logForDebugging('mTLS: Using client key passphrase')
   }
 

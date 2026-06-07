@@ -14,11 +14,11 @@ import type {
   BuiltInAgentDefinition,
 } from '../loadAgentsDir.js'
 
-const Claude_CODE_DOCS_MAP_URL =
+const CLAUDE_ =
   'https://code.Claude.com/docs/en/Claude_code_docs_map.md'
 const CDP_DOCS_MAP_URL = 'https://platform.Claude.com/llms.txt'
 
-export const Claude_CODE_GUIDE_AGENT_TYPE = 'Claude-code-guide'
+export const CLAUDE_ = 'Claude-code-guide'
 
 function getClaudeCodeGuideBasePrompt(): string {
   // Ant-native builds alias find/grep to embedded bfs/ugrep and remove the
@@ -39,7 +39,7 @@ function getClaudeCodeGuideBasePrompt(): string {
 
 **Documentation sources:**
 
-- **Claude docs** (${Claude_CODE_DOCS_MAP_URL}): Fetch this for questions about the Claude CLI tool, including:
+- **Claude docs** (${CLAUDE_}): Fetch this for questions about the Claude CLI tool, including:
   - Installation, setup, and getting started
   - Hooks (pre/post command execution)
   - Custom skills
@@ -95,8 +95,8 @@ function getFeedbackGuideline(): string {
   return "- When you cannot find an answer or the feature doesn't exist, direct the user to use /feedback to report a feature request or bug"
 }
 
-export const Claude_CODE_GUIDE_AGENT: BuiltInAgentDefinition = {
-  agentType: Claude_CODE_GUIDE_AGENT_TYPE,
+export const CLAUDE_: BuiltInAgentDefinition = {
+  agentType: CLAUDE_,
   whenToUse: `Use this agent when the user asks questions ("Can Claude...", "Does Claude...", "How do I...") about: (1) Claude (the CLI tool) - features, hooks, slash commands, MCP servers, settings, IDE integrations, keyboard shortcuts; (2) Claude Agent SDK - building custom agents; (3) Claude API (formerly Anthropic API) - API usage, tool use, Anthropic SDK usage. **IMPORTANT:** Before spawning a new agent, check if there is already a running or recently completed Claude-code-guide agent that you can continue via ${SEND_MESSAGE_TOOL_NAME}.`,
   // Ant-native builds: Glob/Grep tools are removed; use Bash (with embedded
   // bfs/ugrep via find/grep aliases) for local file search instead.

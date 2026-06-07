@@ -44,7 +44,7 @@ function isGateEnabled(): boolean {
 // that a gate flip after GrowthBook refresh takes effect without a restart.
 const readStoredToken = memoize((): string | undefined => {
   // Env var takes precedence for testing/canary.
-  const envToken = process.env.Claude_TRUSTED_DEVICE_TOKEN
+  const envToken = process.env.CLAUDE_
   if (envToken) {
     return envToken
   }
@@ -106,12 +106,12 @@ export async function enrollTrustedDevice(): Promise<void> {
       )
       return
     }
-    // If Claude_TRUSTED_DEVICE_TOKEN is set (e.g. by an enterprise wrapper),
+    // If CLAUDE_ is set (e.g. by an enterprise wrapper),
     // skip enrollment — the env var takes precedence in readStoredToken() so
     // any enrolled token would be shadowed and never used.
-    if (process.env.Claude_TRUSTED_DEVICE_TOKEN) {
+    if (process.env.CLAUDE_) {
       logForDebugging(
-        '[trusted-device] Claude_TRUSTED_DEVICE_TOKEN env var is set, skipping enrollment (env var takes precedence)',
+        '[trusted-device] CLAUDE_ env var is set, skipping enrollment (env var takes precedence)',
       )
       return
     }

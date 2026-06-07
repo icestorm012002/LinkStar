@@ -48,10 +48,10 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
 
     if (
       process.env.USER_TYPE === 'ant' &&
-      process.env.ANT_Claude_CODE_METRICS_ENDPOINT
+      process.env.ANT_CLAUDE_
     ) {
       this.endpoint =
-        process.env.ANT_Claude_CODE_METRICS_ENDPOINT +
+        process.env.ANT_CLAUDE_ +
         '/api/claude_code/metrics'
     } else {
       this.endpoint = defaultEndpoint

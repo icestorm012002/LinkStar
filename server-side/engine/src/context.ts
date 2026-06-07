@@ -122,7 +122,7 @@ export const getSystemContext = memoize(
 
     // Skip git status in CCR (unnecessary overhead on resume) or when git instructions are disabled
     const gitStatus =
-      isEnvTruthy(process.env.Claude_CODE_REMOTE) ||
+      isEnvTruthy(process.env.CLAUDE_) ||
       !shouldIncludeGitInstructions()
         ? null
         : await getGitStatus()
@@ -159,11 +159,11 @@ export const getUserContext = memoize(
     const startTime = Date.now()
     logForDiagnosticsNoPII('info', 'user_context_started')
 
-    // Claude_CODE_DISABLE_Claude_MDS: hard off, always.
+    // CLAUDE_laude_MDS: hard off, always.
     // --bare: skip auto-discovery (cwd walk), BUT honor explicit --add-dir.
     // --bare means "skip what I didn't ask for", not "ignore what I asked for".
     const shouldDisableClaudeMd =
-      isEnvTruthy(process.env.Claude_CODE_DISABLE_Claude_MDS) ||
+      isEnvTruthy(process.env.CLAUDE_laude_MDS) ||
       (isBareMode() && getAdditionalDirectoriesForClaudeMd().length === 0)
     // Await the async I/O (readFile/readdir directory walk) so the event
     // loop yields naturally at the first fs.readFile.

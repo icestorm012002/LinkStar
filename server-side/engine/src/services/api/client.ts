@@ -54,10 +54,10 @@ import {
  *
  * Vertex AI:
  * - Model-specific region variables (highest priority):
- *   - VERTEX_REGION_Claude_3_5_HAIKU: Region for Claude 3.5 Haiku model
- *   - VERTEX_REGION_Claude_HAIKU_4_5: Region for Claude Haiku 4.5 model
- *   - VERTEX_REGION_Claude_3_5_SONNET: Region for Claude 3.5 Sonnet model
- *   - VERTEX_REGION_Claude_3_7_SONNET: Region for Claude 3.7 Sonnet model
+ *   - VERTEX_REGION_CLAUDE_: Region for Claude 3.5 Haiku model
+ *   - VERTEX_REGION_CLAUDE_: Region for Claude Haiku 4.5 model
+ *   - VERTEX_REGION_CLAUDE_: Region for Claude 3.5 Sonnet model
+ *   - VERTEX_REGION_CLAUDE_: Region for Claude 3.7 Sonnet model
  * - CLOUD_ML_REGION: Optional. The default GCP region to use for all models
  *   If specific model region not specified above
  * - ANTHROPIC_VERTEX_PROJECT_ID: Required. Your GCP project ID
@@ -98,9 +98,9 @@ export async function getAnthropicClient({
   fetchOverride?: ClientOptions['fetch']
   source?: string
 }): Promise<Anthropic> {
-  const containerId = process.env.Claude_CODE_CONTAINER_ID
-  const remoteSessionId = process.env.Claude_CODE_REMOTE_SESSION_ID
-  const clientApp = process.env.Claude_AGENT_SDK_CLIENT_APP
+  const containerId = process.env.CLAUDE_
+  const remoteSessionId = process.env.CLAUDE_
+  const clientApp = process.env.CLAUDE_
   const customHeaders = getCustomHeaders()
   const defaultHeaders: { [key: string]: string } = {
     'x-app': 'cli',
@@ -122,7 +122,7 @@ export async function getAnthropicClient({
 
   // Add additional protection header if enabled via env var
   const additionalProtectionEnabled = isEnvTruthy(
-    process.env.Claude_CODE_ADDITIONAL_PROTECTION,
+    process.env.CLAUDE_,
   )
   if (additionalProtectionEnabled) {
     defaultHeaders['x-anthropic-additional-protection'] = 'true'
@@ -150,7 +150,7 @@ export async function getAnthropicClient({
       fetch: resolvedFetch,
     }),
   }
-  if (isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     const { AnthropicBedrock } = await import('@anthropic-ai/bedrock-sdk')
     // Use region override for small fast model if specified
     const awsRegion =
@@ -162,7 +162,7 @@ export async function getAnthropicClient({
     const bedrockArgs: Record<string, unknown> = {
       ...ARGS,
       awsRegion,
-      ...(isEnvTruthy(process.env.Claude_CODE_SKIP_BEDROCK_AUTH) && {
+      ...(isEnvTruthy(process.env.CLAUDE_) && {
         skipAuth: true,
       }),
       ...(isDebugToStdErr() && { logger: createStderrLogger() }),
@@ -176,7 +176,7 @@ export async function getAnthropicClient({
         ...(bedrockArgs.defaultHeaders as Record<string, string> | undefined),
         Authorization: `Bearer ${process.env.AWS_BEARER_TOKEN_BEDROCK}`,
       }
-    } else if (!isEnvTruthy(process.env.Claude_CODE_SKIP_BEDROCK_AUTH)) {
+    } else if (!isEnvTruthy(process.env.CLAUDE_)) {
       // Refresh auth and get credentials with cache clearing
       const cachedCredentials = await refreshAndGetAwsCredentials()
       if (cachedCredentials) {
@@ -188,13 +188,13 @@ export async function getAnthropicClient({
     // we have always been lying about the return type - this doesn't support batching or models
     return new AnthropicBedrock(bedrockArgs) as unknown as Anthropic
   }
-  if (isEnvTruthy(process.env.Claude_CODE_USE_FOUNDRY)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     const { AnthropicFoundry } = await import('@anthropic-ai/foundry-sdk')
     // Determine Azure AD token provider based on configuration
     // SDK reads ANTHROPIC_FOUNDRY_API_KEY by default
     let azureADTokenProvider: (() => Promise<string>) | undefined
     if (!process.env.ANTHROPIC_FOUNDRY_API_KEY) {
-      if (isEnvTruthy(process.env.Claude_CODE_SKIP_FOUNDRY_AUTH)) {
+      if (isEnvTruthy(process.env.CLAUDE_)) {
         // Mock token provider for testing/proxy scenarios (similar to Vertex mock GoogleAuth)
         azureADTokenProvider = () => Promise.resolve('')
       } else {
@@ -218,10 +218,10 @@ export async function getAnthropicClient({
     // we have always been lying about the return type - this doesn't support batching or models
     return new AnthropicFoundry(foundryArgs) as unknown as Anthropic
   }
-  if (isEnvTruthy(process.env.Claude_CODE_USE_VERTEX)) {
+  if (isEnvTruthy(process.env.CLAUDE_)) {
     // Refresh GCP credentials if gcpAuthRefresh is configured and credentials are expired
     // This is similar to how we handle AWS credential refresh for Bedrock
-    if (!isEnvTruthy(process.env.Claude_CODE_SKIP_VERTEX_AUTH)) {
+    if (!isEnvTruthy(process.env.CLAUDE_)) {
       await refreshGcpCredentialsIfNeeded()
     }
 
@@ -263,7 +263,7 @@ export async function getAnthropicClient({
       process.env['GOOGLE_APPLICATION_CREDENTIALS'] ||
       process.env['google_application_credentials']
 
-    const googleAuth = isEnvTruthy(process.env.Claude_CODE_SKIP_VERTEX_AUTH)
+    const googleAuth = isEnvTruthy(process.env.CLAUDE_)
       ? ({
           // Mock GoogleAuth for testing/proxy scenarios
           getClient: () => ({

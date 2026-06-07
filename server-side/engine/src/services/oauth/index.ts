@@ -77,7 +77,7 @@ export class OAuthService {
       ? client.buildAuthUrl({
           ...opts,
           isManual: false,
-          authorizeUrlOverride: `${getOauthConfig().Claude_AI_ORIGIN.replace(/\/$/, '')}/oauth/authorize`,
+          authorizeUrlOverride: `${getOauthConfig().CLAUDE_.replace(/\/$/, '')}/oauth/authorize`,
         })
       : undefined
 

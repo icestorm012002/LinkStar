@@ -16,13 +16,13 @@ import { getWorkload } from './workloadContext.js'
 // WARNING: We rely on `Claude-cli` in the user agent for log filtering.
 // Please do NOT change this without making sure that logging also gets updated!
 export function getUserAgent(): string {
-  const agentSdkVersion = process.env.Claude_AGENT_SDK_VERSION
-    ? `, agent-sdk/${process.env.Claude_AGENT_SDK_VERSION}`
+  const agentSdkVersion = process.env.CLAUDE_
+    ? `, agent-sdk/${process.env.CLAUDE_}`
     : ''
-  // SDK consumers can identify their app/library via Claude_AGENT_SDK_CLIENT_APP
+  // SDK consumers can identify their app/library via CLAUDE_
   // e.g., "my-app/1.0.0" or "my-library/2.1"
-  const clientApp = process.env.Claude_AGENT_SDK_CLIENT_APP
-    ? `, client-app/${process.env.Claude_AGENT_SDK_CLIENT_APP}`
+  const clientApp = process.env.CLAUDE_
+    ? `, client-app/${process.env.CLAUDE_}`
     : ''
   // Turn-/process-scoped workload tag for cron-initiated requests. 1P-only
   // observability — proxies strip HTTP headers; QoS routing uses cc_workload
@@ -31,19 +31,19 @@ export function getUserAgent(): string {
   // so the read picks up the same setWorkload() value as getAttributionHeader.
   const workload = getWorkload()
   const workloadSuffix = workload ? `, workload/${workload}` : ''
-  return `Claude-cli/${MACRO.VERSION} (${process.env.USER_TYPE}, ${process.env.Claude_CODE_ENTRYPOINT ?? 'cli'}${agentSdkVersion}${clientApp}${workloadSuffix})`
+  return `Claude-cli/${MACRO.VERSION} (${process.env.USER_TYPE}, ${process.env.CLAUDE_ ?? 'cli'}${agentSdkVersion}${clientApp}${workloadSuffix})`
 }
 
 export function getMCPUserAgent(): string {
   const parts: string[] = []
-  if (process.env.Claude_CODE_ENTRYPOINT) {
-    parts.push(process.env.Claude_CODE_ENTRYPOINT)
+  if (process.env.CLAUDE_) {
+    parts.push(process.env.CLAUDE_)
   }
-  if (process.env.Claude_AGENT_SDK_VERSION) {
-    parts.push(`agent-sdk/${process.env.Claude_AGENT_SDK_VERSION}`)
+  if (process.env.CLAUDE_) {
+    parts.push(`agent-sdk/${process.env.CLAUDE_}`)
   }
-  if (process.env.Claude_AGENT_SDK_CLIENT_APP) {
-    parts.push(`client-app/${process.env.Claude_AGENT_SDK_CLIENT_APP}`)
+  if (process.env.CLAUDE_) {
+    parts.push(`client-app/${process.env.CLAUDE_}`)
   }
   const suffix = parts.length > 0 ? ` (${parts.join(', ')})` : ''
   return `Claude-code/${MACRO.VERSION}${suffix}`
