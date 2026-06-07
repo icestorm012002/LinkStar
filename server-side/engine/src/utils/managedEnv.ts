@@ -15,9 +15,9 @@ import {
 } from './settings/settings.js'
 
 /**
- * `Claude ssh` remote: ANTHROPIC_UNIX_SOCKET routes auth through a -R forwarded
+ * `claude ssh` remote: ANTHROPIC_UNIX_SOCKET routes auth through a -R forwarded
  * socket to a local proxy, and the launcher sets a handful of placeholder auth
- * env vars that the remote's ~/.Claude settings.env MUST NOT clobber (see
+ * env vars that the remote's ~/.claude settings.env MUST NOT clobber (see
  * isAnthropicAuthEnabled). Strip them from any settings-sourced env object.
  */
 function withoutSSHTunnelVars(
@@ -39,7 +39,7 @@ function withoutSSHTunnelVars(
  * When the host owns inference routing (sets
  * CLAUDE_ in spawn env), strip
  * provider-selection / model-default vars from settings-sourced env so a
- * user's ~/.Claude/settings.json can't redirect requests away from the
+ * user's ~/.claude/settings.json can't redirect requests away from the
  * host-configured provider.
  */
 function withoutHostManagedProviderVars(
@@ -93,7 +93,7 @@ function filterSettingsEnv(
 /**
  * Trusted setting sources whose env vars can be applied before the trust dialog.
  *
- * - userSettings (~/.Claude/settings.json): controlled by the user, not project-specific
+ * - userSettings (~/.claude/settings.json): controlled by the user, not project-specific
  * - flagSettings (--settings CLI flag or SDK inline settings): explicitly passed by the user
  * - policySettings (managed settings from enterprise API or local managed-settings.json):
  *   controlled by IT/admin (highest priority, cannot be overridden)
@@ -134,7 +134,7 @@ export function applySafeConfigEnvironmentVariables(): void {
   // Capture CCD spawn-env keys before any settings.env is applied (once).
   if (ccdSpawnEnvKeys === undefined) {
     ccdSpawnEnvKeys =
-      process.env.CLAUDE_ === 'Claude-desktop'
+      process.env.CLAUDE_ === 'claude-desktop'
         ? new Set(Object.keys(process.env))
         : null
   }
@@ -146,7 +146,7 @@ export function applySafeConfigEnvironmentVariables(): void {
 
   // Apply ALL env vars from trusted setting sources, policySettings last.
   // Gate on isSettingSourceEnabled so SDK settingSources: [] (isolation mode)
-  // doesn't get clobbered by ~/.Claude/settings.json env (gh#217). policy/flag
+  // doesn't get clobbered by ~/.claude/settings.json env (gh#217). policy/flag
   // sources are always enabled, so this only ever filters userSettings.
   for (const source of TRUSTED_SETTING_SOURCES) {
     if (source === 'policySettings') continue

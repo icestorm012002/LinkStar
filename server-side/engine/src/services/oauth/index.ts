@@ -46,7 +46,7 @@ export class OAuthService {
       /**
        * Don't call openBrowser(). Caller takes both URLs via authURLHandler
        * and decides how/where to open them. Used by the SDK control protocol
-       * (Claude_authenticate) where the SDK client owns the user's display,
+       * (claude_authenticate) where the SDK client owns the user's display,
        * not this process.
        */
       skipBrowserOpen?: boolean

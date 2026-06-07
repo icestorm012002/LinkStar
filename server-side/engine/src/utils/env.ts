@@ -21,7 +21,7 @@ export const getGlobalClaudeFile = memoize((): string => {
     return join(getClaudeConfigHomeDir(), '.config.json')
   }
 
-  const filename = `.Claude${fileSuffixForOauthConfig()}.json`
+  const filename = `.claude${fileSuffixForOauthConfig()}.json`
   return join(process.env.CLAUDE_ || homedir(), filename)
 })
 

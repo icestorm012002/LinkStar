@@ -5,7 +5,7 @@ import { isEnvTruthy } from './envUtils.js'
  * Actions. This prevents prompt-injection attacks from exfiltrating secrets
  * via shell expansion (e.g., ${ANTHROPIC_API_KEY}) in Bash tool commands.
  *
- * The parent Claude process keeps these vars (needed for API calls, lazy
+ * The parent claude process keeps these vars (needed for API calls, lazy
  * credential reads). Only child processes (bash, shell snapshot, MCP stdio, LSP, hooks) are scrubbed.
  *
  * GITHUB_TOKEN / GH_TOKEN are intentionally NOT scrubbed — wrapper scripts
@@ -13,7 +13,7 @@ import { isEnvTruthy } from './envUtils.js'
  * expires when the workflow ends.
  */
 const GHA_SUBPROCESS_SCRUB = [
-  // Anthropic auth — Claude re-reads these per-request, subprocesses don't need them
+  // Anthropic auth — claude re-reads these per-request, subprocesses don't need them
   'ANTHROPIC_API_KEY',
   'CLAUDE_',
   'ANTHROPIC_AUTH_TOKEN',
@@ -35,7 +35,7 @@ const GHA_SUBPROCESS_SCRUB = [
   'AZURE_CLIENT_SECRET',
   'AZURE_CLIENT_CERTIFICATE_PATH',
 
-  // GitHub Actions OIDC — consumed by the action's JS before Claude spawns;
+  // GitHub Actions OIDC — consumed by the action's JS before claude spawns;
   // leaking these allows minting an App installation token → repo takeover
   'ACTIONS_ID_TOKEN_REQUEST_TOKEN',
   'ACTIONS_ID_TOKEN_REQUEST_URL',
@@ -44,8 +44,8 @@ const GHA_SUBPROCESS_SCRUB = [
   'ACTIONS_RUNTIME_TOKEN',
   'ACTIONS_RUNTIME_URL',
 
-  // Claude-code-action-specific duplicates — action JS consumes these during
-  // prepare, before spawning Claude. ALL_INPUTS contains anthropic_api_key as JSON.
+  // claude-code-action-specific duplicates — action JS consumes these during
+  // prepare, before spawning claude. ALL_INPUTS contains anthropic_api_key as JSON.
   'ALL_INPUTS',
   'OVERRIDE_GITHUB_TOKEN',
   'DEFAULT_WORKFLOW_TOKEN',
@@ -57,7 +57,7 @@ const GHA_SUBPROCESS_SCRUB = [
  * spawning subprocesses (Bash tool, shell snapshot, MCP stdio servers, LSP
  * servers, shell hooks).
  *
- * Gated on CLAUDE_. Claude-code-action sets this
+ * Gated on CLAUDE_. claude-code-action sets this
  * automatically when `allowed_non_write_users` is configured — the flag that
  * exposes a workflow to untrusted content (prompt injection surface).
  */

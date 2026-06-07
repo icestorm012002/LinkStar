@@ -1,5 +1,5 @@
 /**
- * Marketplace manager for Claude plugins
+ * Marketplace manager for claude plugins
  *
  * This module provides functionality to:
  * - Manage known marketplace sources (URLs, GitHub repos, npm packages, local files)
@@ -8,13 +8,13 @@
  * - Track and update marketplace configurations
  *
  * File structure managed by this module:
- * ~/.Claude/
+ * ~/.claude/
  *   └── plugins/
  *       ├── known_marketplaces.json    # Configuration of all known marketplaces
  *       └── marketplaces/              # Cache directory for marketplace data
  *           ├── my-marketplace.json    # Cached marketplace from URL source
  *           └── github-marketplace/    # Cloned repository for GitHub source
- *               └── .Claude-plugin/
+ *               └── .claude-plugin/
  *                   └── marketplace.json
  */
 
@@ -182,7 +182,7 @@ export function getDeclaredMarketplaces(): Record<string, DeclaredMarketplace> {
   }
 
   // Lowest precedence: implicit < --add-dir < merged settings.
-  // An explicit extraKnownMarketplaces entry for Claude-plugins-official
+  // An explicit extraKnownMarketplaces entry for claude-plugins-official
   // in --add-dir or settings wins.
   return {
     ...implicit,
@@ -240,7 +240,7 @@ export function saveMarketplaceToSettings(
 /**
  * Load known marketplaces configuration from disk
  *
- * Reads the configuration file at ~/.Claude/plugins/known_marketplaces.json
+ * Reads the configuration file at ~/.claude/plugins/known_marketplaces.json
  * which contains a mapping of marketplace names to their sources and metadata.
  *
  * Example configuration file content:
@@ -248,12 +248,12 @@ export function saveMarketplaceToSettings(
  * {
  *   "official-marketplace": {
  *     "source": { "source": "url", "url": "https://example.com/marketplace.json" },
- *     "installLocation": "/Users/me/.Claude/plugins/marketplaces/official-marketplace.json",
+ *     "installLocation": "/Users/me/.claude/plugins/marketplaces/official-marketplace.json",
  *     "lastUpdated": "2024-01-15T10:30:00.000Z"
  *   },
  *   "company-plugins": {
  *     "source": { "source": "github", "repo": "mycompany/plugins" },
- *     "installLocation": "/Users/me/.Claude/plugins/marketplaces/company-plugins",
+ *     "installLocation": "/Users/me/.claude/plugins/marketplaces/company-plugins",
  *     "lastUpdated": "2024-01-14T15:45:00.000Z"
  *   }
  * }
@@ -311,7 +311,7 @@ export async function loadKnownMarketplacesConfigSafe(): Promise<KnownMarketplac
     return await loadKnownMarketplacesConfig()
   } catch {
     // Inner function already logged via logForDebugging. Don't logError here —
-    // corrupted user config isn't a Claude bug, shouldn't hit the error file.
+    // corrupted user config isn't a claude bug, shouldn't hit the error file.
     return {}
   }
 }
@@ -319,7 +319,7 @@ export async function loadKnownMarketplacesConfigSafe(): Promise<KnownMarketplac
 /**
  * Save known marketplaces configuration to disk
  *
- * Writes the configuration to ~/.Claude/plugins/known_marketplaces.json,
+ * Writes the configuration to ~/.claude/plugins/known_marketplaces.json,
  * creating the directory structure if it doesn't exist.
  *
  * @param config - The marketplace configuration to save
@@ -1070,7 +1070,7 @@ export async function reconcileSparseCheckout(
  * Example repository structure:
  * ```
  * my-marketplace/
- *   ├── .Claude-plugin/
+ *   ├── .claude-plugin/
  *   │   └── marketplace.json    # Default location for marketplace manifest
  *   ├── plugins/                # Plugin implementations
  *   └── README.md
@@ -1409,7 +1409,7 @@ async function parseFileWithSchema<T>(
  *
  * Handles different source types:
  * - URL: Downloads marketplace.json directly
- * - GitHub: Clones repo and looks for .Claude-plugin/marketplace.json
+ * - GitHub: Clones repo and looks for .claude-plugin/marketplace.json
  * - Git: Clones repository from git URL
  * - NPM: (Not yet implemented) Would fetch from npm package
  * - File: Reads from local filesystem
@@ -1418,10 +1418,10 @@ async function parseFileWithSchema<T>(
  * to match the marketplace's actual name from the manifest.
  *
  * Cache structure:
- * ~/.Claude/plugins/marketplaces/
+ * ~/.claude/plugins/marketplaces/
  *   ├── official-marketplace.json     # From URL source
  *   ├── github-marketplace/          # From GitHub/Git source
- *   │   └── .Claude-plugin/
+ *   │   └── .claude-plugin/
  *   │       └── marketplace.json
  *   └── local-marketplace.json       # From file source
  *
@@ -1593,7 +1593,7 @@ async function loadAndCacheMarketplace(
 
         marketplacePath = join(
           temporaryCachePath,
-          source.path || '.Claude-plugin/marketplace.json',
+          source.path || '.claude-plugin/marketplace.json',
         )
         break
       }
@@ -1610,7 +1610,7 @@ async function loadAndCacheMarketplace(
         )
         marketplacePath = join(
           temporaryCachePath,
-          source.path || '.Claude-plugin/marketplace.json',
+          source.path || '.claude-plugin/marketplace.json',
         )
         break
       }
@@ -1622,8 +1622,8 @@ async function loadAndCacheMarketplace(
 
       case 'file': {
         // For local files, resolve paths relative to marketplace root directory
-        // File sources point to .Claude-plugin/marketplace.json, so the marketplace
-        // root is two directories up (parent of .Claude-plugin/)
+        // File sources point to .claude-plugin/marketplace.json, so the marketplace
+        // root is two directories up (parent of .claude-plugin/)
         // Resolve to absolute so error messages show the actual path checked
         // (legacy known_marketplaces.json entries may have relative paths)
         const absPath = resolve(source.path)
@@ -1634,11 +1634,11 @@ async function loadAndCacheMarketplace(
       }
 
       case 'directory': {
-        // For directories, look for .Claude-plugin/marketplace.json
+        // For directories, look for .claude-plugin/marketplace.json
         // Resolve to absolute so error messages show the actual path checked
         // (legacy known_marketplaces.json entries may have relative paths)
         const absPath = resolve(source.path)
-        marketplacePath = join(absPath, '.Claude-plugin', 'marketplace.json')
+        marketplacePath = join(absPath, '.claude-plugin', 'marketplace.json')
         temporaryCachePath = absPath
         cleanupNeeded = false
         break
@@ -1660,7 +1660,7 @@ async function loadAndCacheMarketplace(
         temporaryCachePath = join(cacheDir, source.name)
         marketplacePath = join(
           temporaryCachePath,
-          '.Claude-plugin',
+          '.claude-plugin',
           'marketplace.json',
         )
         cleanupNeeded = false
@@ -1771,7 +1771,7 @@ async function loadAndCacheMarketplace(
  * Add a marketplace source to the known marketplaces
  *
  * The marketplace is fetched, validated, and cached locally.
- * The configuration is saved to ~/.Claude/plugins/known_marketplaces.json.
+ * The configuration is saved to ~/.claude/plugins/known_marketplaces.json.
  *
  * @param source - MarketplaceSource object representing the marketplace source.
  *                 Callers should parse user input into MarketplaceSource format
@@ -1950,7 +1950,7 @@ export async function removeMarketplaceSource(name: string): Promise<void> {
     throw new Error(
       `Marketplace '${name}' is registered from the read-only seed directory ` +
         `(${seedDir}) and will be re-registered on next startup. ` +
-        `To stop using its plugins: Claude plugin disable <plugin>@${name}`,
+        `To stop using its plugins: claude plugin disable <plugin>@${name}`,
     )
   }
 
@@ -2058,11 +2058,11 @@ export async function removeMarketplaceSource(name: string): Promise<void> {
 async function readCachedMarketplace(
   installLocation: string,
 ): Promise<PluginMarketplace> {
-  // For git-sourced directories, the manifest lives at .Claude-plugin/marketplace.json.
+  // For git-sourced directories, the manifest lives at .claude-plugin/marketplace.json.
   // For url/file/directory sources it is the installLocation itself.
   // Try the nested path first; fall back to installLocation when it is a plain file
   // (ENOTDIR) or the nested file is simply missing (ENOENT).
-  const nestedPath = join(installLocation, '.Claude-plugin', 'marketplace.json')
+  const nestedPath = join(installLocation, '.claude-plugin', 'marketplace.json')
   try {
     return await parseFileWithSchema(nestedPath, PluginMarketplaceSchema())
   } catch (e) {
@@ -2141,7 +2141,7 @@ export const getMarketplace = memoize(
       throw new Error(
         `Marketplace "${name}" has a relative source path (${entry.source.path}) ` +
           `in known_marketplaces.json — this is stale state from an older ` +
-          `Claude version. Run 'Claude marketplace remove ${name}' and ` +
+          `claude version. Run 'claude marketplace remove ${name}' and ` +
           `re-add it from the original project directory.`,
       )
     }
@@ -2310,7 +2310,7 @@ export async function refreshAllMarketplaces(): Promise<void> {
       continue
     }
     // inc-5046: same GCS intercept as refreshMarketplace() — bulk update
-    // hits this path on `Claude plugin marketplace update` (no name arg).
+    // hits this path on `claude plugin marketplace update` (no name arg).
     if (name === OFFICIAL_MARKETPLACE_NAME) {
       const sha = await fetchOfficialMarketplaceFromGcs(
         entry.installLocation,
@@ -2420,7 +2420,7 @@ export async function refreshMarketplace(
             `(${installLocation}) — expected a path inside ${cacheDir}. ` +
             `This can happen after cross-platform path writes or manual edits ` +
             `to known_marketplaces.json. ` +
-            `Run: Claude plugin marketplace remove "${name}" and re-add it.`,
+            `Run: claude plugin marketplace remove "${name}" and re-add it.`,
         )
       }
     }
@@ -2533,14 +2533,14 @@ export async function refreshMarketplace(
             ? source.repo
             : redactUrlCredentials(source.url)
         const reason =
-          name === 'Claude-code-plugins'
-            ? `We've deprecated "Claude-code-plugins" in favor of "Claude-plugins-official".`
+          name === 'claude-code-plugins'
+            ? `We've deprecated "claude-code-plugins" in favor of "claude-plugins-official".`
             : `This marketplace may have been deprecated or moved to a new location.`
         throw new Error(
           `The marketplace.json file is no longer present in this repository.\n\n` +
             `${reason}\n` +
             `Source: ${sourceDisplay}\n\n` +
-            `You can remove this marketplace with: Claude plugin marketplace remove "${name}"`,
+            `You can remove this marketplace with: claude plugin marketplace remove "${name}"`,
         )
       }
     } else if (source.source === 'url') {

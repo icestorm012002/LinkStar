@@ -114,7 +114,7 @@ export type BridgeCoreParams = {
    * (HTTP-only, orgUUID+model supplied by the daemon caller).
    *
    * Receives `gitRepoUrl`+`branch` so the REPL wrapper can build the git
-   * source/outcome for Claude.ai's session card. Daemon ignores them.
+   * source/outcome for CLAUDE.ai's session card. Daemon ignores them.
    */
   createSession: (opts: {
     environmentId: string
@@ -186,7 +186,7 @@ export type BridgeCoreParams = {
    * isBypassPermissionsModeAvailable) BEFORE calling transitionPermissionMode —
    * that function's internal auto-gate check is a defensive throw, not a
    * graceful guard, and its side-effect order is setAutoModeActive(true) then
-   * throw, which corrupts the 3-way invariant documented in src/Claude.md if
+   * throw, which corrupts the 3-way invariant documented in src/CLAUDE.md if
    * the callback lets the throw escape here.
    */
   onSetPermissionMode?: (
@@ -306,7 +306,7 @@ export async function initBridgeCore(
   // state. The pointer is written unconditionally after session create
   // (crash-recovery for all sessions); perpetual mode just skips the
   // teardown clear so it survives clean exits too. Only reuse 'repl'
-  // pointers — a crashed standalone bridge (`Claude remote-control`)
+  // pointers — a crashed standalone bridge (`CLAUDE remote-control`)
   // writes source:'standalone' with a different workerType.
   const rawPrior = perpetual ? await readBridgePointer(dir) : null
   const prior = rawPrior?.source === 'repl' ? rawPrior : null
@@ -479,7 +479,7 @@ export async function initBridgeCore(
   // Crash-recovery pointer: written now so a kill -9 at any point after
   // this leaves a recoverable trail. Cleared in teardown (non-perpetual)
   // or left alone (perpetual mode — pointer survives clean exit too).
-  // `Claude remote-control --continue` from the same directory will detect
+  // `CLAUDE remote-control --continue` from the same directory will detect
   // it and offer to resume.
   await writeBridgePointer(dir, {
     sessionId: currentSessionId,
@@ -527,7 +527,7 @@ export async function initBridgeCore(
   const recentInboundUUIDs = new BoundedUUIDSet(2000)
 
   // 7. Start poll loop for work items — this is what makes the session
-  // "live" on Claude.ai. When a user types there, the backend dispatches
+  // "live" on CLAUDE.ai. When a user types there, the backend dispatches
   // a work item to our environment. We poll for it, get the ingress token,
   // and connect the ingress WebSocket.
   //

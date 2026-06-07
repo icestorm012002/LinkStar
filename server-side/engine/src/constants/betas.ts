@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle'
 
-export const CLAUDE_ = 'Claude-code-20250219'
+export const CLAUDE_ = 'claude-code-20250219'
 export const INTERLEAVED_THINKING_BETA_HEADER =
   'interleaved-thinking-2025-05-14'
 export const CONTEXT_1M_BETA_HEADER = 'context-1m-2025-08-07'

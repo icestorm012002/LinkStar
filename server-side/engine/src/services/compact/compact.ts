@@ -124,7 +124,7 @@ import {
 export const POST_COMPACT_MAX_FILES_TO_RESTORE = 5
 export const POST_COMPACT_TOKEN_BUDGET = 50_000
 export const POST_COMPACT_MAX_TOKENS_PER_FILE = 5_000
-// Skills can be large (verify=18.7KB, Claude-api=20.1KB). Previously re-injected
+// Skills can be large (verify=18.7KB, claude-api=20.1KB). Previously re-injected
 // unbounded on every compact → 5-10K tok/compact. Per-skill truncation beats
 // dropping — instructions at the top of a skill file are usually the critical
 // part. Budget sized to hold ~5 skills at the per-skill cap.
@@ -1689,9 +1689,9 @@ function shouldExcludeFromPostCompactRestore(
     // If we can't get plan file path, continue with other checks
   }
 
-  // Exclude all types of Claude.md files
-  // TODO: Refactor to use isMemoryFilePath() from Claudemd.ts for consistency
-  // and to also match child directory memory files (.Claude/rules/*.md, etc.)
+  // Exclude all types of claude.md files
+  // TODO: Refactor to use isMemoryFilePath() from claudemd.ts for consistency
+  // and to also match child directory memory files (.claude/rules/*.md, etc.)
   try {
     const normalizedMemoryPaths = new Set(
       MEMORY_TYPE_VALUES.map(type => expandPath(getMemoryPath(type))),

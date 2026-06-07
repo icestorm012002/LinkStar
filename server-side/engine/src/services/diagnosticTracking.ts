@@ -79,8 +79,8 @@ export class DiagnosticTrackingService {
     // Remove our protocol prefixes
     const protocolPrefixes = [
       'file://',
-      '_Claude_fs_right:',
-      '_Claude_fs_left:',
+      '_claude_fs_right:',
+      '_claude_fs_left:',
     ]
 
     let normalized = fileUri
@@ -182,7 +182,7 @@ export class DiagnosticTrackingService {
   }
 
   /**
-   * Get new diagnostics from file://, _Claude_fs_right, and _Claude_fs_ URIs that aren't in the baseline.
+   * Get new diagnostics from file://, _claude_fs_right, and _claude_fs_ URIs that aren't in the baseline.
    * Only processes diagnostics for files that have been edited.
    */
   async getNewDiagnostics(): Promise<DiagnosticFile[]> {
@@ -217,7 +217,7 @@ export class DiagnosticTrackingService {
     >()
     allDiagnosticFiles
       .filter(file => this.baseline.has(this.normalizeFileUri(file.uri)))
-      .filter(file => file.uri.startsWith('_Claude_fs_right:'))
+      .filter(file => file.uri.startsWith('_claude_fs_right:'))
       .forEach(file => {
         diagnosticsForClaudeFsRightUrisWithBaselinesMap.set(
           this.normalizeFileUri(file.uri),
@@ -232,34 +232,34 @@ export class DiagnosticTrackingService {
       const normalizedPath = this.normalizeFileUri(file.uri)
       const baselineDiagnostics = this.baseline.get(normalizedPath) || []
 
-      // Get the _Claude_fs_right file if it exists
-      const ClaudeFsRightFile =
+      // Get the _claude_fs_right file if it exists
+      const claudeFsRightFile =
         diagnosticsForClaudeFsRightUrisWithBaselinesMap.get(normalizedPath)
 
       // Determine which file to use based on the state of right file diagnostics
       let fileToUse = file
 
-      if (ClaudeFsRightFile) {
+      if (claudeFsRightFile) {
         const previousRightDiagnostics =
           this.rightFileDiagnosticsState.get(normalizedPath)
 
-        // Use _Claude_fs_right if:
+        // Use _claude_fs_right if:
         // 1. We've never gotten right file diagnostics for this file (previousRightDiagnostics === undefined)
         // 2. OR the right file diagnostics have just changed
         if (
           !previousRightDiagnostics ||
           !this.areDiagnosticArraysEqual(
             previousRightDiagnostics,
-            ClaudeFsRightFile.diagnostics,
+            claudeFsRightFile.diagnostics,
           )
         ) {
-          fileToUse = ClaudeFsRightFile
+          fileToUse = claudeFsRightFile
         }
 
         // Update our tracking of right file diagnostics
         this.rightFileDiagnosticsState.set(
           normalizedPath,
-          ClaudeFsRightFile.diagnostics,
+          claudeFsRightFile.diagnostics,
         )
       }
 

@@ -372,16 +372,16 @@ export async function fetchProfileInfo(accessToken: string): Promise<{
   // Reuse the logic from fetchSubscriptionType
   let subscriptionType: SubscriptionType | null = null
   switch (orgType) {
-    case 'Claude_max':
+    case 'claude_max':
       subscriptionType = 'max'
       break
-    case 'Claude_pro':
+    case 'claude_pro':
       subscriptionType = 'pro'
       break
-    case 'Claude_enterprise':
+    case 'claude_enterprise':
       subscriptionType = 'enterprise'
       break
-    case 'Claude_team':
+    case 'claude_team':
       subscriptionType = 'team'
       break
     default:

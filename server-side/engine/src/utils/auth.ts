@@ -81,17 +81,17 @@ import { clearToolSchemaCache } from './toolSchemaCache.js'
 const DEFAULT_API_KEY_HELPER_TTL = 5 * 60 * 1000
 
 /**
- * CCR and Claude Desktop spawn the CLI with OAuth and should never fall back
- * to the user's ~/.Claude/settings.json API-key config (apiKeyHelper,
+ * CCR and claude Desktop spawn the CLI with OAuth and should never fall back
+ * to the user's ~/.claude/settings.json API-key config (apiKeyHelper,
  * env.ANTHROPIC_API_KEY, env.ANTHROPIC_AUTH_TOKEN). Those settings exist for
  * the user's terminal CLI, not managed sessions. Without this guard, a user
- * who runs `Claude` in their terminal with an API key sees every CCD session
+ * who runs `claude` in their terminal with an API key sees every CCD session
  * also use that key — and fail if it's stale/wrong-org.
  */
 function isManagedOAuthContext(): boolean {
   return (
     isEnvTruthy(process.env.CLAUDE_) ||
-    process.env.CLAUDE_ === 'Claude-desktop'
+    process.env.CLAUDE_ === 'claude-desktop'
   )
 }
 
@@ -101,11 +101,11 @@ export function isAnthropicAuthEnabled(): boolean {
   // --bare: API-key-only, never OAuth.
   if (isBareMode()) return false
 
-  // `Claude ssh` remote: ANTHROPIC_UNIX_SOCKET tunnels API calls through a
+  // `claude ssh` remote: ANTHROPIC_UNIX_SOCKET tunnels API calls through a
   // local auth-injecting proxy. The launcher sets CLAUDE_ as a
   // placeholder iff the local side is a subscriber (so the remote includes the
   // oauth-2025 beta header to match what the proxy will inject). The remote's
-  // ~/.Claude settings (apiKeyHelper, settings.env.ANTHROPIC_API_KEY) MUST NOT
+  // ~/.claude settings (apiKeyHelper, settings.env.ANTHROPIC_API_KEY) MUST NOT
   // flip this — they'd cause a header mismatch with the proxy and a bogus
   // "invalid x-api-key" from the API. See src/ssh/sshAuthProxy.ts.
   if (process.env.ANTHROPIC_UNIX_SOCKET) {
@@ -199,7 +199,7 @@ export function getAuthTokenSource() {
 
   const oauthTokens = getClaudeAIOAuthTokens()
   if (shouldUseClaudeAIAuth(oauthTokens?.scopes) && oauthTokens?.accessToken) {
-    return { source: 'Claude.ai' as const, hasToken: true }
+    return { source: 'claude.ai' as const, hasToken: true }
   }
 
   return { source: 'none' as const, hasToken: false }
@@ -253,7 +253,7 @@ export function getAnthropicApiKeyWithSource(
     ? undefined
     : process.env.ANTHROPIC_API_KEY
 
-  // Always check for direct environment variable when the user ran Claude --print.
+  // Always check for direct environment variable when the user ran claude --print.
   // This is useful for CI, etc.
   if (preferThirdPartyAuthentication() && apiKeyEnv) {
     return {
@@ -350,7 +350,7 @@ export function getAnthropicApiKeyWithSource(
 /**
  * Get the configured apiKeyHelper from settings.
  * In bare mode, only the --settings flag source is consulted — apiKeyHelper
- * from ~/.Claude/settings.json or project settings is ignored.
+ * from ~/.claude/settings.json or project settings is ignored.
  */
 export function getConfiguredApiKeyHelper(): string | undefined {
   if (isBareMode()) {
@@ -1196,7 +1196,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
   warning?: string
 } {
   if (!shouldUseClaudeAIAuth(tokens.scopes)) {
-    logEvent('tengu_oauth_tokens_not_Claude_ai', {})
+    logEvent('tengu_oauth_tokens_not_claude_ai', {})
     return { success: true }
   }
 
@@ -1212,9 +1212,9 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
 
   try {
     const storageData = secureStorage.read() || {}
-    const existingOauth = storageData.ClaudeAiOauth
+    const existingOauth = storageData.claudeAiOauth
 
-    storageData.ClaudeAiOauth = {
+    storageData.claudeAiOauth = {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       expiresAt: tokens.expiresAt,
@@ -1286,7 +1286,7 @@ export const getClaudeAIOAuthTokens = memoize((): OAuthTokens | null => {
   try {
     const secureStorage = getSecureStorage()
     const storageData = secureStorage.read()
-    const oauthData = storageData?.ClaudeAiOauth
+    const oauthData = storageData?.claudeAiOauth
 
     if (!oauthData?.accessToken) {
       return null
@@ -1335,7 +1335,7 @@ async function invalidateOAuthCacheIfDiskChanged(): Promise<void> {
   }
 }
 
-// In-flight dedup: when N Claude.ai proxy connectors hit 401 with the same
+// In-flight dedup: when N claude.ai proxy connectors hit 401 with the same
 // token simultaneously (common at startup — #20930), only one should clear
 // caches and re-read the keychain. Without this, each call's clearOAuthTokenCache()
 // nukes readInFlight in macOsKeychainStorage and triggers a fresh spawn —
@@ -1410,7 +1410,7 @@ export async function getClaudeAIOAuthTokensAsync(): Promise<OAuthTokens | null>
   try {
     const secureStorage = getSecureStorage()
     const storageData = await secureStorage.readAsync()
-    const oauthData = storageData?.ClaudeAiOauth
+    const oauthData = storageData?.claudeAiOauth
     if (!oauthData?.accessToken) {
       return null
     }
@@ -1482,13 +1482,13 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
   }
 
   // Tokens are still expired, try to acquire lock and refresh
-  const ClaudeDir = getClaudeConfigHomeDir()
-  await mkdir(ClaudeDir, { recursive: true })
+  const claudeDir = getClaudeConfigHomeDir()
+  await mkdir(claudeDir, { recursive: true })
 
   let release
   try {
     logEvent('tengu_oauth_token_refresh_lock_acquiring', {})
-    release = await lockfile.lock(ClaudeDir)
+    release = await lockfile.lock(claudeDir)
     logEvent('tengu_oauth_token_refresh_lock_acquired', {})
   } catch (err) {
     if ((err as { code?: string }).code === 'ELOCKED') {
@@ -1529,7 +1529,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
 
     logEvent('tengu_oauth_token_refresh_starting', {})
     const refreshedTokens = await refreshOAuthToken(lockedTokens.refreshToken, {
-      // For Claude.ai subscribers, omit scopes so the default
+      // For claude.ai subscribers, omit scopes so the default
       // CLAUDE_ applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
       scopes: shouldUseClaudeAIAuth(lockedTokens.scopes)
@@ -1585,7 +1585,7 @@ export function hasProfileScope(): boolean {
 
 export function is1PApiCustomer(): boolean {
   // 1P API customers are users who are NOT:
-  // 1. Claude.ai subscribers (Max, Pro, Enterprise, Team)
+  // 1. claude.ai subscribers (Max, Pro, Enterprise, Team)
   // 2. Vertex AI users
   // 3. AWS Bedrock users
   // 4. Foundry users
@@ -1599,7 +1599,7 @@ export function is1PApiCustomer(): boolean {
     return false
   }
 
-  // Exclude Claude.ai subscribers
+  // Exclude claude.ai subscribers
   if (isClaudeAISubscriber()) {
     return false
   }
@@ -1618,13 +1618,13 @@ export function getOauthAccountInfo(): AccountInfo | undefined {
 
 /**
  * Checks if overage/extra usage provisioning is allowed for this organization.
- * This mirrors the logic in apps/Claude-ai `useIsOverageProvisioningAllowed` hook as closely as possible.
+ * This mirrors the logic in apps/claude-ai `useIsOverageProvisioningAllowed` hook as closely as possible.
  */
 export function isOverageProvisioningAllowed(): boolean {
   const accountInfo = getOauthAccountInfo()
   const billingType = accountInfo?.billingType
 
-  // Must be a Claude subscriber with a supported subscription type
+  // Must be a claude subscriber with a supported subscription type
   if (!isClaudeAISubscriber() || !billingType) {
     return false
   }
@@ -1687,7 +1687,7 @@ export function isTeamSubscriber(): boolean {
 export function isTeamPremiumSubscriber(): boolean {
   return (
     getSubscriptionType() === 'team' &&
-    getRateLimitTier() === 'default_Claude_max_5x'
+    getRateLimitTier() === 'default_claude_max_5x'
   )
 }
 
@@ -1716,15 +1716,15 @@ export function getSubscriptionName(): string {
 
   switch (subscriptionType) {
     case 'enterprise':
-      return 'Claude Enterprise'
+      return 'claude Enterprise'
     case 'team':
-      return 'Claude Team'
+      return 'claude Team'
     case 'max':
-      return 'Claude Max'
+      return 'claude Max'
     case 'pro':
-      return 'Claude Pro'
+      return 'claude Pro'
     default:
-      return 'Claude API'
+      return 'claude API'
   }
 }
 
@@ -1885,7 +1885,7 @@ export function getAccountInformation() {
 
   // We don't know the organization if we're relying on an external API key or auth token
   if (
-    authTokenSource === 'Claude.ai' ||
+    authTokenSource === 'claude.ai' ||
     apiKeySource === '/login managed key'
   ) {
     // Get organization name from OAuth account info
@@ -1896,7 +1896,7 @@ export function getAccountInformation() {
   }
   const email = getOauthAccountInfo()?.emailAddress
   if (
-    (authTokenSource === 'Claude.ai' ||
+    (authTokenSource === 'claude.ai' ||
       apiKeySource === '/login managed key') &&
     email
   ) {
@@ -1921,7 +1921,7 @@ export type OrgValidationResult =
  * token's org (network error, missing profile data), validation fails.
  */
 export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
-  // `Claude ssh` remote: real auth lives on the local machine and is injected
+  // `claude ssh` remote: real auth lives on the local machine and is injected
   // by the proxy. The placeholder token can't be validated against the profile
   // endpoint. The local side already ran this check before establishing the session.
   if (process.env.ANTHROPIC_UNIX_SOCKET) {
@@ -1964,8 +1964,8 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
         `Unable to verify organization for the current authentication token.\n` +
         `This machine requires organization ${requiredOrgUuid} but the profile could not be fetched.\n` +
         `This may be a network error, or the token may lack the user:profile scope required for\n` +
-        `verification (tokens from 'Claude setup-token' do not include this scope).\n` +
-        `Try again, or obtain a full-scope token via 'Claude auth login'.`,
+        `verification (tokens from 'claude setup-token' do not include this scope).\n` +
+        `Try again, or obtain a full-scope token via 'claude auth login'.`,
     }
   }
 
@@ -1995,7 +1995,7 @@ export async function validateForceLoginOrg(): Promise<OrgValidationResult> {
     message:
       `Your authentication token belongs to organization ${tokenOrgUuid},\n` +
       `but this machine requires organization ${requiredOrgUuid}.\n\n` +
-      `Please log in with the correct organization: Claude auth login`,
+      `Please log in with the correct organization: claude auth login`,
   }
 }
 

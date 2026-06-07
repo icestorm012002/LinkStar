@@ -31,8 +31,8 @@ export function createGoogleGeminiCodeAssistHeaders(
   return {
     Authorization: `Bearer ${accessToken}`,
     'Content-Type': 'application/json',
-    'User-Agent': 'Claudex/google-gemini-auth',
-    'X-Goog-Api-Client': 'gl-node/Claudex',
+    'User-Agent': 'claudex/google-gemini-auth',
+    'X-Goog-Api-Client': 'gl-node/claudex',
   }
 }
 

@@ -137,10 +137,10 @@ export function attachErrorLogSink(newSink: ErrorLogSink): void {
  * Logs an error to multiple destinations for debugging and monitoring.
  *
  * This function logs errors to:
- * - Debug logs (visible via `Claude --debug` or `tail -f ~/.Claude/debug/latest`)
+ * - Debug logs (visible via `CLAUDE --debug` or `tail -f ~/.CLAUDE/debug/latest`)
  * - In-memory error log (accessible via `getInMemoryErrors()`, useful for including
  *   in bug reports or displaying recent errors to users)
- * - Persistent error log file (only for internal 'ant' users, stored in ~/.Claude/errors/)
+ * - Persistent error log file (only for internal 'ant' users, stored in ~/.CLAUDE/errors/)
  *
  * Usage:
  * ```ts
@@ -148,7 +148,7 @@ export function attachErrorLogSink(newSink: ErrorLogSink): void {
  * ```
  *
  * To view errors:
- * - Debug: Run `Claude --debug` or `tail -f ~/.Claude/debug/latest`
+ * - Debug: Run `CLAUDE --debug` or `tail -f ~/.CLAUDE/debug/latest`
  * - In-memory: Call `getInMemoryErrors()` to get recent errors for the current session
  */
 const isHardFailMode = memoize((): boolean => {
@@ -345,7 +345,7 @@ export function captureAPIRequest(
   setLastAPIRequest(paramsWithoutMessages)
   // For ant users only: also keep a reference to the final messages array so
   // /share's serialized_conversation.json captures the exact post-compaction,
-  // Claude.md-injected payload the API received. Overwritten each turn;
+  // CLAUDE.md-injected payload the API received. Overwritten each turn;
   // dumpPrompts.ts already holds 5 full request bodies for ants, so this is
   // not a new retention class.
   setLastAPIRequestMessages(process.env.USER_TYPE === 'ant' ? messages : null)

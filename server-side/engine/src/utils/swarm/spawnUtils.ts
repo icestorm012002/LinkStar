@@ -104,7 +104,7 @@ const TEAMMATE_ENV_VARS = [
   // Config directory override
   'CLAUDE_',
   // CCR marker — teammates need this for CCR-aware code paths. Auth finds
-  // its own way via /home/Claude/.Claude/remote/.oauth_token regardless;
+  // its own way via /home/claude/.claude/remote/.oauth_token regardless;
   // the FD env var wouldn't help (pipe FDs don't cross tmux).
   'CLAUDE_',
   // Auto-memory gate (memdir/paths.ts) checks REMOTE && !MEMORY_DIR to
@@ -129,11 +129,11 @@ const TEAMMATE_ENV_VARS = [
 
 /**
  * Builds the `env KEY=VALUE ...` string for teammate spawn commands.
- * Always includes ClaudeCODE=1 and CLAUDE_=1,
+ * Always includes CLAUDECODE=1 and CLAUDE_=1,
  * plus any provider/config env vars that are set in the current process.
  */
 export function buildInheritedEnvVars(): string {
-  const envVars = ['ClaudeCODE=1', 'CLAUDE_=1']
+  const envVars = ['CLAUDECODE=1', 'CLAUDE_=1']
 
   for (const key of TEAMMATE_ENV_VARS) {
     const value = process.env[key]

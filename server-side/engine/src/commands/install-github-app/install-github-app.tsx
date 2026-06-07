@@ -39,7 +39,7 @@ const INITIAL_STATE: State = {
   secretName: 'ANTHROPIC_API_KEY',
   useExistingSecret: true,
   workflowExists: false,
-  selectedWorkflows: ['claude', 'claude-review'] as Workflow[],
+  selectedWorkflows: ['Claude', 'claude-review'] as Workflow[],
   selectedApiKeyOption: 'new' as 'existing' | 'new' | 'oauth',
   authType: 'api_key'
 };
@@ -164,7 +164,7 @@ function InstallGitHubApp(props: {
           step: 'error',
           error: 'A Claude workflow file already exists in this repository.',
           errorReason: 'Workflow file conflict',
-          errorInstructions: ['The file .github/workflows/claude.yml already exists', 'You can either:', '  1. Delete the existing file and run this command again', '  2. Update the existing file manually using the template from:', `     ${GITHUB_ACTION_SETUP_DOCS_URL}`]
+          errorInstructions: ['The file .github/workflows/Claude.yml already exists', 'You can either:', '  1. Delete the existing file and run this command again', '  2. Update the existing file manually using the template from:', `     ${GITHUB_ACTION_SETUP_DOCS_URL}`]
         }));
       } else {
         logEvent('tengu_install_github_app_error', {
@@ -181,7 +181,7 @@ function InstallGitHubApp(props: {
     }
   }, [state.selectedRepoName, state.workflowAction, state.selectedWorkflows, state.useCurrentRepo, state.workflowExists, state.secretExists, state.authType]);
   async function openGitHubAppInstallation() {
-    const installUrl = 'https://github.com/apps/claude';
+    const installUrl = 'https://github.com/apps/Claude';
     await openBrowser(installUrl);
   }
   async function checkRepositoryPermissions(repoName: string): Promise<{
@@ -212,7 +212,7 @@ function InstallGitHubApp(props: {
     }
   }
   async function checkExistingWorkflowFile(repoName_0: string): Promise<boolean> {
-    const checkFileResult = await execFileNoThrow('gh', ['api', `repos/${repoName_0}/contents/.github/workflows/claude.yml`, '--jq', '.sha']);
+    const checkFileResult = await execFileNoThrow('gh', ['api', `repos/${repoName_0}/contents/.github/workflows/Claude.yml`, '--jq', '.sha']);
     return checkFileResult.code === 0;
   }
   async function checkExistingSecret() {

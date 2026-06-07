@@ -20,7 +20,7 @@ export const getManagedFilePath = memoize(function (): string {
     case 'windows':
       return 'C:\\Program Files\\ClaudeCode'
     default:
-      return '/etc/Claude-code'
+      return '/etc/claude-code'
   }
 })
 

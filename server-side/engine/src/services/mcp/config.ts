@@ -40,7 +40,7 @@ import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from '../analytics/index.js'
-import { fetchClaudeAIMcpConfigsIfEligible } from './Claudeai.js'
+import { fetchClaudeAIMcpConfigsIfEligible } from './claudeai.js'
 import { expandEnvVarsInString } from './envExpansion.js'
 import {
   type ConfigScope,
@@ -273,13 +273,13 @@ export function dedupPluginMcpServers(
  * Connector keys are `Claude.ai <DisplayName>` so they never key-collide with
  * manual servers in the merge — this content-based check catches the case where
  * both point at the same underlying URL (e.g. `mcp__slack__*` and
- * `mcp__Claude_ai_Slack__*` both hitting mcp.slack.com, ~600 chars/turn wasted).
+ * `mcp__claude_ai_Slack__*` both hitting mcp.slack.com, ~600 chars/turn wasted).
  *
  * Only enabled manual servers count as dedup targets — a disabled manual server
  * mustn't suppress its connector twin, or neither runs.
  */
 export function dedupClaudeAiMcpServers(
-  ClaudeAiServers: Record<string, ScopedMcpServerConfig>,
+  claudeAiServers: Record<string, ScopedMcpServerConfig>,
   manualServers: Record<string, ScopedMcpServerConfig>,
 ): {
   servers: Record<string, ScopedMcpServerConfig>
@@ -294,7 +294,7 @@ export function dedupClaudeAiMcpServers(
 
   const servers: Record<string, ScopedMcpServerConfig> = {}
   const suppressed: Array<{ name: string; duplicateOf: string }> = []
-  for (const [name, config] of Object.entries(ClaudeAiServers)) {
+  for (const [name, config] of Object.entries(claudeAiServers)) {
     const sig = getMcpServerSignature(config)
     const manualDup = sig !== null ? manualSigs.get(sig) : undefined
     if (manualDup !== undefined) {
@@ -604,7 +604,7 @@ function expandEnvVars(config: McpServerConfig): {
     case 'sdk':
       expanded = config
       break
-    case 'Claudeai-proxy':
+    case 'claudeai-proxy':
       expanded = config
       break
   }
@@ -633,7 +633,7 @@ export async function addMcpConfig(
     )
   }
 
-  // Block reserved server name "Claude-in-chrome"
+  // Block reserved server name "claude-in-chrome"
   if (isClaudeInChromeMCPServer(name)) {
     throw new Error(`Cannot add MCP server "${name}": this name is reserved.`)
   }
@@ -705,8 +705,8 @@ export async function addMcpConfig(
       throw new Error('Cannot add MCP server to scope: dynamic')
     case 'enterprise':
       throw new Error('Cannot add MCP server to scope: enterprise')
-    case 'Claudeai':
-      throw new Error('Cannot add MCP server to scope: Claudeai')
+    case 'claudeai':
+      throw new Error('Cannot add MCP server to scope: claudeai')
   }
 
   // Add based on scope
@@ -1266,25 +1266,25 @@ export async function getAllMcpConfigs(): Promise<{
 
   // Kick off the Claude.ai fetch before getClaudeCodeMcpConfigs so it overlaps
   // with loadAllPluginsCacheOnly() inside. Memoized — the awaited call below is a cache hit.
-  const ClaudeaiPromise = fetchClaudeAIMcpConfigsIfEligible()
-  const { servers: ClaudeCodeServers, errors } = await getClaudeCodeMcpConfigs(
+  const claudeaiPromise = fetchClaudeAIMcpConfigsIfEligible()
+  const { servers: claudeCodeServers, errors } = await getClaudeCodeMcpConfigs(
     {},
-    ClaudeaiPromise,
+    claudeaiPromise,
   )
-  const { allowed: ClaudeaiMcpServers } = filterMcpServersByPolicy(
-    await ClaudeaiPromise,
+  const { allowed: claudeaiMcpServers } = filterMcpServersByPolicy(
+    await claudeaiPromise,
   )
 
   // Suppress Claude.ai connectors that duplicate an enabled manual server.
   // Keys never collide (`slack` vs `Claude.ai Slack`) so the merge below
   // won't catch this — need content-based dedup by URL signature.
   const { servers: dedupedClaudeAi } = dedupClaudeAiMcpServers(
-    ClaudeaiMcpServers as Record<string, ScopedMcpServerConfig>,
-    ClaudeCodeServers,
+    claudeaiMcpServers as Record<string, ScopedMcpServerConfig>,
+    claudeCodeServers,
   )
 
   // Merge with Claude.ai having lowest precedence
-  const servers = Object.assign({}, dedupedClaudeAi, ClaudeCodeServers)
+  const servers = Object.assign({}, dedupedClaudeAi, claudeCodeServers)
 
   return { servers, errors }
 }
@@ -1496,11 +1496,11 @@ export function areMcpConfigsAllowedWithEnterpriseMcpConfig(
   configs: Record<string, ScopedMcpServerConfig>,
 ): boolean {
   // NOTE: While all SDK MCP servers should be safe from a security perspective, we are still discussing
-  // what the best way to do this is. In the meantime, we are limiting this to Claude-vscode for now to
+  // what the best way to do this is. In the meantime, we are limiting this to claude-vscode for now to
   // unbreak the VSCode extension for certain enterprise customers who have enterprise MCP config enabled.
   // https://anthropic.slack.com/archives/C093UA0KLD7/p1764975463670109
   return Object.values(configs).every(
-    c => c.type === 'sdk' && c.name === 'Claude-vscode',
+    c => c.type === 'sdk' && c.name === 'claude-vscode',
   )
 }
 

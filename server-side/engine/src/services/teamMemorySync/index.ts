@@ -74,7 +74,7 @@ const TEAM_MEMORY_SYNC_TIMEOUT_MS = 30_000
 // this case doesn't give us anything to learn (one file is just too big).
 const MAX_FILE_SIZE_BYTES = 250_000
 // No client-side DEFAULT_MAX_ENTRIES: the server's entry-count cap is
-// GB-tunable per-org (Claude_code_team_memory_limits), so any compile-time
+// GB-tunable per-org (claude_code_team_memory_limits), so any compile-time
 // constant here will drift.  We only truncate after learning the effective
 // limit from a structured 413's extra_details.max_entries.
 // Gateway body-size cap.  The API gateway rejects PUT bodies over ~256-512KB
@@ -637,7 +637,7 @@ async function readLocalTeamMemory(maxEntries: number | null): Promise<{
   // Truncate only if we've LEARNED a cap from the server (via a structured
   // 413's extra_details.max_entries — anthropic/anthropic#293258).  The
   // server's entry-count cap is GB-tunable per-org via
-  // Claude_code_team_memory_limits; we have no way to know it in advance.
+  // claude_code_team_memory_limits; we have no way to know it in advance.
   // Before the first 413 we send everything and let the server be
   // authoritative.  The server validates total stored entries after merge
   // (not PUT body count) and rejects atomically — nothing is written on 413.

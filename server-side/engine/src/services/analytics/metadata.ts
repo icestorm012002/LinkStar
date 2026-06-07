@@ -93,9 +93,9 @@ export function isToolDetailsLoggingEnabled(): boolean {
  *
  * Per go/taxonomy, MCP names are medium PII. We log them for:
  * - Cowork (entrypoint=local-agent) — no ZDR concept, log all MCPs
- * - Claude.ai-proxied connectors — always official (from Claude.ai's list)
+ * - claude.ai-proxied connectors — always official (from claude.ai's list)
  * - Servers whose URL matches the official MCP registry — directory
- *   connectors added via `Claude mcp add`, not customer-specific config
+ *   connectors added via `claude mcp add`, not customer-specific config
  *
  * Custom/user-configured MCPs stay sanitized (toolName='mcp_tool').
  */
@@ -106,7 +106,7 @@ export function isAnalyticsToolDetailsLoggingEnabled(
   if (process.env.CLAUDE_ === 'local-agent') {
     return true
   }
-  if (mcpServerType === 'Claudeai-proxy') {
+  if (mcpServerType === 'claudeai-proxy') {
     return true
   }
   if (mcpServerBaseUrl && isOfficialMcpUrl(mcpServerBaseUrl)) {
@@ -430,8 +430,8 @@ export type EnvContext = {
   isConductor: boolean
   remoteEnvironmentType?: string
   coworkerType?: string
-  ClaudeCodeContainerId?: string
-  ClaudeCodeRemoteSessionId?: string
+  claudeCodeContainerId?: string
+  claudeCodeRemoteSessionId?: string
   tags?: string
   isGithubAction: boolean
   isClaudeCodeAction: boolean
@@ -606,10 +606,10 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
         : {}
       : {}),
     ...(process.env.CLAUDE_ && {
-      ClaudeCodeContainerId: process.env.CLAUDE_,
+      claudeCodeContainerId: process.env.CLAUDE_,
     }),
     ...(process.env.CLAUDE_ && {
-      ClaudeCodeRemoteSessionId: process.env.CLAUDE_,
+      claudeCodeRemoteSessionId: process.env.CLAUDE_,
     }),
     ...(process.env.CLAUDE_ && {
       tags: process.env.CLAUDE_,
@@ -626,9 +626,9 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
       githubActionsRunnerEnvironment: process.env.RUNNER_ENVIRONMENT,
       githubActionsRunnerOs: process.env.RUNNER_OS,
       githubActionRef: process.env.GITHUB_ACTION_PATH?.includes(
-        'Claude-code-action/',
+        'claude-code-action/',
       )
-        ? process.env.GITHUB_ACTION_PATH.split('Claude-code-action/')[1]
+        ? process.env.GITHUB_ACTION_PATH.split('claude-code-action/')[1]
         : undefined,
     }),
     ...(getWslVersion() && { wslVersion: getWslVersion() }),
@@ -828,12 +828,12 @@ export function to1PEventFormat(
     is_running_with_bun: envContext.isRunningWithBun,
     is_ci: envContext.isCi,
     is_claubbit: envContext.isClaubbit,
-    is_Claude_code_remote: envContext.isClaudeCodeRemote,
+    is_claude_code_remote: envContext.isClaudeCodeRemote,
     is_local_agent_mode: envContext.isLocalAgentMode,
     is_conductor: envContext.isConductor,
     is_github_action: envContext.isGithubAction,
-    is_Claude_code_action: envContext.isClaudeCodeAction,
-    is_Claude_ai_auth: envContext.isClaudeAiAuth,
+    is_claude_code_action: envContext.isClaudeCodeAction,
+    is_claude_ai_auth: envContext.isClaudeAiAuth,
     version: envContext.version,
     build_time: envContext.buildTime,
     deployment_environment: envContext.deploymentEnvironment,
@@ -846,11 +846,11 @@ export function to1PEventFormat(
   if (feature('COWORKER_TYPE_TELEMETRY') && envContext.coworkerType) {
     env.coworker_type = envContext.coworkerType
   }
-  if (envContext.ClaudeCodeContainerId) {
-    env.Claude_code_container_id = envContext.ClaudeCodeContainerId
+  if (envContext.claudeCodeContainerId) {
+    env.claude_code_container_id = envContext.claudeCodeContainerId
   }
-  if (envContext.ClaudeCodeRemoteSessionId) {
-    env.Claude_code_remote_session_id = envContext.ClaudeCodeRemoteSessionId
+  if (envContext.claudeCodeRemoteSessionId) {
+    env.claude_code_remote_session_id = envContext.claudeCodeRemoteSessionId
   }
   if (envContext.tags) {
     env.tags = envContext.tags

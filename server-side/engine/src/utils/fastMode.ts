@@ -90,7 +90,7 @@ export function getFastModeUnavailableReason(): string | null {
     !isInBundledMode() &&
     getFeatureValue_CACHED_MAY_BE_STALE('tengu_marble_sandcastle', false)
   ) {
-    return 'Fast mode requires the native binary · Install from: https://Claude.com/product/Claude-code'
+    return 'Fast mode requires the native binary · Install from: https://claude.com/product/claude-code'
   }
 
   // Not available in the SDK unless explicitly opted in via --settings.
@@ -367,7 +367,7 @@ type FastModeResponse = {
 async function fetchFastModeStatus(
   auth: { accessToken: string } | { apiKey: string },
 ): Promise<FastModeResponse> {
-  const endpoint = `${getOauthConfig().BASE_API_URL}/api/Claude_code_penguin_mode`
+  const endpoint = `${getOauthConfig().BASE_API_URL}/api/claude_code_penguin_mode`
   const headers: Record<string, string> =
     'accessToken' in auth
       ? {

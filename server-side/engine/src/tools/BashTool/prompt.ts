@@ -182,12 +182,12 @@ function getSimpleSandboxSection(): string {
   const allowUnsandboxedCommands =
     SandboxManager.areUnsandboxedCommandsAllowed()
 
-  // Replace the per-UID temp dir literal (e.g. /private/tmp/Claude-1001/) with
+  // Replace the per-UID temp dir literal (e.g. /private/tmp/claude-1001/) with
   // "$TMPDIR" so the prompt is identical across users — avoids busting the
   // cross-user global prompt cache. The sandbox already sets $TMPDIR at runtime.
-  const ClaudeTempDir = getClaudeTempDir()
+  const claudeTempDir = getClaudeTempDir()
   const normalizeAllowOnly = (paths: string[]): string[] =>
-    [...new Set(paths)].map(p => (p === ClaudeTempDir ? '$TMPDIR' : p))
+    [...new Set(paths)].map(p => (p === claudeTempDir ? '$TMPDIR' : p))
 
   const filesystemConfig = {
     read: {

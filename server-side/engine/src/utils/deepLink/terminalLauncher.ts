@@ -1,7 +1,7 @@
 /**
  * Terminal Launcher
  *
- * Detects the user's preferred terminal emulator and launches Claude
+ * Detects the user's preferred terminal emulator and launches claude
  * inside it. Used by the deep link protocol handler when invoked by the OS
  * (i.e., not already running inside a terminal).
  *
@@ -194,7 +194,7 @@ export async function detectTerminal(): Promise<TerminalInfo | null> {
 }
 
 /**
- * Launch Claude in the detected terminal emulator.
+ * Launch claude in the detected terminal emulator.
  *
  * Pure argv paths (no shell, user input never touches an interpreter):
  *   macOS — Ghostty, Alacritty, Kitty, WezTerm (via open -na --args)
@@ -206,13 +206,13 @@ export async function detectTerminal(): Promise<TerminalInfo | null> {
  *           are inherently shell-interpreted; no argv interface exists)
  *   Windows — PowerShell -Command, cmd.exe /k (no argv exec mode)
  *
- * For pure-argv paths: ClaudePath, --prefill, query, cwd travel as distinct
+ * For pure-argv paths: claudePath, --prefill, query, cwd travel as distinct
  * argv elements end-to-end. No sh -c. No shellQuote(). The terminal does
- * chdir(cwd) and execvp(Claude, argv). Spaces/quotes/metacharacters in
+ * chdir(cwd) and execvp(claude, argv). Spaces/quotes/metacharacters in
  * query or cwd are preserved by argv boundaries with zero interpretation.
  */
 export async function launchInTerminal(
-  ClaudePath: string,
+  claudePath: string,
   action: {
     query?: string
     cwd?: string
@@ -229,24 +229,24 @@ export async function launchInTerminal(
   logForDebugging(
     `Launching in terminal: ${terminal.name} (${terminal.command})`,
   )
-  const ClaudeArgs = ['--deep-link-origin']
+  const claudeArgs = ['--deep-link-origin']
   if (action.repo) {
-    ClaudeArgs.push('--deep-link-repo', action.repo)
+    claudeArgs.push('--deep-link-repo', action.repo)
     if (action.lastFetchMs !== undefined) {
-      ClaudeArgs.push('--deep-link-last-fetch', String(action.lastFetchMs))
+      claudeArgs.push('--deep-link-last-fetch', String(action.lastFetchMs))
     }
   }
   if (action.query) {
-    ClaudeArgs.push('--prefill', action.query)
+    claudeArgs.push('--prefill', action.query)
   }
 
   switch (process.platform) {
     case 'darwin':
-      return launchMacosTerminal(terminal, ClaudePath, ClaudeArgs, action.cwd)
+      return launchMacosTerminal(terminal, claudePath, claudeArgs, action.cwd)
     case 'linux':
-      return launchLinuxTerminal(terminal, ClaudePath, ClaudeArgs, action.cwd)
+      return launchLinuxTerminal(terminal, claudePath, claudeArgs, action.cwd)
     case 'win32':
-      return launchWindowsTerminal(terminal, ClaudePath, ClaudeArgs, action.cwd)
+      return launchWindowsTerminal(terminal, claudePath, claudeArgs, action.cwd)
     default:
       return false
   }
@@ -254,8 +254,8 @@ export async function launchInTerminal(
 
 async function launchMacosTerminal(
   terminal: TerminalInfo,
-  ClaudePath: string,
-  ClaudeArgs: string[],
+  claudePath: string,
+  claudeArgs: string[],
   cwd?: string,
 ): Promise<boolean> {
   switch (terminal.command) {
@@ -264,7 +264,7 @@ async function launchMacosTerminal(
     // macOS paths where shellQuote() correctness is load-bearing.
 
     case 'iTerm': {
-      const shCmd = buildShellCommand(ClaudePath, ClaudeArgs, cwd)
+      const shCmd = buildShellCommand(claudePath, claudeArgs, cwd)
       // If iTerm isn't running, `tell application` launches it and iTerm's
       // default startup behavior opens a window — so `create window` would
       // make a second one. Check `running` first: if already running (even
@@ -288,7 +288,7 @@ end tell`
     }
 
     case 'Terminal': {
-      const shCmd = buildShellCommand(ClaudePath, ClaudeArgs, cwd)
+      const shCmd = buildShellCommand(claudePath, claudeArgs, cwd)
       const script = `tell application "Terminal"
   do script ${appleScriptQuote(shCmd)}
   activate
@@ -311,7 +311,7 @@ end tell`
         '--window-save-state=never',
       ]
       if (cwd) args.push(`--working-directory=${cwd}`)
-      args.push('-e', ClaudePath, ...ClaudeArgs)
+      args.push('-e', claudePath, ...claudeArgs)
       const { code } = await execFileNoThrow('open', args, { useCwd: false })
       if (code === 0) return true
       break
@@ -320,7 +320,7 @@ end tell`
     case 'Alacritty': {
       const args = ['-na', terminal.command, '--args']
       if (cwd) args.push('--working-directory', cwd)
-      args.push('-e', ClaudePath, ...ClaudeArgs)
+      args.push('-e', claudePath, ...claudeArgs)
       const { code } = await execFileNoThrow('open', args, { useCwd: false })
       if (code === 0) return true
       break
@@ -329,7 +329,7 @@ end tell`
     case 'kitty': {
       const args = ['-na', terminal.command, '--args']
       if (cwd) args.push('--directory', cwd)
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       const { code } = await execFileNoThrow('open', args, { useCwd: false })
       if (code === 0) return true
       break
@@ -338,7 +338,7 @@ end tell`
     case 'WezTerm': {
       const args = ['-na', terminal.command, '--args', 'start']
       if (cwd) args.push('--cwd', cwd)
-      args.push('--', ClaudePath, ...ClaudeArgs)
+      args.push('--', claudePath, ...claudeArgs)
       const { code } = await execFileNoThrow('open', args, { useCwd: false })
       if (code === 0) return true
       break
@@ -350,16 +350,16 @@ end tell`
   )
   return launchMacosTerminal(
     { name: 'Terminal.app', command: 'Terminal' },
-    ClaudePath,
-    ClaudeArgs,
+    claudePath,
+    claudeArgs,
     cwd,
   )
 }
 
 async function launchLinuxTerminal(
   terminal: TerminalInfo,
-  ClaudePath: string,
-  ClaudeArgs: string[],
+  claudePath: string,
+  claudeArgs: string[],
   cwd?: string,
 ): Promise<boolean> {
   // All Linux paths are pure argv. Each terminal's --working-directory
@@ -374,41 +374,41 @@ async function launchLinuxTerminal(
   switch (terminal.name) {
     case 'gnome-terminal':
       args = cwd ? [`--working-directory=${cwd}`, '--'] : ['--']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'konsole':
       args = cwd ? ['--workdir', cwd, '-e'] : ['-e']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'kitty':
       args = cwd ? ['--directory', cwd] : []
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'wezterm':
       args = cwd ? ['start', '--cwd', cwd, '--'] : ['start', '--']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'alacritty':
       args = cwd ? ['--working-directory', cwd, '-e'] : ['-e']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'ghostty':
       args = cwd ? [`--working-directory=${cwd}`, '-e'] : ['-e']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'xfce4-terminal':
     case 'mate-terminal':
       args = cwd ? [`--working-directory=${cwd}`, '-x'] : ['-x']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     case 'tilix':
       args = cwd ? [`--working-directory=${cwd}`, '-e'] : ['-e']
-      args.push(ClaudePath, ...ClaudeArgs)
+      args.push(claudePath, ...claudeArgs)
       break
     default:
       // xterm, x-terminal-emulator, $TERMINAL — no reliable cwd flag.
       // spawn({cwd}) sets the terminal's own cwd; most inherit.
-      args = ['-e', ClaudePath, ...ClaudeArgs]
+      args = ['-e', claudePath, ...claudeArgs]
       spawnCwd = cwd
       break
   }
@@ -418,8 +418,8 @@ async function launchLinuxTerminal(
 
 async function launchWindowsTerminal(
   terminal: TerminalInfo,
-  ClaudePath: string,
-  ClaudeArgs: string[],
+  claudePath: string,
+  claudeArgs: string[],
   cwd?: string,
 ): Promise<boolean> {
   const args: string[] = []
@@ -428,12 +428,12 @@ async function launchWindowsTerminal(
     // --- PURE ARGV PATH ---
     case 'Windows Terminal':
       if (cwd) args.push('-d', cwd)
-      args.push('--', ClaudePath, ...ClaudeArgs)
+      args.push('--', claudePath, ...claudeArgs)
       break
 
     // --- SHELL-STRING PATHS ---
     // PowerShell -Command and cmd /k take a command string. No argv exec
-    // mode that also keeps the session interactive after Claude exits.
+    // mode that also keeps the session interactive after claude exits.
     // User input is escaped per-shell; correctness of that escaping is
     // load-bearing here.
 
@@ -445,7 +445,7 @@ async function launchWindowsTerminal(
       args.push(
         '-NoExit',
         '-Command',
-        `${cdCmd}& ${psQuote(ClaudePath)} ${ClaudeArgs.map(psQuote).join(' ')}`,
+        `${cdCmd}& ${psQuote(claudePath)} ${claudeArgs.map(psQuote).join(' ')}`,
       )
       break
     }
@@ -454,7 +454,7 @@ async function launchWindowsTerminal(
       const cdCmd = cwd ? `cd /d ${cmdQuote(cwd)} && ` : ''
       args.push(
         '/k',
-        `${cdCmd}${cmdQuote(ClaudePath)} ${ClaudeArgs.map(a => cmdQuote(a)).join(' ')}`,
+        `${cdCmd}${cmdQuote(claudePath)} ${claudeArgs.map(a => cmdQuote(a)).join(' ')}`,
       )
       break
     }
@@ -503,12 +503,12 @@ function spawnDetached(
  * AppleScript paths (iTerm, Terminal.app) which have no argv interface.
  */
 function buildShellCommand(
-  ClaudePath: string,
-  ClaudeArgs: string[],
+  claudePath: string,
+  claudeArgs: string[],
   cwd?: string,
 ): string {
   const cdPrefix = cwd ? `cd ${shellQuote(cwd)} && ` : ''
-  return `${cdPrefix}${[ClaudePath, ...ClaudeArgs].map(shellQuote).join(' ')}`
+  return `${cdPrefix}${[claudePath, ...claudeArgs].map(shellQuote).join(' ')}`
 }
 
 /**
@@ -547,7 +547,7 @@ function psQuote(s: string): string {
  * cmd.exe double-quoted string). Escape % as %% to prevent environment
  * variable expansion (%PATH% etc.) which cmd.exe performs even inside
  * double quotes. Trailing backslashes are still doubled because the
- * *child process* (Claude.exe) uses CommandLineToArgvW, where a trailing
+ * *child process* (claude.exe) uses CommandLineToArgvW, where a trailing
  * \ before our closing " would eat the close-quote.
  */
 function cmdQuote(arg: string): string {

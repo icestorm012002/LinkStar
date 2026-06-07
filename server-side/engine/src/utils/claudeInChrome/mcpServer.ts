@@ -23,7 +23,7 @@ import { getAllSocketPaths, getSecureSocketPath } from './common.js'
 
 const EXTENSION_DOWNLOAD_URL = 'https://Claude.ai/chrome'
 const BUG_REPORT_URL =
-  'https://github.com/anthropics/Claude-code/issues/new?labels=bug,Claude-in-chrome'
+  'https://github.com/anthropics/claude-code/issues/new?labels=bug,claude-in-chrome'
 
 // String metadata keys safe to forward to analytics. Keys like error_message
 // are excluded because they could contain page content or user data.
@@ -65,10 +65,10 @@ function getChromeBridgeUrl(): string | undefined {
   }
 
   if (isEnvTruthy(process.env.USE_STAGING_OAUTH)) {
-    return 'wss://bridge-staging.Claudeusercontent.com'
+    return 'wss://bridge-staging.claudeusercontent.com'
   }
 
-  return 'wss://bridge.Claudeusercontent.com'
+  return 'wss://bridge.claudeusercontent.com'
 }
 
 function isLocalBridge(): boolean {
@@ -106,7 +106,7 @@ export function createChromeContext(
     logger,
     socketPath: getSecureSocketPath(),
     getSocketPaths: getAllSocketPaths,
-    clientTypeId: 'Claude-code',
+    clientTypeId: 'claude-code',
     onAuthenticationError: () => {
       logger.warn(
         'Authentication error occurred. Please ensure you are logged into the Claude browser extension with the same Claude.ai account as Claude.',

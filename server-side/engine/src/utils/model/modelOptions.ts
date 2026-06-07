@@ -200,42 +200,42 @@ function getExplicitClaudeModelOptions(): ModelOption[] {
   return [
     {
       value: getModelStrings().opus47,
-      label: 'Claude-opus-4-7',
+      label: 'claude-opus-4-7',
       description: 'Opus 4.7 · exact model ID',
     },
     {
       value: getModelStrings().opus46,
-      label: 'Claude-opus-4-6',
+      label: 'claude-opus-4-6',
       description: 'Opus 4.6 · exact model ID',
     },
     {
       value: getModelStrings().opus45,
-      label: 'Claude-opus-4-5-20251101',
+      label: 'claude-opus-4-5-20251101',
       description: 'Opus 4.5 · exact model ID',
     },
     {
       value: getModelStrings().opus41,
-      label: 'Claude-opus-4-1-20250805',
+      label: 'claude-opus-4-1-20250805',
       description: 'Opus 4.1 · exact model ID',
     },
     {
       value: getModelStrings().sonnet46,
-      label: 'Claude-sonnet-4-6',
+      label: 'claude-sonnet-4-6',
       description: 'Sonnet 4.6 · exact model ID',
     },
     {
       value: getModelStrings().sonnet45,
-      label: 'Claude-sonnet-4-5-20250929',
+      label: 'claude-sonnet-4-5-20250929',
       description: 'Sonnet 4.5 · exact model ID',
     },
     {
       value: getModelStrings().sonnet40,
-      label: 'Claude-sonnet-4-20250514',
+      label: 'claude-sonnet-4-20250514',
       description: 'Sonnet 4 · exact model ID',
     },
     {
       value: getModelStrings().haiku45,
-      label: 'Claude-haiku-4-5-20251001',
+      label: 'claude-haiku-4-5-20251001',
       description: 'Haiku 4.5 · exact model ID',
     },
   ]
@@ -490,11 +490,11 @@ function getModelFamilyInfo(
 
   // Sonnet family
   if (
-    canonical.includes('Claude-sonnet-4-6') ||
-    canonical.includes('Claude-sonnet-4-5') ||
-    canonical.includes('Claude-sonnet-4-') ||
-    canonical.includes('Claude-3-7-sonnet') ||
-    canonical.includes('Claude-3-5-sonnet')
+    canonical.includes('claude-sonnet-4-6') ||
+    canonical.includes('claude-sonnet-4-5') ||
+    canonical.includes('claude-sonnet-4-') ||
+    canonical.includes('claude-3-7-sonnet') ||
+    canonical.includes('claude-3-5-sonnet')
   ) {
     const currentName = getMarketingNameForModel(getDefaultSonnetModel())
     if (currentName) {
@@ -503,7 +503,7 @@ function getModelFamilyInfo(
   }
 
   // Opus family
-  if (canonical.includes('Claude-opus-4')) {
+  if (canonical.includes('claude-opus-4')) {
     const currentName = getMarketingNameForModel(getDefaultOpusModel())
     if (currentName) {
       return { alias: 'Opus', currentVersionName: currentName }
@@ -512,8 +512,8 @@ function getModelFamilyInfo(
 
   // Haiku family
   if (
-    canonical.includes('Claude-haiku') ||
-    canonical.includes('Claude-3-5-haiku')
+    canonical.includes('claude-haiku') ||
+    canonical.includes('claude-3-5-haiku')
   ) {
     const currentName = getMarketingNameForModel(getDefaultHaikuModel())
     if (currentName) {
@@ -560,7 +560,7 @@ function getKnownModelOption(model: string): ModelOption | null {
 }
 
 export function getModelOptions(fastMode = false): ModelOption[] {
-  const ClaudeOptions = getModelOptionsBase(fastMode)
+  const claudeOptions = getModelOptionsBase(fastMode)
   const explicitClaudeOptions =
     getAPIProvider() === 'firstParty' ? getExplicitClaudeModelOptions() : []
   const codexOptions = getOpenAICodexOptions()
@@ -571,12 +571,12 @@ export function getModelOptions(fastMode = false): ModelOption[] {
 
   const options =
     preferredModel && isOpenAICodexModel(preferredModel)
-      ? [...codexOptions, ...apiKeyOptions, ...ClaudeOptions, ...explicitClaudeOptions]
+      ? [...codexOptions, ...apiKeyOptions, ...claudeOptions, ...explicitClaudeOptions]
       : preferredModel && getApiKeyProviderForModel(preferredModel)
-        ? [...apiKeyOptions, ...codexOptions, ...ClaudeOptions, ...explicitClaudeOptions]
+        ? [...apiKeyOptions, ...codexOptions, ...claudeOptions, ...explicitClaudeOptions]
         : isClaudeAISubscriber() || preferredModel === null
-          ? [...ClaudeOptions, ...explicitClaudeOptions, ...codexOptions, ...apiKeyOptions]
-          : [...codexOptions, ...apiKeyOptions, ...ClaudeOptions, ...explicitClaudeOptions]
+          ? [...claudeOptions, ...explicitClaudeOptions, ...codexOptions, ...apiKeyOptions]
+          : [...codexOptions, ...apiKeyOptions, ...claudeOptions, ...explicitClaudeOptions]
 
   // Add the custom model from the ANTHROPIC_CUSTOM_MODEL_OPTION env var
   const envCustomModel = process.env.ANTHROPIC_CUSTOM_MODEL_OPTION

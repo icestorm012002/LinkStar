@@ -1,7 +1,7 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
 /**
  * Hooks are user-defined shell commands that can be executed at various points
- * in Claude's lifecycle.
+ * in CLAUDE's lifecycle.
  */
 import { basename } from 'path'
 import { spawn, type ChildProcessWithoutNullStreams } from 'child_process'
@@ -269,7 +269,7 @@ function executeInBackground({
  * Checks if a hook should be skipped due to lack of workspace trust.
  *
  * ALL hooks require workspace trust because they execute arbitrary commands from
- * .Claude/settings.json. This is a defense-in-depth security measure.
+ * .CLAUDE/settings.json. This is a defense-in-depth security measure.
  *
  * Context: Hooks are captured via captureHooksConfigSnapshot() before the trust
  * dialog is shown. While most hooks won't execute until after trust is established
@@ -967,10 +967,10 @@ async function execCommandHook(
     CLAUDE_: toHookPath(projectDir),
   }
 
-  // Some plugin workers shell out to "Claude" again for their own agent
+  // Some plugin workers shell out to "CLAUDE" again for their own agent
   // sessions. When this session is running under an alternate entrypoint such
-  // as Claudex, leaving CLAUDE_ unset makes those workers rediscover
-  // the system "Claude" binary and lose the current auth namespace. Re-enter
+  // as claudex, leaving CLAUDE_ unset makes those workers rediscover
+  // the system "CLAUDE" binary and lose the current auth namespace. Re-enter
   // through the current executable/script unless the user already pinned one.
   const currentCliPath =
     envVars.CLAUDE_ ||
@@ -4428,15 +4428,15 @@ export function hasInstructionsLoadedHook(): boolean {
 }
 
 /**
- * Execute InstructionsLoaded hooks when an instruction file (Claude.md or
- * .Claude/rules/*.md) is loaded into context. Fire-and-forget — this hook is
+ * Execute InstructionsLoaded hooks when an instruction file (CLAUDE.md or
+ * .CLAUDE/rules/*.md) is loaded into context. Fire-and-forget — this hook is
  * for observability/audit only and does not support blocking.
  *
  * Dispatch sites:
- * - Eager load at session start (getMemoryFiles in Claudemd.ts)
+ * - Eager load at session start (getMemoryFiles in claudemd.ts)
  * - Eager reload after compaction (getMemoryFiles cache cleared by
  *   runPostCompactCleanup; next call reports load_reason: 'compact')
- * - Lazy load when Claude touches a file that triggers nested Claude.md or
+ * - Lazy load when CLAUDE touches a file that triggers nested CLAUDE.md or
  *   conditional rules with paths: frontmatter (memoryFilesToAttachments in
  *   attachments.ts)
  */

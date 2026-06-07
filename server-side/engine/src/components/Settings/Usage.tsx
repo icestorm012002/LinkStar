@@ -313,7 +313,7 @@ export function Usage(): React.ReactNode {
           </Text>}
         {runtimeProviderSummary && <Box flexDirection="column" gap={0}>
             <Text dimColor>
-              Current session tokens: <Text color="claude">{formatNumber(runtimeTotalTokens)}</Text>
+              Current session tokens: <Text color="Claude">{formatNumber(runtimeTotalTokens)}</Text>
               {' '}· In: {formatNumber(runtimeProviderSummary.providerUsage.inputTokens)}
               {' '}· Out: {formatNumber(runtimeProviderSummary.providerUsage.outputTokens)}
             </Text>

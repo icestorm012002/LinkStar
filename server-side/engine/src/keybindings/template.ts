@@ -1,6 +1,6 @@
 /**
  * Keybindings template generator.
- * Generates a well-documented template file for ~/.Claude/keybindings.json
+ * Generates a well-documented template file for ~/.claude/keybindings.json
  */
 
 import { jsonStringify } from '../utils/slowOperations.js'
@@ -43,8 +43,8 @@ export function generateKeybindingsTemplate(): string {
 
   // Format as object wrapper with bindings array
   const config = {
-    $schema: 'https://www.schemastore.org/Claude-code-keybindings.json',
-    $docs: 'https://code.Claude.com/docs/en/keybindings',
+    $schema: 'https://www.schemastore.org/claude-code-keybindings.json',
+    $docs: 'https://code.claude.com/docs/en/keybindings',
     bindings,
   }
 

@@ -1,7 +1,7 @@
 /**
  * PID-Based Version Locking
  *
- * This module provides PID-based locking for running Claude versions.
+ * This module provides PID-based locking for running claude versions.
  * Unlike mtime-based locking (which can hold locks for 30 days after a crash),
  * PID-based locking can immediately detect when a process is no longer running.
  *
@@ -95,7 +95,7 @@ export function isProcessRunning(pid: number): boolean {
 }
 
 /**
- * Validate that a running process is actually a Claude process
+ * Validate that a running process is actually a claude process
  * This helps mitigate PID reuse issues
  */
 function isClaudeProcess(pid: number, expectedExecPath: string): boolean {
@@ -104,7 +104,7 @@ function isClaudeProcess(pid: number, expectedExecPath: string): boolean {
   }
 
   // If the PID matches our current process, we know it's valid
-  // This handles test environments where the command might not contain 'Claude'
+  // This handles test environments where the command might not contain 'claude'
   if (pid === process.pid) {
     return true
   }
@@ -117,12 +117,12 @@ function isClaudeProcess(pid: number, expectedExecPath: string): boolean {
       return true
     }
 
-    // Check if the command contains 'Claude' or the expected exec path
+    // Check if the command contains 'claude' or the expected exec path
     const normalizedCommand = command.toLowerCase()
     const normalizedExecPath = expectedExecPath.toLowerCase()
 
     return (
-      normalizedCommand.includes('Claude') ||
+      normalizedCommand.includes('claude') ||
       normalizedCommand.includes(normalizedExecPath)
     )
   } catch {
@@ -175,11 +175,11 @@ export function isLockActive(lockFilePath: string): boolean {
     return false
   }
 
-  // Secondary validation: is it actually a Claude process?
+  // Secondary validation: is it actually a claude process?
   // This helps with PID reuse scenarios
   if (!isClaudeProcess(pid, execPath)) {
     logForDebugging(
-      `Lock PID ${pid} is running but does not appear to be Claude - treating as stale`,
+      `Lock PID ${pid} is running but does not appear to be claude - treating as stale`,
     )
     return false
   }
@@ -244,7 +244,7 @@ export async function tryAcquireLock(
 
   // Check if there's an existing active lock (including by our own process)
   // Use isLockActive for consistency with cleanup - it checks both PID running AND
-  // validates it's actually a Claude process (to handle PID reuse scenarios)
+  // validates it's actually a claude process (to handle PID reuse scenarios)
   if (isLockActive(lockFilePath)) {
     const existingContent = readLockContent(lockFilePath)
     logForDebugging(

@@ -7,7 +7,7 @@
  *   3. 管理用户目录的初始化和生命周期
  *   4. 确保进程级隔离——一个用户崩溃不影响其他用户
  *
- * 本模块是纯 Node.js 层，不依赖 Claude-code 内部模块。
+ * 本模块是纯 Node.js 层，不依赖 claude-code 内部模块。
  * 它通过 child_process.fork() 启动 headless-server.ts，利用操作系统进程边界实现强隔离。
  */
 
@@ -89,7 +89,7 @@ type ActiveSession = {
  * 为用户创建隔离的云端工作目录
  * 目录结构:
  *   {dataRoot}/{userId}/
- *     .Claude/           — Claude-code 配置 & 会话存储
+ *     .CLAUDE/           — claude-code 配置 & 会话存储
  *     workspace/          — 云端影子工作区（文件同步的目标）
  *     logs/               — 会话日志
  */
@@ -98,7 +98,7 @@ export function initializeUserDirectory(dataRoot: string, userId: string, projec
     ? resolve(dataRoot, userId, 'projects', projectName) 
     : resolve(dataRoot, userId)
   const dirs = [
-    join(userDir, '.Claude'),
+    join(userDir, '.CLAUDE'),
     join(userDir, 'workspace'),
     join(userDir, 'logs'),
   ]
@@ -110,7 +110,7 @@ export function initializeUserDirectory(dataRoot: string, userId: string, projec
   }
 
   // 写入元数据标记（用于审计和调试）
-  const metaPath = join(userDir, '.Claude', 'tenant-meta.json')
+  const metaPath = join(userDir, '.CLAUDE', 'tenant-meta.json')
   if (!existsSync(metaPath)) {
     writeFileSync(
       metaPath,
@@ -216,7 +216,7 @@ export class SessionOrchestrator extends EventEmitter {
       env: {
         ...process.env,
         // 覆盖关键隔离变量
-        CLAUDE_: join(userDir, '.Claude'),
+        CLAUDE_: join(userDir, '.CLAUDE'),
         HOME: userDir,
         USERPROFILE: userDir,
       },

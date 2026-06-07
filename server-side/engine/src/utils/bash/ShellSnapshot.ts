@@ -357,7 +357,7 @@ async function getSnapshotScript(
       ? // we need to manually force alias expansion in bash - normally `getUserSnapshotContent` takes care of this
         'echo "shopt -s expand_aliases" >> "$SNAPSHOT_FILE"'
       : ''
-  const ClaudeCodeContent = await getClaudeCodeSnapshotContent()
+  const claudeCodeContent = await getClaudeCodeSnapshotContent()
 
   const script = `SNAPSHOT_FILE=${quote([snapshotFilePath])}
       ${configFileExists ? `source "${configFile}" < /dev/null` : '# No user config file to source'}
@@ -373,7 +373,7 @@ async function getSnapshotScript(
 
       ${userContent}
 
-      ${ClaudeCodeContent}
+      ${claudeCodeContent}
 
       # Exit silently on success, only report errors
       if [ ! -f "$SNAPSHOT_FILE" ]; then
@@ -463,7 +463,7 @@ export const createAndSaveSnapshot = async (
               : subprocessEnv()) as typeof process.env),
             SHELL: binShell,
             GIT_EDITOR: 'true',
-            ClaudeCODE: '1',
+            CLAUDECODE: '1',
           },
           timeout: SNAPSHOT_CREATION_TIMEOUT,
           maxBuffer: 1024 * 1024, // 1MB buffer

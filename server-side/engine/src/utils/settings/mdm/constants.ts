@@ -9,7 +9,7 @@ import { homedir, userInfo } from 'os'
 import { join } from 'path'
 
 /** macOS preference domain for Claude MDM profiles. */
-export const MACOS_PREFERENCE_DOMAIN = 'com.anthropic.Claudecode'
+export const MACOS_PREFERENCE_DOMAIN = 'com.anthropic.ClaudeCode'
 
 /**
  * Windows registry key paths for Claude MDM policies.

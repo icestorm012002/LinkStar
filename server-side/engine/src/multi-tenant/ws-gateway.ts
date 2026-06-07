@@ -357,7 +357,7 @@ export class WsGateway {
   private async handleTestConnection(ctx: ClientContext, msg: Extract<ClientMessage, { type: 'test_api_connection' }>): Promise<void> {
     const { provider, apiKey, baseUrl, model } = msg
     const userId = ctx.user?.userId || 'anonymous'
-    console.log(`[WsGateway] Testing API connection via Claude-code for tenant: ${userId}, provider: ${provider}, model: ${model}`)
+    console.log(`[WsGateway] Testing API connection via claude-code for tenant: ${userId}, provider: ${provider}, model: ${model}`)
 
     // 辅助：向同一用户的所有当前活跃连接发送结果（防止异步期间旧连接关闭导致消息丢失）
     const sendResultToUser = (result: any) => {
@@ -380,7 +380,7 @@ export class WsGateway {
       // 构建环境变量，注入对应的 API 密钥和基准地址
       const testEnv: Record<string, string> = {
         ...process.env,
-        CLAUDE_: join(userDir, '.Claude'),
+        CLAUDE_: join(userDir, '.CLAUDE'),
         HOME: userDir,
         USERPROFILE: userDir,
       }

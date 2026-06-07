@@ -4,11 +4,11 @@
  * 职责：
  *   1. 接收来自编排器（orchestrator）的会话配置（JSON via stdin 或 CLI args）
  *   2. 通过 CLAUDE_ 等环境变量实现用户级隔离
- *   3. 复用 Claude-code 的 init → getTools → QueryEngine 链路
+ *   3. 复用 claude-code 的 init → getTools → QueryEngine 链路
  *   4. 将 QueryEngine 产生的 SDKMessage 流序列化为 NDJSON 输出到 stdout
  *   5. 编排器负责捕获 stdout 并通过 WebSocket 转发到用户本地客户端
  *
- * 本模块 **不改写** 任何 Claude-code 核心文件——它只是核心引擎的一个新消费者。
+ * 本模块 **不改写** 任何 claude-code 核心文件——它只是核心引擎的一个新消费者。
  *
  * 启动方式（由编排器调用）:
  *   node headless-server.js '{"prompt":"...","sessionDir":"/data/users/abc123"}'
@@ -19,8 +19,8 @@
 Object.assign(globalThis, {
   MACRO: {
     VERSION: '0.0.0-headless',
-    NATIVE_PACKAGE_URL: '@anthropic-ai/Claude-code',
-    PACKAGE_URL: '@anthropic-ai/Claude-code',
+    NATIVE_PACKAGE_URL: '@anthropic-ai/claude-code',
+    PACKAGE_URL: '@anthropic-ai/claude-code',
     VERSION_CHANGELOG: {},
   },
 })
@@ -61,23 +61,23 @@ export type HeadlessSessionConfig = {
   envOverrides?: Record<string, string>
   /** 可选：上次断网遗留的未完成写入文件列表（.tmp），用于 AI 提示恢复 */
   incompleteWrites?: string[]
-  /** 可选：会话/对话唯一标识，用于在 .Claude 恢复历史上下文 */
+  /** 可选：会话/对话唯一标识，用于在 .CLAUDE 恢复历史上下文 */
   sessionId?: string
 }
 
 // ---------------------------------------------------------------------------
-// 2. 环境隔离注入 — 必须在任何 Claude-code 模块导入之前执行
+// 2. 环境隔离注入 — 必须在任何 claude-code 模块导入之前执行
 // ---------------------------------------------------------------------------
 function injectSessionEnvironment(config: HeadlessSessionConfig): void {
-  // 核心隔离：将 Claude-code 的全局配置目录指向用户专属目录
-  const configDir = join(config.sessionDir, '.Claude')
+  // 核心隔离：将 claude-code 的全局配置目录指向用户专属目录
+  const configDir = join(config.sessionDir, '.CLAUDE')
   if (!existsSync(configDir)) {
     mkdirSync(configDir, { recursive: true })
   }
   
   // 从全局目录复制登录凭证（OAuth token 等），让用户继承宿主机的登录状态
   try {
-    const globalSettingsPath = join(homedir(), '.Claude', 'settings.json')
+    const globalSettingsPath = join(homedir(), '.CLAUDE', 'settings.json')
     const localSettingsPath = join(configDir, 'settings.json')
     if (existsSync(globalSettingsPath) && !existsSync(localSettingsPath)) {
       copyFileSync(globalSettingsPath, localSettingsPath)
@@ -179,7 +179,7 @@ async function runSession(config: HeadlessSessionConfig): Promise<number> {
   emit({ type: 'session_start', sessionId, timestamp: timestamp() })
 
   try {
-    // --- 延迟导入 Claude-code 模块（环境变量已在导入前注入完毕）---
+    // --- 延迟导入 claude-code 模块（环境变量已在导入前注入完毕）---
     const { init } = await import('./entrypoints/init.js')
     await init()
 
@@ -310,7 +310,7 @@ async function runSession(config: HeadlessSessionConfig): Promise<number> {
     let finalPrompt = config.prompt
     
     // Natively instruct the AI model about its brand, role, and local environment
-    const systemBrandingInstruction = `[System Instruction: You are CLAUDE, a premium AI coding assistant designed to build and refine codebases. Never refer to yourself as Claude or Anthropic. Always refer to yourself as CLAUDE. You are directly editing the local codebase on the developer's computer. When displaying paths, use the real physical filesystem paths on the host.]`
+    const systemBrandingInstruction = `[System Instruction: You are CLAUDE, a premium AI coding assistant designed to build and refine codebases. Never refer to yourself as CLAUDE or Anthropic. Always refer to yourself as CLAUDE. You are directly editing the local codebase on the developer's computer. When displaying paths, use the real physical filesystem paths on the host.]`
     
     // 如果存在未完成的写入（断网遗留），在此处向大模型注入隐式上下文
     if (config.incompleteWrites && config.incompleteWrites.length > 0) {
@@ -375,7 +375,7 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  // 注入环境（在任何 Claude-code 模块加载之前）
+  // 注入环境（在任何 claude-code 模块加载之前）
   injectSessionEnvironment(config)
 
   const exitCode = await runSession(config)

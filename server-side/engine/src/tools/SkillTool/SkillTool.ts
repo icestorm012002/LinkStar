@@ -161,7 +161,7 @@ async function executeForkedSkill(
       'fork' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     invocation_trigger: (queryDepth > 0
       ? 'nested-skill'
-      : 'Claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+      : 'claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     query_depth: queryDepth,
     ...(parentAgentId && {
       parent_agent_id:
@@ -685,7 +685,7 @@ export const SkillTool: Tool<InputSchema, Output, Progress> = buildTool({
         'inline' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       invocation_trigger: (queryDepth > 0
         ? 'nested-skill'
-        : 'Claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+        : 'claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       query_depth: queryDepth,
       ...(parentAgentId && {
         parent_agent_id:
@@ -1039,7 +1039,7 @@ async function executeRemoteSkill(
       'remote' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     invocation_trigger: (queryDepth > 0
       ? 'nested-skill'
-      : 'Claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+      : 'claude-proactive') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     query_depth: queryDepth,
     ...(parentAgentId && {
       parent_agent_id:

@@ -6,7 +6,7 @@ import { sendRpcRequest } from './rpc.js'
 
 /**
  * Apply monkey-patches to fs and child_process to reroute local tool executions to the remote client.
- * This should be called BEFORE any Claude-code core modules are imported.
+ * This should be called BEFORE any claude-code core modules are imported.
  * @param remoteCwd The absolute path to the user's workspace on the cloud (shadow workspace)
  */
 export function applyMonkeyPatches(cloudWorkspaceDir: string) {
@@ -32,7 +32,7 @@ export function applyMonkeyPatches(cloudWorkspaceDir: string) {
       // It's a workspace path, route it to the client!
       // This is blocking since writeFileSync is sync, but we are using async RPC.
       // Wait, Node.js sync methods CANNOT easily await async RPCs.
-      // If Claude uses writeFileSync, we have a problem.
+      // If CLAUDE uses writeFileSync, we have a problem.
       throw new Error(`[MonkeyPatch] Synchronous fs.writeFileSync on workspace path is not supported in RPC mode: ${file}`)
     }
     return originalWriteFileSync.apply(this, [file, data, options])
@@ -55,7 +55,7 @@ export function applyMonkeyPatches(cloudWorkspaceDir: string) {
   }
 
   // --- Patch child_process.spawn ---
-  // Claude's Shell.ts uses spawn to run commands.
+  // CLAUDE's Shell.ts uses spawn to run commands.
   const originalSpawn = child_process.spawn
   ;(child_process as any).spawn = function(
     command: string,

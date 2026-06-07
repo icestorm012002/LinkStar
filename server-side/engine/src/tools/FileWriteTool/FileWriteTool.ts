@@ -336,9 +336,9 @@ export const FileWriteTool = buildTool({
       limit: undefined,
     })
 
-    // Log when writing to Claude.md
-    if (fullFilePath.endsWith(`${sep}Claude.md`)) {
-      logEvent('tengu_write_Claudemd', {})
+    // Log when writing to CLAUDE.md
+    if (fullFilePath.endsWith(`${sep}CLAUDE.md`)) {
+      logEvent('tengu_write_claudemd', {})
     }
 
     let gitDiff: ToolUseDiff | undefined

@@ -2,7 +2,7 @@
  * Claude hints protocol.
  *
  * CLIs and SDKs running under Claude can emit a self-closing
- * `<Claude-code-hint />` tag to stderr (merged into stdout by the shell
+ * `<claude-code-hint />` tag to stderr (merged into stdout by the shell
  * tools). The harness scans tool output for these tags, strips them before
  * the output reaches the model, and surfaces an install prompt to the
  * user — no inference, no proactive execution.
@@ -12,7 +12,7 @@
  * at most one prompt per session, so there's no reason to accumulate.
  * React subscribes via useSyncExternalStore.
  *
- * See docs/Claude-code-hints.md for the vendor-facing spec.
+ * See docs/claude-code-hints.md for the vendor-facing spec.
  */
 
 import { logForDebugging } from './debug.js'
@@ -50,7 +50,7 @@ const SUPPORTED_TYPES = new Set<string>(['plugin'])
  * tag — is ignored. Leading and trailing whitespace on the line is
  * tolerated since some SDKs pad stderr.
  */
-const HINT_TAG_RE = /^[ \t]*<Claude-code-hint\s+([^>]*?)\s*\/>[ \t]*$/gm
+const HINT_TAG_RE = /^[ \t]*<claude-code-hint\s+([^>]*?)\s*\/>[ \t]*$/gm
 
 /**
  * Attribute matcher. Accepts `key="value"` and `key=value` (terminated by
@@ -74,7 +74,7 @@ export function extractClaudeCodeHints(
   command: string,
 ): { hints: ClaudeCodeHint[]; stripped: string } {
   // Fast path: no tag open sequence → no work, no allocation.
-  if (!output.includes('<Claude-code-hint')) {
+  if (!output.includes('<claude-code-hint')) {
     return { hints: [], stripped: output }
   }
 
@@ -89,18 +89,18 @@ export function extractClaudeCodeHints(
 
     if (!SUPPORTED_VERSIONS.has(v)) {
       logForDebugging(
-        `[ClaudeCodeHints] dropped hint with unsupported v=${attrs.v}`,
+        `[claudeCodeHints] dropped hint with unsupported v=${attrs.v}`,
       )
       return ''
     }
     if (!type || !SUPPORTED_TYPES.has(type)) {
       logForDebugging(
-        `[ClaudeCodeHints] dropped hint with unsupported type=${type}`,
+        `[claudeCodeHints] dropped hint with unsupported type=${type}`,
       )
       return ''
     }
     if (!value) {
-      logForDebugging('[ClaudeCodeHints] dropped hint with empty value')
+      logForDebugging('[claudeCodeHints] dropped hint with empty value')
       return ''
     }
 

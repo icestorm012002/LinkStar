@@ -143,14 +143,14 @@ describe('initializeUserDirectory', () => {
   it('应该创建完整的用户目录结构', () => {
     const userDir = initializeUserDirectory(dataRoot, 'user-001')
 
-    expect(existsSync(join(userDir, '.Claude'))).toBe(true)
+    expect(existsSync(join(userDir, '.CLAUDE'))).toBe(true)
     expect(existsSync(join(userDir, 'workspace'))).toBe(true)
     expect(existsSync(join(userDir, 'logs'))).toBe(true)
   })
 
   it('应该写入 tenant-meta.json', () => {
     const userDir = initializeUserDirectory(dataRoot, 'user-002')
-    const metaPath = join(userDir, '.Claude', 'tenant-meta.json')
+    const metaPath = join(userDir, '.CLAUDE', 'tenant-meta.json')
 
     expect(existsSync(metaPath)).toBe(true)
 
@@ -176,13 +176,13 @@ describe('initializeUserDirectory', () => {
   it('重复初始化同一用户不应报错也不应覆盖元数据', () => {
     const dir1 = initializeUserDirectory(dataRoot, 'user-repeat')
     const meta1 = JSON.parse(
-      readFileSync(join(dir1, '.Claude', 'tenant-meta.json'), 'utf-8'),
+      readFileSync(join(dir1, '.CLAUDE', 'tenant-meta.json'), 'utf-8'),
     )
 
     // 再次初始化
     const dir2 = initializeUserDirectory(dataRoot, 'user-repeat')
     const meta2 = JSON.parse(
-      readFileSync(join(dir2, '.Claude', 'tenant-meta.json'), 'utf-8'),
+      readFileSync(join(dir2, '.CLAUDE', 'tenant-meta.json'), 'utf-8'),
     )
 
     expect(dir1).toBe(dir2)

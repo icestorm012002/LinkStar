@@ -41,17 +41,17 @@ export const CONSOLE_OAUTH_SCOPES = [
   CLAUDE_,
 ] as const
 
-// Claude.ai OAuth scopes - for Claude.ai subscribers (Pro/Max/Team/Enterprise)
+// claude.ai OAuth scopes - for claude.ai subscribers (Pro/Max/Team/Enterprise)
 export const CLAUDE_ = [
   CLAUDE_,
   CLAUDE_,
-  'user:sessions:Claude_code',
+  'user:sessions:claude_code',
   'user:mcp_servers',
   'user:file_upload',
 ] as const
 
-// All OAuth scopes - union of all scopes used in Claude CLI
-// When logging in, request all scopes in order to handle both Console -> Claude.ai redirect
+// All OAuth scopes - union of all scopes used in claude CLI
+// When logging in, request all scopes in order to handle both Console -> claude.ai redirect
 // Ensure that `OAuthConsentPage` in apps repo is kept in sync with this list.
 export const ALL_OAUTH_SCOPES = Array.from(
   new Set([...CONSOLE_OAUTH_SCOPES, ...CLAUDE_]),
@@ -62,17 +62,17 @@ type OauthConfig = {
   CONSOLE_AUTHORIZE_URL: string
   CLAUDE_: string
   /**
-   * The Claude.ai web origin. Separate from CLAUDE_ because
-   * that now routes through Claude.com/cai/* for attribution — deriving
-   * .origin from it would give Claude.com, breaking links to /code,
-   * /settings/connectors, and other Claude.ai web pages.
+   * The claude.ai web origin. Separate from CLAUDE_ because
+   * that now routes through claude.com/cai/* for attribution — deriving
+   * .origin from it would give claude.com, breaking links to /code,
+   * /settings/connectors, and other claude.ai web pages.
    */
   CLAUDE_: string
   TOKEN_URL: string
   API_KEY_URL: string
   ROLES_URL: string
   CONSOLE_SUCCESS_URL: string
-  ClaudeAI_SUCCESS_URL: string
+  CLAUDEAI_SUCCESS_URL: string
   MANUAL_REDIRECT_URL: string
   CLIENT_ID: string
   OAUTH_FILE_SUFFIX: string
@@ -83,19 +83,19 @@ type OauthConfig = {
 // Production OAuth configuration - Used in normal operation
 const PROD_OAUTH_CONFIG = {
   BASE_API_URL: 'https://api.anthropic.com',
-  CONSOLE_AUTHORIZE_URL: 'https://platform.Claude.com/oauth/authorize',
-  // Bounces through Claude.com/cai/* so CLI sign-ins connect to Claude.com
-  // visits for attribution. 307s to Claude.ai/oauth/authorize in two hops.
-  CLAUDE_: 'https://Claude.com/cai/oauth/authorize',
-  CLAUDE_: 'https://Claude.ai',
-  TOKEN_URL: 'https://platform.Claude.com/v1/oauth/token',
-  API_KEY_URL: 'https://api.anthropic.com/api/oauth/Claude_cli/create_api_key',
-  ROLES_URL: 'https://api.anthropic.com/api/oauth/Claude_cli/roles',
+  CONSOLE_AUTHORIZE_URL: 'https://platform.claude.com/oauth/authorize',
+  // Bounces through claude.com/cai/* so CLI sign-ins connect to claude.com
+  // visits for attribution. 307s to claude.ai/oauth/authorize in two hops.
+  CLAUDE_: 'https://claude.com/cai/oauth/authorize',
+  CLAUDE_: 'https://claude.ai',
+  TOKEN_URL: 'https://platform.claude.com/v1/oauth/token',
+  API_KEY_URL: 'https://api.anthropic.com/api/oauth/claude_cli/create_api_key',
+  ROLES_URL: 'https://api.anthropic.com/api/oauth/claude_cli/roles',
   CONSOLE_SUCCESS_URL:
-    'https://platform.Claude.com/buy_credits?returnUrl=/oauth/code/success%3Fapp%3DClaude-code',
-  ClaudeAI_SUCCESS_URL:
-    'https://platform.Claude.com/oauth/code/success?app=Claude-code',
-  MANUAL_REDIRECT_URL: 'https://platform.Claude.com/oauth/code/callback',
+    'https://platform.claude.com/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code',
+  CLAUDEAI_SUCCESS_URL:
+    'https://platform.claude.com/oauth/code/success?app=claude-code',
+  MANUAL_REDIRECT_URL: 'https://platform.claude.com/oauth/code/callback',
   CLIENT_ID: '9d1c250a-e61b-44d9-88ed-5944d1962f5e',
   // No suffix for production config
   OAUTH_FILE_SUFFIX: '',
@@ -106,12 +106,12 @@ const PROD_OAUTH_CONFIG = {
 /**
  * Client ID Metadata Document URL for MCP OAuth (CIMD / SEP-991).
  * When an MCP auth server advertises client_id_metadata_document_supported: true,
- * Claude uses this URL as its client_id instead of Dynamic Client Registration.
+ * claude uses this URL as its client_id instead of Dynamic Client Registration.
  * The URL must point to a JSON document hosted by Anthropic.
  * See: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00
  */
 export const MCP_CLIENT_METADATA_URL =
-  'https://Claude.ai/oauth/Claude-code-client-metadata'
+  'https://claude.ai/oauth/claude-code-client-metadata'
 
 // Staging OAuth configuration - only included in ant builds with staging flag
 // Uses literal check for dead code elimination
@@ -122,17 +122,17 @@ const STAGING_OAUTH_CONFIG =
         CONSOLE_AUTHORIZE_URL:
           'https://platform.staging.ant.dev/oauth/authorize',
         CLAUDE_:
-          'https://Claude-ai.staging.ant.dev/oauth/authorize',
-        CLAUDE_: 'https://Claude-ai.staging.ant.dev',
+          'https://claude-ai.staging.ant.dev/oauth/authorize',
+        CLAUDE_: 'https://claude-ai.staging.ant.dev',
         TOKEN_URL: 'https://platform.staging.ant.dev/v1/oauth/token',
         API_KEY_URL:
-          'https://api-staging.anthropic.com/api/oauth/Claude_cli/create_api_key',
+          'https://api-staging.anthropic.com/api/oauth/claude_cli/create_api_key',
         ROLES_URL:
-          'https://api-staging.anthropic.com/api/oauth/Claude_cli/roles',
+          'https://api-staging.anthropic.com/api/oauth/claude_cli/roles',
         CONSOLE_SUCCESS_URL:
-          'https://platform.staging.ant.dev/buy_credits?returnUrl=/oauth/code/success%3Fapp%3DClaude-code',
-        ClaudeAI_SUCCESS_URL:
-          'https://platform.staging.ant.dev/oauth/code/success?app=Claude-code',
+          'https://platform.staging.ant.dev/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code',
+        CLAUDEAI_SUCCESS_URL:
+          'https://platform.staging.ant.dev/oauth/code/success?app=claude-code',
         MANUAL_REDIRECT_URL:
           'https://platform.staging.ant.dev/oauth/code/callback',
         CLIENT_ID: '22422756-60c9-4084-8eb7-27705fd5cf9a',
@@ -143,8 +143,8 @@ const STAGING_OAUTH_CONFIG =
     : undefined
 
 // Three local dev servers: :8000 api-proxy (`api dev start -g ccr`),
-// :4000 Claude-ai frontend, :3000 Console frontend. Env vars let
-// scripts/Claude-localhost override if your layout differs.
+// :4000 claude-ai frontend, :3000 Console frontend. Env vars let
+// scripts/claude-localhost override if your layout differs.
 function getLocalOauthConfig(): OauthConfig {
   const api =
     process.env.CLAUDE_?.replace(/\/$/, '') ??
@@ -161,10 +161,10 @@ function getLocalOauthConfig(): OauthConfig {
     CLAUDE_: `${apps}/oauth/authorize`,
     CLAUDE_: apps,
     TOKEN_URL: `${api}/v1/oauth/token`,
-    API_KEY_URL: `${api}/api/oauth/Claude_cli/create_api_key`,
-    ROLES_URL: `${api}/api/oauth/Claude_cli/roles`,
-    CONSOLE_SUCCESS_URL: `${consoleBase}/buy_credits?returnUrl=/oauth/code/success%3Fapp%3DClaude-code`,
-    ClaudeAI_SUCCESS_URL: `${consoleBase}/oauth/code/success?app=Claude-code`,
+    API_KEY_URL: `${api}/api/oauth/claude_cli/create_api_key`,
+    ROLES_URL: `${api}/api/oauth/claude_cli/roles`,
+    CONSOLE_SUCCESS_URL: `${consoleBase}/buy_credits?returnUrl=/oauth/code/success%3Fapp%3Dclaude-code`,
+    CLAUDEAI_SUCCESS_URL: `${consoleBase}/oauth/code/success?app=claude-code`,
     MANUAL_REDIRECT_URL: `${consoleBase}/oauth/code/callback`,
     CLIENT_ID: '22422756-60c9-4084-8eb7-27705fd5cf9a',
     OAUTH_FILE_SUFFIX: '-local-oauth',
@@ -177,9 +177,9 @@ function getLocalOauthConfig(): OauthConfig {
 // Only FedStart/PubSec deployments are permitted to prevent OAuth tokens
 // from being sent to arbitrary endpoints.
 const ALLOWED_OAUTH_BASE_URLS = [
-  'https://beacon.Claude-ai.staging.ant.dev',
-  'https://Claude.fedstart.com',
-  'https://Claude-staging.fedstart.com',
+  'https://beacon.claude-ai.staging.ant.dev',
+  'https://claude.fedstart.com',
+  'https://claude-staging.fedstart.com',
 ]
 
 // Default to prod config, override with test/staging if enabled
@@ -212,10 +212,10 @@ export function getOauthConfig(): OauthConfig {
       CLAUDE_: `${base}/oauth/authorize`,
       CLAUDE_: base,
       TOKEN_URL: `${base}/v1/oauth/token`,
-      API_KEY_URL: `${base}/api/oauth/Claude_cli/create_api_key`,
-      ROLES_URL: `${base}/api/oauth/Claude_cli/roles`,
-      CONSOLE_SUCCESS_URL: `${base}/oauth/code/success?app=Claude-code`,
-      ClaudeAI_SUCCESS_URL: `${base}/oauth/code/success?app=Claude-code`,
+      API_KEY_URL: `${base}/api/oauth/claude_cli/create_api_key`,
+      ROLES_URL: `${base}/api/oauth/claude_cli/roles`,
+      CONSOLE_SUCCESS_URL: `${base}/oauth/code/success?app=claude-code`,
+      CLAUDEAI_SUCCESS_URL: `${base}/oauth/code/success?app=claude-code`,
       MANUAL_REDIRECT_URL: `${base}/oauth/code/callback`,
       OAUTH_FILE_SUFFIX: '-custom-oauth',
     }

@@ -31,17 +31,17 @@ const FETCH_TIMEOUT_MS = 5000
 const MCP_SERVERS_BETA_HEADER = 'mcp-servers-2025-12-04'
 
 /**
- * Fetches MCP server configurations from Claude.ai org configs.
- * These servers are managed by the organization via Claude.ai.
+ * Fetches MCP server configurations from claude.ai org configs.
+ * These servers are managed by the organization via claude.ai.
  *
  * Results are memoized for the session lifetime (fetch once per CLI session).
  */
 export const fetchClaudeAIMcpConfigsIfEligible = memoize(
   async (): Promise<Record<string, ScopedMcpServerConfig>> => {
     try {
-      if (isEnvDefinedFalsy(process.env.ENABLE_ClaudeAI_MCP_SERVERS)) {
-        logForDebugging('[Claudeai-mcp] Disabled via env var')
-        logEvent('tengu_Claudeai_mcp_eligibility', {
+      if (isEnvDefinedFalsy(process.env.ENABLE_CLAUDEAI_MCP_SERVERS)) {
+        logForDebugging('[claudeai-mcp] Disabled via env var')
+        logEvent('tengu_claudeai_mcp_eligibility', {
           state:
             'disabled_env_var' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -50,8 +50,8 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
 
       const tokens = getClaudeAIOAuthTokens()
       if (!tokens?.accessToken) {
-        logForDebugging('[Claudeai-mcp] No access token')
-        logEvent('tengu_Claudeai_mcp_eligibility', {
+        logForDebugging('[claudeai-mcp] No access token')
+        logEvent('tengu_claudeai_mcp_eligibility', {
           state:
             'no_oauth_token' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -62,12 +62,12 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
       // In non-interactive mode, isClaudeAISubscriber() returns false when ANTHROPIC_API_KEY
       // is set (even with valid OAuth tokens) because preferThirdPartyAuthentication() causes
       // isAnthropicAuthEnabled() to return false. Checking the scope directly allows users
-      // with both API keys and OAuth tokens to access Claude.ai MCPs in print mode.
+      // with both API keys and OAuth tokens to access claude.ai MCPs in print mode.
       if (!tokens.scopes?.includes('user:mcp_servers')) {
         logForDebugging(
-          `[Claudeai-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`,
+          `[claudeai-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`,
         )
-        logEvent('tengu_Claudeai_mcp_eligibility', {
+        logEvent('tengu_claudeai_mcp_eligibility', {
           state:
             'missing_scope' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
@@ -77,7 +77,7 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
       const baseUrl = getOauthConfig().BASE_API_URL
       const url = `${baseUrl}/v1/mcp_servers?limit=1000`
 
-      logForDebugging(`[Claudeai-mcp] Fetching from ${url}`)
+      logForDebugging(`[claudeai-mcp] Fetching from ${url}`)
 
       const response = await axios.get<ClaudeAIMcpServersResponse>(url, {
         headers: {
@@ -93,11 +93,11 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
       // Track used normalized names to detect collisions and assign (2), (3), etc. suffixes.
       // We check the final normalized name (including suffix) to handle edge cases where
       // a suffixed name collides with another server's base name (e.g., "Example Server 2"
-      // colliding with "Example Server! (2)" which both normalize to Claude_ai_Example_Server_2).
+      // colliding with "Example Server! (2)" which both normalize to claude_ai_Example_Server_2).
       const usedNormalizedNames = new Set<string>()
 
       for (const server of response.data.data) {
-        const baseName = `Claude.ai ${server.display_name}`
+        const baseName = `claude.ai ${server.display_name}`
 
         // Try without suffix first, then increment until we find an unused normalized name
         let finalName = baseName
@@ -111,23 +111,23 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(
         usedNormalizedNames.add(finalNormalized)
 
         configs[finalName] = {
-          type: 'Claudeai-proxy',
+          type: 'claudeai-proxy',
           url: server.url,
           id: server.id,
-          scope: 'Claudeai',
+          scope: 'claudeai',
         }
       }
 
       logForDebugging(
-        `[Claudeai-mcp] Fetched ${Object.keys(configs).length} servers`,
+        `[claudeai-mcp] Fetched ${Object.keys(configs).length} servers`,
       )
-      logEvent('tengu_Claudeai_mcp_eligibility', {
+      logEvent('tengu_claudeai_mcp_eligibility', {
         state:
           'eligible' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       })
       return configs
     } catch {
-      logForDebugging(`[Claudeai-mcp] Fetch failed`)
+      logForDebugging(`[claudeai-mcp] Fetch failed`)
       return {}
     }
   },
@@ -144,7 +144,7 @@ export function clearClaudeAIMcpConfigsCache(): void {
 }
 
 /**
- * Record that a Claude.ai connector successfully connected. Idempotent.
+ * Record that a claude.ai connector successfully connected. Idempotent.
  *
  * Gates the "N connectors unavailable/need auth" startup notifications: a
  * connector that was working yesterday and is now failed is a state change
@@ -153,12 +153,12 @@ export function clearClaudeAIMcpConfigsCache(): void {
  */
 export function markClaudeAiMcpConnected(name: string): void {
   saveGlobalConfig(current => {
-    const seen = current.ClaudeAiMcpEverConnected ?? []
+    const seen = current.claudeAiMcpEverConnected ?? []
     if (seen.includes(name)) return current
-    return { ...current, ClaudeAiMcpEverConnected: [...seen, name] }
+    return { ...current, claudeAiMcpEverConnected: [...seen, name] }
   })
 }
 
 export function hasClaudeAiMcpEverConnected(name: string): boolean {
-  return (getGlobalConfig().ClaudeAiMcpEverConnected ?? []).includes(name)
+  return (getGlobalConfig().claudeAiMcpEverConnected ?? []).includes(name)
 }

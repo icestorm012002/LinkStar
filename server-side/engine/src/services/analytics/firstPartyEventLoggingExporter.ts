@@ -311,7 +311,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       // Filter for event logs only (by scope name)
       const eventLogs = logs.filter(
         log =>
-          log.instrumentationScope?.name === 'com.anthropic.Claude_code.events',
+          log.instrumentationScope?.name === 'com.anthropic.claude_code.events',
       )
 
       if (eventLogs.length === 0) {
@@ -538,7 +538,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     const baseHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       'User-Agent': getClaudeCodeUserAgent(),
-      'x-service-name': 'Claude-code',
+      'x-service-name': 'claude-code',
     }
 
     // Skip auth if trust hasn't been established yet

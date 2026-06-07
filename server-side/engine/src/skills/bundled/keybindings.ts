@@ -112,8 +112,8 @@ function generateReservedShortcuts(): string {
 }
 
 const FILE_FORMAT_EXAMPLE: KeybindingsSchemaType = {
-  $schema: 'https://www.schemastore.org/Claude-code-keybindings.json',
-  $docs: 'https://code.Claude.com/docs/en/keybindings',
+  $schema: 'https://www.schemastore.org/claude-code-keybindings.json',
+  $docs: 'https://code.claude.com/docs/en/keybindings',
   bindings: [
     {
       context: 'Chat',
@@ -149,11 +149,11 @@ const CHORD_EXAMPLE: KeybindingsSchemaType['bindings'][number] = {
 const SECTION_INTRO = [
   '# Keybindings Skill',
   '',
-  'Create or modify `~/.Claude/keybindings.json` to customize keyboard shortcuts.',
+  'Create or modify `~/.claude/keybindings.json` to customize keyboard shortcuts.',
   '',
   '## CRITICAL: Read Before Write',
   '',
-  '**Always read `~/.Claude/keybindings.json` first** (it may not exist yet). Merge changes with existing bindings — never replace the entire file.',
+  '**Always read `~/.claude/keybindings.json` first** (it may not exist yet). Merge changes with existing bindings — never replace the entire file.',
   '',
   '- Use **Edit** tool for modifications to existing files',
   '- Use **Write** tool only if the file does not exist yet',
@@ -231,7 +231,7 @@ const SECTION_BEHAVIORAL_RULES = [
 const SECTION_DOCTOR = [
   '## Validation with /doctor',
   '',
-  'The `/doctor` command includes a "Keybinding Configuration Issues" section that validates `~/.Claude/keybindings.json`.',
+  'The `/doctor` command includes a "Keybinding Configuration Issues" section that validates `~/.claude/keybindings.json`.',
   '',
   '### Common Issues and Fixes',
   '',
@@ -280,7 +280,7 @@ const SECTION_DOCTOR = [
   '',
   '```',
   'Keybinding Configuration Issues',
-  'Location: ~/.Claude/keybindings.json',
+  'Location: ~/.claude/keybindings.json',
   '  └ [Error] Unknown context "chat"',
   '    → Valid contexts: Global, Chat, Autocomplete, ...',
   '  └ [Warning] "ctrl+c" may not work: Terminal interrupt (SIGINT)',
@@ -293,7 +293,7 @@ export function registerKeybindingsSkill(): void {
   registerBundledSkill({
     name: 'keybindings-help',
     description:
-      'Use when the user wants to customize keyboard shortcuts, rebind keys, add chord bindings, or modify ~/.Claude/keybindings.json. Examples: "rebind ctrl+s", "add a chord shortcut", "change the submit key", "customize keybindings".',
+      'Use when the user wants to customize keyboard shortcuts, rebind keys, add chord bindings, or modify ~/.claude/keybindings.json. Examples: "rebind ctrl+s", "add a chord shortcut", "change the submit key", "customize keybindings".',
     allowedTools: ['Read'],
     userInvocable: false,
     isEnabled: isKeybindingCustomizationEnabled,

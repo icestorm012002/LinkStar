@@ -115,15 +115,15 @@ export async function createBashShellProvider(
       // but Node.js needs native Windows paths for file operations.
       const shellCwdFilePath = opts.useSandbox
         ? posixJoin(opts.sandboxTmpDir!, `cwd-${opts.id}`)
-        : posixJoin(shellTmpdir, `Claude-${opts.id}-cwd`)
+        : posixJoin(shellTmpdir, `claude-${opts.id}-cwd`)
       const cwdFilePath = opts.useSandbox
         ? posixJoin(opts.sandboxTmpDir!, `cwd-${opts.id}`)
-        : nativeJoin(tmpdir, `Claude-${opts.id}-cwd`)
+        : nativeJoin(tmpdir, `claude-${opts.id}-cwd`)
 
       // Defensive rewrite: the model sometimes emits Windows CMD-style `2>nul`
       // redirects. In POSIX bash (including Git Bash on Windows), this creates a
       // literal file named `nul` — a reserved device name that breaks git.
-      // See anthropics/Claude-code#4928.
+      // See anthropics/claude-code#4928.
       const normalizedCommand = rewriteWindowsNullRedirect(command)
       const addStdinRedirect = shouldAddStdinRedirect(normalizedCommand)
       let quotedCommand = quoteShellCommand(normalizedCommand, addStdinRedirect)
@@ -224,13 +224,13 @@ export async function createBashShellProvider(
       ) {
         await ensureSocketInitialized()
       }
-      const ClaudeTmuxEnv = getClaudeTmuxEnv()
+      const claudeTmuxEnv = getClaudeTmuxEnv()
       const env: Record<string, string> = {}
       // CRITICAL: Override TMUX to isolate ALL tmux commands to Claude's socket.
       // This is NOT the user's TMUX value - it points to Claude's isolated socket.
       // When null (before socket initializes), user's TMUX is preserved.
-      if (ClaudeTmuxEnv) {
-        env.TMUX = ClaudeTmuxEnv
+      if (claudeTmuxEnv) {
+        env.TMUX = claudeTmuxEnv
       }
       if (currentSandboxTmpDir) {
         let posixTmpDir = currentSandboxTmpDir

@@ -17,7 +17,7 @@ export interface GitHubActionsMetadata {
 
 /**
  * EnvironmentMetadata contains environment and runtime information
- * See Claude-cli-internal/src/services/statsig.ts for the source of these fields
+ * See claude-cli-internal/src/services/statsig.ts for the source of these fields
  */
 export interface EnvironmentMetadata {
   platform?: string | undefined
@@ -29,8 +29,8 @@ export interface EnvironmentMetadata {
   is_ci?: boolean | undefined
   is_claubbit?: boolean | undefined
   is_github_action?: boolean | undefined
-  is_Claude_code_action?: boolean | undefined
-  is_Claude_ai_auth?: boolean | undefined
+  is_claude_code_action?: boolean | undefined
+  is_claude_ai_auth?: boolean | undefined
   version?: string | undefined
   /** GitHub Actions specific fields (only present when is_github_action is true) */
   github_event_name?: string | undefined
@@ -42,10 +42,10 @@ export interface EnvironmentMetadata {
   /** GitHub metadata (only present when is_github_action is true) */
   github_actions_metadata?: GitHubActionsMetadata | undefined
   arch?: string | undefined
-  is_Claude_code_remote?: boolean | undefined
+  is_claude_code_remote?: boolean | undefined
   remote_environment_type?: string | undefined
-  Claude_code_container_id?: string | undefined
-  Claude_code_remote_session_id?: string | undefined
+  claude_code_container_id?: string | undefined
+  claude_code_remote_session_id?: string | undefined
   tags?: string[] | undefined
   deployment_environment?: string | undefined
   is_conductor?: boolean | undefined
@@ -74,7 +74,7 @@ export interface SlackContext {
 
 /**
  * ClaudeCodeInternalEvent represents events logged from Claude via Statsig
- * This schema matches the structure in Claude-cli-internal/src/services/statsig.ts
+ * This schema matches the structure in claude-cli-internal/src/services/statsig.ts
  * Source table: proj-product-data-nhme.raw_statsig_internal_tools.events
  */
 export interface ClaudeCodeInternalEvent {
@@ -189,8 +189,8 @@ function createBaseEnvironmentMetadata(): EnvironmentMetadata {
     is_ci: false,
     is_claubbit: false,
     is_github_action: false,
-    is_Claude_code_action: false,
-    is_Claude_ai_auth: false,
+    is_claude_code_action: false,
+    is_claude_ai_auth: false,
     version: '',
     github_event_name: '',
     github_actions_runner_environment: '',
@@ -199,10 +199,10 @@ function createBaseEnvironmentMetadata(): EnvironmentMetadata {
     wsl_version: '',
     github_actions_metadata: undefined,
     arch: '',
-    is_Claude_code_remote: false,
+    is_claude_code_remote: false,
     remote_environment_type: '',
-    Claude_code_container_id: '',
-    Claude_code_remote_session_id: '',
+    claude_code_container_id: '',
+    claude_code_remote_session_id: '',
     tags: [],
     deployment_environment: '',
     is_conductor: false,
@@ -246,11 +246,11 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
       is_github_action: isSet(object.is_github_action)
         ? globalThis.Boolean(object.is_github_action)
         : false,
-      is_Claude_code_action: isSet(object.is_Claude_code_action)
-        ? globalThis.Boolean(object.is_Claude_code_action)
+      is_claude_code_action: isSet(object.is_claude_code_action)
+        ? globalThis.Boolean(object.is_claude_code_action)
         : false,
-      is_Claude_ai_auth: isSet(object.is_Claude_ai_auth)
-        ? globalThis.Boolean(object.is_Claude_ai_auth)
+      is_claude_ai_auth: isSet(object.is_claude_ai_auth)
+        ? globalThis.Boolean(object.is_claude_ai_auth)
         : false,
       version: isSet(object.version) ? globalThis.String(object.version) : '',
       github_event_name: isSet(object.github_event_name)
@@ -274,17 +274,17 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
         ? GitHubActionsMetadata.fromJSON(object.github_actions_metadata)
         : undefined,
       arch: isSet(object.arch) ? globalThis.String(object.arch) : '',
-      is_Claude_code_remote: isSet(object.is_Claude_code_remote)
-        ? globalThis.Boolean(object.is_Claude_code_remote)
+      is_claude_code_remote: isSet(object.is_claude_code_remote)
+        ? globalThis.Boolean(object.is_claude_code_remote)
         : false,
       remote_environment_type: isSet(object.remote_environment_type)
         ? globalThis.String(object.remote_environment_type)
         : '',
-      Claude_code_container_id: isSet(object.Claude_code_container_id)
-        ? globalThis.String(object.Claude_code_container_id)
+      claude_code_container_id: isSet(object.claude_code_container_id)
+        ? globalThis.String(object.claude_code_container_id)
         : '',
-      Claude_code_remote_session_id: isSet(object.Claude_code_remote_session_id)
-        ? globalThis.String(object.Claude_code_remote_session_id)
+      claude_code_remote_session_id: isSet(object.claude_code_remote_session_id)
+        ? globalThis.String(object.claude_code_remote_session_id)
         : '',
       tags: globalThis.Array.isArray(object?.tags)
         ? object.tags.map((e: any) => globalThis.String(e))
@@ -352,11 +352,11 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
     if (message.is_github_action !== undefined) {
       obj.is_github_action = message.is_github_action
     }
-    if (message.is_Claude_code_action !== undefined) {
-      obj.is_Claude_code_action = message.is_Claude_code_action
+    if (message.is_claude_code_action !== undefined) {
+      obj.is_claude_code_action = message.is_claude_code_action
     }
-    if (message.is_Claude_ai_auth !== undefined) {
-      obj.is_Claude_ai_auth = message.is_Claude_ai_auth
+    if (message.is_claude_ai_auth !== undefined) {
+      obj.is_claude_ai_auth = message.is_claude_ai_auth
     }
     if (message.version !== undefined) {
       obj.version = message.version
@@ -385,17 +385,17 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
     if (message.arch !== undefined) {
       obj.arch = message.arch
     }
-    if (message.is_Claude_code_remote !== undefined) {
-      obj.is_Claude_code_remote = message.is_Claude_code_remote
+    if (message.is_claude_code_remote !== undefined) {
+      obj.is_claude_code_remote = message.is_claude_code_remote
     }
     if (message.remote_environment_type !== undefined) {
       obj.remote_environment_type = message.remote_environment_type
     }
-    if (message.Claude_code_container_id !== undefined) {
-      obj.Claude_code_container_id = message.Claude_code_container_id
+    if (message.claude_code_container_id !== undefined) {
+      obj.claude_code_container_id = message.claude_code_container_id
     }
-    if (message.Claude_code_remote_session_id !== undefined) {
-      obj.Claude_code_remote_session_id = message.Claude_code_remote_session_id
+    if (message.claude_code_remote_session_id !== undefined) {
+      obj.claude_code_remote_session_id = message.claude_code_remote_session_id
     }
     if (message.tags?.length) {
       obj.tags = message.tags
@@ -454,8 +454,8 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
     message.is_ci = object.is_ci ?? false
     message.is_claubbit = object.is_claubbit ?? false
     message.is_github_action = object.is_github_action ?? false
-    message.is_Claude_code_action = object.is_Claude_code_action ?? false
-    message.is_Claude_ai_auth = object.is_Claude_ai_auth ?? false
+    message.is_claude_code_action = object.is_claude_code_action ?? false
+    message.is_claude_ai_auth = object.is_claude_ai_auth ?? false
     message.version = object.version ?? ''
     message.github_event_name = object.github_event_name ?? ''
     message.github_actions_runner_environment =
@@ -469,11 +469,11 @@ export const EnvironmentMetadata: MessageFns<EnvironmentMetadata> = {
         ? GitHubActionsMetadata.fromPartial(object.github_actions_metadata)
         : undefined
     message.arch = object.arch ?? ''
-    message.is_Claude_code_remote = object.is_Claude_code_remote ?? false
+    message.is_claude_code_remote = object.is_claude_code_remote ?? false
     message.remote_environment_type = object.remote_environment_type ?? ''
-    message.Claude_code_container_id = object.Claude_code_container_id ?? ''
-    message.Claude_code_remote_session_id =
-      object.Claude_code_remote_session_id ?? ''
+    message.claude_code_container_id = object.claude_code_container_id ?? ''
+    message.claude_code_remote_session_id =
+      object.claude_code_remote_session_id ?? ''
     message.tags = object.tags?.map(e => e) || []
     message.deployment_environment = object.deployment_environment ?? ''
     message.is_conductor = object.is_conductor ?? false

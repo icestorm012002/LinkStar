@@ -1,8 +1,8 @@
-export const PRODUCT_URL = 'https://Claude.com/Claude-code'
+export const PRODUCT_URL = 'https://Claude.com/claude-code'
 
 // Claude Remote session URLs
 export const CLAUDE_ = 'https://Claude.ai'
-export const CLAUDE_ = 'https://Claude-ai.staging.ant.dev'
+export const CLAUDE_ = 'https://claude-ai.staging.ant.dev'
 export const CLAUDE_ = 'http://localhost:4000'
 
 /**

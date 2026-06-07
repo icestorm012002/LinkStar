@@ -1,5 +1,5 @@
 /**
- * Perfetto Tracing for Claude (Ant-only)
+ * Perfetto Tracing for claude (Ant-only)
  *
  * This module generates traces in the Chrome Trace Event format that can be
  * viewed in ui.perfetto.dev or Chrome's chrome://tracing.
@@ -16,8 +16,8 @@
  * 1. Enable via CLAUDE_=1 or CLAUDE_=<path>
  * 2. Optionally set CLAUDE_=<positive integer> to write the
  *    trace file periodically (default: write only on exit).
- * 3. Run Claude normally
- * 4. Trace file is written to ~/.Claude/traces/trace-<session-id>.json
+ * 3. Run claude normally
+ * 4. Trace file is written to ~/.claude/traces/trace-<session-id>.json
  *    or to the specified path
  * 5. Open in ui.perfetto.dev to visualize
  */

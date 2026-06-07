@@ -39,7 +39,7 @@ import {
 import { resetUserCache } from '../../utils/user.js'
 
 type LoginProvider =
-  | 'claude'
+  | 'Claude'
   | 'codex'
   | 'google-gemini'
   | 'moonshot-kimi'
@@ -50,7 +50,7 @@ type LoginProvider =
 
 function isLoginProvider(value: string | null | undefined): value is LoginProvider {
   return (
-    value === 'claude' ||
+    value === 'Claude' ||
     value === 'codex' ||
     value === 'google-gemini' ||
     value === 'moonshot-kimi' ||
@@ -75,7 +75,7 @@ function getPreferredLoginProvider(mainLoopModel: string): LoginProvider {
       return provider
     }
   }
-  return 'claude'
+  return 'Claude'
 }
 
 export async function call(
@@ -139,7 +139,7 @@ export function Login(props: {
   const handleSuccess = React.useCallback(
     () => {
       const nextModel =
-        provider === 'claude'
+        provider === 'Claude'
           ? null
           : provider === 'codex'
             ? getDefaultOpenAICodexModel()
@@ -187,7 +187,7 @@ export function Login(props: {
         onDone={handleSuccess}
         startingMessage={props.startingMessage}
       />
-    ) : provider === 'claude' ? (
+    ) : provider === 'Claude' ? (
       <ConsoleOAuthFlow
         onDone={handleSuccess}
         startingMessage={props.startingMessage}
@@ -213,7 +213,7 @@ export function Login(props: {
                     <Text dimColor>Subscription or Console billing</Text>
                   </Text>
                 ),
-                value: 'claude',
+                value: 'Claude',
               },
               {
                 label: (

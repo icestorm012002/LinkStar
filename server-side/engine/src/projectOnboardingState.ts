@@ -31,7 +31,7 @@ export function getSteps(): Step[] {
       isEnabled: isWorkspaceDirEmpty,
     },
     {
-      key: 'Claudemd',
+      key: 'claudemd',
       text: 'Run /init to create a Claude.md file with instructions for Claude',
       isComplete: hasClaudeMd,
       isCompletable: true,

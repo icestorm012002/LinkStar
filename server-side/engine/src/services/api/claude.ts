@@ -101,7 +101,7 @@ import {
   currentLimits,
   extractQuotaStatusFromError,
   extractQuotaStatusFromHeaders,
-} from '../ClaudeAiLimits.js'
+} from '../claudeAiLimits.js'
 import { getAPIContextManagement } from '../compact/apiMicrocompact.js'
 
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -483,7 +483,7 @@ function configureEffortParams(
 // Stainless SDK types don't yet include task_budget on BetaOutputConfig, so we
 // define the wire shape locally and cast. The API validates on receipt; see
 // api/api/schemas/messages/request/output_config.py:12-39 in the monorepo.
-// Beta: task-budgets-2026-03-13 (EAP, Claude-strudel-eap only as of Mar 2026).
+// Beta: task-budgets-2026-03-13 (EAP, claude-strudel-eap only as of Mar 2026).
 type TaskBudgetParam = {
   type: 'tokens'
   total: number
@@ -2318,7 +2318,7 @@ async function* queryModel(
                 max_tokens: maxOutputTokens,
               })
               yield createAssistantAPIErrorMessage({
-                content: `${API_ERROR_MESSAGE_PREFIX}: Claude's response exceeded the ${
+                content: `${API_ERROR_MESSAGE_PREFIX}: claude's response exceeded the ${
                   maxOutputTokens
                 } output token maximum. To configure this behavior, set the CLAUDE_ environment variable.`,
                 apiError: 'max_output_tokens',
@@ -2585,7 +2585,7 @@ async function* queryModel(
       // If the streaming failure was itself a 529, count it toward the
       // consecutive-529 budget so total 529s-before-model-fallback is the
       // same whether the overload was hit in streaming or non-streaming mode.
-      // This is a speculative fix for https://github.com/anthropics/Claude-code/issues/1513
+      // This is a speculative fix for https://github.com/anthropics/claude-code/issues/1513
       // Instrumentation: proves executeNonStreamingRequest was entered (vs. the
       // fallback event firing but the call itself hanging at dispatch).
       logForDiagnosticsNoPII('info', 'cli_nonstreaming_fallback_started')
@@ -3343,7 +3343,7 @@ export async function queryHaiku({
 type QueryWithModelOptions = Omit<Options, 'getToolPermissionContext'>
 
 /**
- * Query a specific model through the Claude infrastructure.
+ * Query a specific model through the claude infrastructure.
  * This goes through the full query pipeline including proper authentication,
  * betas, and headers - unlike direct API calls.
  */
@@ -3398,7 +3398,7 @@ export async function queryWithModel({
 }
 
 // Non-streaming requests have a 10min max per the docs:
-// https://platform.Claude.com/docs/en/api/errors#long-requests
+// https://platform.claude.com/docs/en/api/errors#long-requests
 // The SDK's 21333-token cap is derived from 10min × 128k tokens/hour, but we
 // bypass it by setting a client-level timeout, so we can cap higher.
 export const MAX_NON_STREAMING_TOKENS = 64_000
@@ -3453,7 +3453,7 @@ export function getMaxOutputTokensForModel(model: string): number {
   // = 4,911 tokens; 32k/64k defaults over-reserve 8-16× slot capacity.
   // Requests hitting the cap get one clean retry at 64k (query.ts
   // max_output_tokens_escalate). Math.min keeps models with lower native
-  // defaults (e.g. Claude-3-opus at 4k) at their native value. Applied
+  // defaults (e.g. claude-3-opus at 4k) at their native value. Applied
   // before the env-var override so CLAUDE_ still wins.
   const defaultTokens = isMaxTokensCapEnabled()
     ? Math.min(maxOutputTokens.default, CAPPED_DEFAULT_MAX_TOKENS)

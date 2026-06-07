@@ -126,7 +126,7 @@ export async function update() {
         writeToStdout(`Update available: ${MACRO.VERSION} → ${latest}\n`)
         writeToStdout('\n')
         writeToStdout('To update, run:\n')
-        writeToStdout(chalk.bold('  brew upgrade Claude-code') + '\n')
+        writeToStdout(chalk.bold('  brew upgrade claude-code') + '\n')
       } else {
         writeToStdout('Claude is up to date!\n')
       }
@@ -150,7 +150,7 @@ export async function update() {
         writeToStdout(`Update available: ${MACRO.VERSION} → ${latest}\n`)
         writeToStdout('\n')
         writeToStdout('To update, run:\n')
-        writeToStdout(chalk.bold('  apk upgrade Claude-code') + '\n')
+        writeToStdout(chalk.bold('  apk upgrade claude-code') + '\n')
       } else {
         writeToStdout('Claude is up to date!\n')
       }
@@ -295,8 +295,8 @@ export async function update() {
     const packageName =
       MACRO.PACKAGE_URL ||
       (process.env.USER_TYPE === 'ant'
-        ? '@anthropic-ai/Claude-cli'
-        : '@anthropic-ai/Claude-code')
+        ? '@anthropic-ai/claude-cli'
+        : '@anthropic-ai/claude-code')
     process.stderr.write(
       `  • Manually check: npm view ${packageName} version\n`,
     )

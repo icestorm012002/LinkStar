@@ -12,7 +12,7 @@ import type {
   SDKMessage,
   SDKRateLimitInfo,
 } from 'src/entrypoints/agentSdkTypes.js'
-import type { ClaudeAILimits } from 'src/services/ClaudeAiLimits.js'
+import type { claudeAiLimits } from 'src/services/claudeAiLimits.js'
 import { EXIT_PLAN_MODE_V2_TOOL_NAME } from 'src/tools/ExitPlanModeTool/constants.js'
 import type {
   AssistantMessage,
@@ -219,11 +219,11 @@ export function localCommandOutputToSDKAssistantMessage(
 }
 
 /**
- * Maps internal ClaudeAILimits to the SDK-facing SDKRateLimitInfo type,
+ * Maps internal claudeAiLimits to the SDK-facing SDKRateLimitInfo type,
  * stripping internal-only fields like unifiedRateLimitFallbackAvailable.
  */
 export function toSDKRateLimitInfo(
-  limits: ClaudeAILimits | undefined,
+  limits: claudeAiLimits | undefined,
 ): SDKRateLimitInfo | undefined {
   if (!limits) {
     return undefined

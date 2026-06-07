@@ -319,25 +319,25 @@ async function countSystemTokens(
 
 async function countMemoryFileTokens(): Promise<{
   memoryFileDetails: MemoryFile[]
-  ClaudeMdTokens: number
+  claudeMdTokens: number
 }> {
-  // Simple mode disables Claude.md loading, so don't report tokens for them
+  // Simple mode disables claude.md loading, so don't report tokens for them
   if (isEnvTruthy(process.env.CLAUDE_)) {
-    return { memoryFileDetails: [], ClaudeMdTokens: 0 }
+    return { memoryFileDetails: [], claudeMdTokens: 0 }
   }
 
   const memoryFilesData = filterInjectedMemoryFiles(await getMemoryFiles())
   const memoryFileDetails: MemoryFile[] = []
-  let ClaudeMdTokens = 0
+  let claudeMdTokens = 0
 
   if (memoryFilesData.length < 1) {
     return {
       memoryFileDetails: [],
-      ClaudeMdTokens: 0,
+      claudeMdTokens: 0,
     }
   }
 
-  const ClaudeMdTokenCounts = await Promise.all(
+  const claudeMdTokenCounts = await Promise.all(
     memoryFilesData.map(async file => {
       const tokens = await countTokensWithFallback(
         [{ role: 'user', content: file.content }],
@@ -348,8 +348,8 @@ async function countMemoryFileTokens(): Promise<{
     }),
   )
 
-  for (const { file, tokens } of ClaudeMdTokenCounts) {
-    ClaudeMdTokens += tokens
+  for (const { file, tokens } of claudeMdTokenCounts) {
+    claudeMdTokens += tokens
     memoryFileDetails.push({
       path: file.path,
       type: file.type,
@@ -357,7 +357,7 @@ async function countMemoryFileTokens(): Promise<{
     })
   }
 
-  return { ClaudeMdTokens, memoryFileDetails }
+  return { claudeMdTokens, memoryFileDetails }
 }
 
 async function countBuiltInToolTokens(
@@ -952,7 +952,7 @@ export async function analyzeContextUsage(
   // Critical operations that should not fail due to skills
   const [
     { systemPromptTokens, systemPromptSections },
-    { ClaudeMdTokens, memoryFileDetails },
+    { claudeMdTokens, memoryFileDetails },
     {
       builtInToolTokens,
       deferredBuiltinDetails,
@@ -1073,11 +1073,11 @@ export async function analyzeContextUsage(
   }
 
   // Memory files after custom agents
-  if (ClaudeMdTokens > 0) {
+  if (claudeMdTokens > 0) {
     cats.push({
       name: 'Memory files',
-      tokens: ClaudeMdTokens,
-      color: 'Claude',
+      tokens: claudeMdTokens,
+      color: 'claude',
     })
   }
 

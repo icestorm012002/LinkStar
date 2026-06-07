@@ -93,7 +93,7 @@ export class AuthCodeListener {
 
     // Default behavior: Choose success page based on granted permissions
     const successUrl = shouldUseClaudeAIAuth(scopes)
-      ? getOauthConfig().ClaudeAI_SUCCESS_URL
+      ? getOauthConfig().CLAUDEAI_SUCCESS_URL
       : getOauthConfig().CONSOLE_SUCCESS_URL
 
     // Send browser to success page
@@ -115,7 +115,7 @@ export class AuthCodeListener {
       customHandler(this.pendingResponse)
     } else {
       // TODO: swap to a different url once we have an error page
-      const errorUrl = getOauthConfig().ClaudeAI_SUCCESS_URL
+      const errorUrl = getOauthConfig().CLAUDEAI_SUCCESS_URL
       this.pendingResponse.writeHead(302, { Location: errorUrl })
       this.pendingResponse.end()
     }

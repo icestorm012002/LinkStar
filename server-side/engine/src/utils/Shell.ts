@@ -318,7 +318,7 @@ export async function exec(
         ...subprocessEnv(),
         SHELL: shellType === 'bash' ? binShell : undefined,
         GIT_EDITOR: 'true',
-        ClaudeCODE: '1',
+        CLAUDECODE: '1',
         ...envOverrides,
         ...(process.env.USER_TYPE === 'ant'
           ? {

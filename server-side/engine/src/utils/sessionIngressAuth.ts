@@ -95,7 +95,7 @@ function getTokenFromFileDescriptor(): string | null {
  *  2. File descriptor (legacy path) — CLAUDE_,
  *     read once and cached.
  *  3. Well-known file — CLAUDE_ env var path, or
- *     /home/Claude/.Claude/remote/.session_ingress_token. Covers subprocesses
+ *     /home/claude/.claude/remote/.session_ingress_token. Covers subprocesses
  *     that can't inherit the FD.
  */
 export function getSessionIngressAuthToken(): string | null {

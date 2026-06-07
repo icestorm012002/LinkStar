@@ -32,3 +32,24 @@ bridge-linux
 test_*.js
 test_serverless.ts
 server_test.exe
+
+# Temp reference & scripts
+server-side/original-claude-code/
+server-side/align-casing.js
+server-side/fix-truncated.js
+temp-claude/
+temp-backend/
+temp-src/
+*.tar.gz
+backend.zip
+login.html
+package.tmp.json
+revert-brand.js
+src_fixed.tar.gz
+src_fixed_again.tar.gz
+src_camelcase.tar.gz
+RECORD.md
+push.log
+test-headless.sh
+apps/
+server-side/gateway/gateway_linux

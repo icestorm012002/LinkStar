@@ -1,7 +1,7 @@
 /**
  * Settings Sync Service
  *
- * Syncs user settings and memory files across Claude environments.
+ * Syncs user settings and memory files across CLAUDE environments.
  *
  * - Interactive CLI: Uploads local settings to remote (incremental, only changed entries)
  * - CCR: Downloads remote settings to local before plugin installation
@@ -483,7 +483,7 @@ async function writeFileForSync(
  *
  * After writing, invalidates relevant caches:
  * - resetSettingsCache() for settings files
- * - clearMemoryFileCaches() for memory files (Claude.md)
+ * - clearMemoryFileCaches() for memory files (CLAUDE.md)
  */
 async function applyRemoteEntriesToLocal(
   entries: Record<string, string>,

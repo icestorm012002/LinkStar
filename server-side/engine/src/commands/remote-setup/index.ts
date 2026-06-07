@@ -7,7 +7,7 @@ const web = {
   name: 'web-setup',
   description:
     'Setup Claude on the web (requires connecting your GitHub account)',
-  availability: ['Claude-ai'],
+  availability: ['claude-ai'],
   isEnabled: () =>
     getFeatureValue_CACHED_MAY_BE_STALE('tengu_cobalt_lantern', false) &&
     isPolicyAllowed('allow_remote_sessions'),

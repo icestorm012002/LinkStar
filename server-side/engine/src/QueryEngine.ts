@@ -15,7 +15,7 @@ import type {
   SDKUserMessageReplay,
 } from 'src/entrypoints/agentSdkTypes.js'
 import type { BetaMessageDeltaUsage } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
-import { accumulateUsage, updateUsage } from 'src/services/api/claude.js'
+import { accumulateUsage, updateUsage } from 'src/services/api/Claude.js'
 import type { NonNullableUsage } from 'src/services/api/logging.js'
 import { EMPTY_USAGE } from 'src/services/api/logging.js'
 import stripAnsi from 'strip-ansi'
@@ -698,7 +698,7 @@ export class QueryEngine {
         // messages up through the preservedSegment tail. Attachments and
         // progress are now recorded inline (their switch cases below), but
         // this flush still matters for the preservedSegment tail walk.
-        // If the SDK subprocess restarts before then (Claude-desktop kills
+        // If the SDK subprocess restarts before then (claude-desktop kills
         // between turns), tailUuid points to a never-written message →
         // applyPreservedSegmentRelinks fails its tail→head walk → returns
         // without pruning → resume loads full pre-compact history.
@@ -720,7 +720,7 @@ export class QueryEngine {
         }
         messages.push(message as Message)
         if (persistSession) {
-          // Fire-and-forget for assistant messages. claude.ts yields one
+          // Fire-and-forget for assistant messages. Claude.ts yields one
           // assistant message per content block, then mutates the last
           // one's message.usage/stop_reason on message_delta — relying on
           // the write queue's 100ms lazy jsonStringify. Awaiting here
@@ -815,7 +815,7 @@ export class QueryEngine {
             )
             // Capture stop_reason from message_delta. The assistant message
             // is yielded at content_block_stop with stop_reason=null; the
-            // real value only arrives here (see claude.ts message_delta
+            // real value only arrives here (see Claude.ts message_delta
             // handler). Without this, result.stop_reason is always null.
             const delta = event.delta as { stop_reason?: string | null }
             if (delta.stop_reason != null) {

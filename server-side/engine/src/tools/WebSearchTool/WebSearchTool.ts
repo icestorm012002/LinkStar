@@ -6,7 +6,7 @@ import { getAPIProvider } from 'src/utils/model/providers.js'
 import type { PermissionResult } from 'src/utils/permissions/PermissionResult.js'
 import { z } from 'zod/v4'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
-import { queryModelWithStreaming } from '../../services/api/claude.js'
+import { queryModelWithStreaming } from '../../services/api/Claude.js'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import { logError } from '../../utils/log.js'
@@ -177,9 +177,9 @@ export const WebSearchTool = buildTool({
     // Enable for Vertex AI with supported models (Claude 4.0+)
     if (provider === 'vertex') {
       const supportsWebSearch =
-        model.includes('Claude-opus-4') ||
-        model.includes('Claude-sonnet-4') ||
-        model.includes('Claude-haiku-4')
+        model.includes('claude-opus-4') ||
+        model.includes('claude-sonnet-4') ||
+        model.includes('claude-haiku-4')
 
       return supportsWebSearch
     }

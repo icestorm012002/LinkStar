@@ -176,7 +176,7 @@ export const getInferenceProfileBackingModel = memoize(async function (
 })
 
 /**
- * Check if a model ID is a foundation model (e.g., "anthropic.Claude-sonnet-4-5-20250929-v1:0")
+ * Check if a model ID is a foundation model (e.g., "anthropic.claude-sonnet-4-5-20250929-v1:0")
  */
 export function isFoundationModel(modelId: string): boolean {
   return modelId.startsWith('anthropic.')
@@ -213,11 +213,11 @@ export type BedrockRegionPrefix = (typeof BEDROCK_REGION_PREFIXES)[number]
  * Extract the region prefix from a Bedrock cross-region inference model ID.
  * Handles both plain model IDs and full ARN format.
  * For example:
- * - "eu.anthropic.Claude-sonnet-4-5-20250929-v1:0" → "eu"
- * - "us.anthropic.Claude-3-7-sonnet-20250219-v1:0" → "us"
- * - "arn:aws:bedrock:ap-northeast-2:123:inference-profile/global.anthropic.Claude-opus-4-6-v1" → "global"
- * - "anthropic.Claude-3-5-sonnet-20241022-v2:0" → undefined (foundation model)
- * - "Claude-sonnet-4-5-20250929" → undefined (first-party format)
+ * - "eu.anthropic.claude-sonnet-4-5-20250929-v1:0" → "eu"
+ * - "us.anthropic.claude-3-7-sonnet-20250219-v1:0" → "us"
+ * - "arn:aws:bedrock:ap-northeast-2:123:inference-profile/global.anthropic.claude-opus-4-6-v1" → "global"
+ * - "anthropic.claude-3-5-sonnet-20241022-v2:0" → undefined (foundation model)
+ * - "claude-sonnet-4-5-20250929" → undefined (first-party format)
  */
 export function getBedrockRegionPrefix(
   modelId: string,
@@ -241,9 +241,9 @@ export function getBedrockRegionPrefix(
  * If the model is not a Bedrock model, it will be returned as-is.
  *
  * For example:
- * - applyBedrockRegionPrefix("us.anthropic.Claude-sonnet-4-5-v1:0", "eu") → "eu.anthropic.Claude-sonnet-4-5-v1:0"
- * - applyBedrockRegionPrefix("anthropic.Claude-sonnet-4-5-v1:0", "eu") → "eu.anthropic.Claude-sonnet-4-5-v1:0"
- * - applyBedrockRegionPrefix("Claude-sonnet-4-5-20250929", "eu") → "Claude-sonnet-4-5-20250929" (not a Bedrock model)
+ * - applyBedrockRegionPrefix("us.anthropic.claude-sonnet-4-5-v1:0", "eu") → "eu.anthropic.claude-sonnet-4-5-v1:0"
+ * - applyBedrockRegionPrefix("anthropic.claude-sonnet-4-5-v1:0", "eu") → "eu.anthropic.claude-sonnet-4-5-v1:0"
+ * - applyBedrockRegionPrefix("claude-sonnet-4-5-20250929", "eu") → "claude-sonnet-4-5-20250929" (not a Bedrock model)
  */
 export function applyBedrockRegionPrefix(
   modelId: string,

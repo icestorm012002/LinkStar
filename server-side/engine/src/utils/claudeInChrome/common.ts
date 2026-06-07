@@ -9,7 +9,7 @@ import { execFileNoThrow } from '../execFileNoThrow.js'
 import { getPlatform } from '../platform.js'
 import { which } from '../which.js'
 
-export const CLAUDE_IN_CHROME_MCP_SERVER_NAME = 'Claude-in-chrome'
+export const CLAUDE_IN_CHROME_MCP_SERVER_NAME = 'claude-in-chrome'
 
 // Re-export ChromiumBrowser type for setup.ts
 export type { ChromiumBrowser } from './setupPortable.js'
@@ -472,7 +472,7 @@ export async function openInChrome(url: string): Promise<boolean> {
  * Get the socket directory path (Unix only)
  */
 export function getSocketDir(): string {
-  return `/tmp/Claude-mcp-browser-bridge-${getUsername()}`
+  return `/tmp/claude-mcp-browser-bridge-${getUsername()}`
 }
 
 /**
@@ -512,7 +512,7 @@ export function getAllSocketPaths(): string[] {
   }
 
   // Legacy fallback paths
-  const legacyName = `Claude-mcp-browser-bridge-${getUsername()}`
+  const legacyName = `claude-mcp-browser-bridge-${getUsername()}`
   const legacyTmpdir = join(tmpdir(), legacyName)
   const legacyTmp = `/tmp/${legacyName}`
 
@@ -528,7 +528,7 @@ export function getAllSocketPaths(): string[] {
 
 function getSocketName(): string {
   // NOTE: This must match the one used in the Claude in Chrome MCP
-  return `Claude-mcp-browser-bridge-${getUsername()}`
+  return `claude-mcp-browser-bridge-${getUsername()}`
 }
 
 function getUsername(): string {

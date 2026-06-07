@@ -38,7 +38,7 @@ export type StickyPrompt = {
 // the next sticky-prompt compute (user scrolls again).
 | 'clicked';
 
-/** Huge pasted prompts (cat file | claude) can be MBs. Header wraps into
+/** Huge pasted prompts (cat file | Claude) can be MBs. Header wraps into
  *  2 rows via overflow:hidden — this just bounds the React prop size. */
 const STICKY_TEXT_CAP = 500;
 

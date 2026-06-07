@@ -13,7 +13,7 @@ export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
   try {
     const config = getGlobalConfig()
 
-    if (config.ClaudeCodeFirstTokenDate !== undefined) {
+    if (config.claudeCodeFirstTokenDate !== undefined) {
       return
     }
 
@@ -24,7 +24,7 @@ export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
     }
 
     const oauthConfig = getOauthConfig()
-    const url = `${oauthConfig.BASE_API_URL}/api/organization/Claude_code_first_token_date`
+    const url = `${oauthConfig.BASE_API_URL}/api/organization/claude_code_first_token_date`
 
     const response = await axios.get(url, {
       headers: {
@@ -52,7 +52,7 @@ export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
 
     saveGlobalConfig(current => ({
       ...current,
-      ClaudeCodeFirstTokenDate: firstTokenDate,
+      claudeCodeFirstTokenDate: firstTokenDate,
     }))
   } catch (error) {
     logError(error)

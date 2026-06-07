@@ -119,7 +119,7 @@ type State = {
   // Last auto-mode classifier request(s) for /share transcript
   lastClassifierRequests: unknown[] | null
   // Claude.md content cached by context.ts for the auto-mode classifier.
-  // Breaks the yoloClassifier → Claudemd → filesystem → permissions cycle.
+  // Breaks the yoloClassifier → claudemd → filesystem → permissions cycle.
   cachedClaudeMdContent: string | null
   // In-memory error log for recent errors
   inMemoryErrorLog: Array<{ error: string; timestamp: string }>
@@ -952,35 +952,35 @@ export function setMeter(
   STATE.meter = meter
 
   // Initialize all counters using the provided factory
-  STATE.sessionCounter = createCounter('Claude_code.session.count', {
+  STATE.sessionCounter = createCounter('claude_code.session.count', {
     description: 'Count of CLI sessions started',
   })
-  STATE.locCounter = createCounter('Claude_code.lines_of_code.count', {
+  STATE.locCounter = createCounter('claude_code.lines_of_code.count', {
     description:
       "Count of lines of code modified, with the 'type' attribute indicating whether lines were added or removed",
   })
-  STATE.prCounter = createCounter('Claude_code.pull_request.count', {
+  STATE.prCounter = createCounter('claude_code.pull_request.count', {
     description: 'Number of pull requests created',
   })
-  STATE.commitCounter = createCounter('Claude_code.commit.count', {
+  STATE.commitCounter = createCounter('claude_code.commit.count', {
     description: 'Number of git commits created',
   })
-  STATE.costCounter = createCounter('Claude_code.cost.usage', {
+  STATE.costCounter = createCounter('claude_code.cost.usage', {
     description: 'Cost of the Claude session',
     unit: 'USD',
   })
-  STATE.tokenCounter = createCounter('Claude_code.token.usage', {
+  STATE.tokenCounter = createCounter('claude_code.token.usage', {
     description: 'Number of tokens used',
     unit: 'tokens',
   })
   STATE.codeEditToolDecisionCounter = createCounter(
-    'Claude_code.code_edit_tool.decision',
+    'claude_code.code_edit_tool.decision',
     {
       description:
         'Count of code editing tool permission decisions (accept/reject) for Edit, Write, and NotebookEdit tools',
     },
   )
-  STATE.activeTimeCounter = createCounter('Claude_code.active_time.total', {
+  STATE.activeTimeCounter = createCounter('claude_code.active_time.total', {
     description: 'Total active time in seconds',
     unit: 's',
   })
@@ -1233,7 +1233,7 @@ export function setAllowedSettingSources(sources: SettingSource[]): void {
 
 export function preferThirdPartyAuthentication(): boolean {
   // IDE extension should behave as 1P for authentication reasons.
-  return getIsNonInteractiveSession() && STATE.clientType !== 'Claude-vscode'
+  return getIsNonInteractiveSession() && STATE.clientType !== 'claude-vscode'
 }
 
 export function setInlinePlugins(plugins: Array<string>): void {
@@ -1570,7 +1570,7 @@ export function addSlowOperation(operation: string, durationMs: number): void {
   if (process.env.USER_TYPE !== 'ant') return
   // Skip tracking for editor sessions (user editing a prompt file in $EDITOR)
   // These are intentionally slow since the user is drafting text
-  if (operation.includes('exec') && operation.includes('Claude-prompt-')) {
+  if (operation.includes('exec') && operation.includes('claude-prompt-')) {
     return
   }
   const now = Date.now()

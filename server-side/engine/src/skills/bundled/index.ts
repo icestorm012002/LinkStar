@@ -63,7 +63,7 @@ export function initBundledSkills(): void {
   }
   if (feature('BUILDING_CLAUDE_')) {
     /* eslint-disable @typescript-eslint/no-require-imports */
-    const { registerClaudeApiSkill } = require('./ClaudeApi.js')
+    const { registerClaudeApiSkill } = require('./claudeApi.js')
     /* eslint-enable @typescript-eslint/no-require-imports */
     registerClaudeApiSkill()
   }

@@ -104,24 +104,24 @@ export function modelSupportsISP(model: string): boolean {
     return true
   }
   if (provider === 'firstParty') {
-    return !canonical.includes('Claude-3-')
+    return !canonical.includes('claude-3-')
   }
   return (
-    canonical.includes('Claude-opus-4') || canonical.includes('Claude-sonnet-4')
+    canonical.includes('claude-opus-4') || canonical.includes('claude-sonnet-4')
   )
 }
 
 function vertexModelSupportsWebSearch(model: string): boolean {
   const canonical = getCanonicalName(model)
-  // Web search only supported on Claude 4.0+ models on Vertex
+  // Web search only supported on claude 4.0+ models on Vertex
   return (
-    canonical.includes('Claude-opus-4') ||
-    canonical.includes('Claude-sonnet-4') ||
-    canonical.includes('Claude-haiku-4')
+    canonical.includes('claude-opus-4') ||
+    canonical.includes('claude-sonnet-4') ||
+    canonical.includes('claude-haiku-4')
   )
 }
 
-// Context management is supported on Claude 4+ models
+// Context management is supported on claude 4+ models
 export function modelSupportsContextManagement(model: string): boolean {
   const canonical = getCanonicalName(model)
   const provider = getAPIProvider()
@@ -129,12 +129,12 @@ export function modelSupportsContextManagement(model: string): boolean {
     return true
   }
   if (provider === 'firstParty') {
-    return !canonical.includes('Claude-3-')
+    return !canonical.includes('claude-3-')
   }
   return (
-    canonical.includes('Claude-opus-4') ||
-    canonical.includes('Claude-sonnet-4') ||
-    canonical.includes('Claude-haiku-4')
+    canonical.includes('claude-opus-4') ||
+    canonical.includes('claude-sonnet-4') ||
+    canonical.includes('claude-haiku-4')
   )
 }
 
@@ -147,16 +147,16 @@ export function modelSupportsStructuredOutputs(model: string): boolean {
     return false
   }
   return (
-    canonical.includes('Claude-sonnet-4-6') ||
-    canonical.includes('Claude-sonnet-4-5') ||
-    canonical.includes('Claude-opus-4-1') ||
-    canonical.includes('Claude-opus-4-5') ||
-    canonical.includes('Claude-opus-4-6') ||
-    canonical.includes('Claude-haiku-4-5')
+    canonical.includes('claude-sonnet-4-6') ||
+    canonical.includes('claude-sonnet-4-5') ||
+    canonical.includes('claude-opus-4-1') ||
+    canonical.includes('claude-opus-4-5') ||
+    canonical.includes('claude-opus-4-6') ||
+    canonical.includes('claude-haiku-4-5')
   )
 }
 
-// @[MODEL LAUNCH]: Add the new model if it supports auto mode (specifically PI probes) — ask in #proj-Claude-code-safety-research.
+// @[MODEL LAUNCH]: Add the new model if it supports auto mode (specifically PI probes) — ask in #proj-claude-code-safety-research.
 export function modelSupportsAutoMode(model: string): boolean {
   if (feature('TRANSCRIPT_CLASSIFIER')) {
     const m = getCanonicalName(model)
@@ -168,8 +168,8 @@ export function modelSupportsAutoMode(model: string): boolean {
     }
     // GrowthBook override: tengu_auto_mode_config.allowModels force-enables
     // auto mode for listed models, bypassing the denylist/allowlist below.
-    // Exact model IDs (e.g. "Claude-strudel-v6-p") match only that model;
-    // canonical names (e.g. "Claude-strudel") match the whole family.
+    // Exact model IDs (e.g. "claude-strudel-v6-p") match only that model;
+    // canonical names (e.g. "claude-strudel") match the whole family.
     const config = getFeatureValue_CACHED_MAY_BE_STALE<{
       allowModels?: string[]
     }>('tengu_auto_mode_config', {})
@@ -182,21 +182,21 @@ export function modelSupportsAutoMode(model: string): boolean {
       return true
     }
     if (process.env.USER_TYPE === 'ant') {
-      // Denylist: block known-unsupported Claude models, allow everything else (ant-internal models etc.)
-      if (m.includes('Claude-3-')) return false
-      // Claude-*-4 not followed by -[6-9]: blocks bare -4, -4-YYYYMMDD, -4@, -4-0 thru -4-5
-      if (/Claude-(opus|sonnet|haiku)-4(?!-[6-9])/.test(m)) return false
+      // Denylist: block known-unsupported claude models, allow everything else (ant-internal models etc.)
+      if (m.includes('claude-3-')) return false
+      // claude-*-4 not followed by -[6-9]: blocks bare -4, -4-YYYYMMDD, -4@, -4-0 thru -4-5
+      if (/claude-(opus|sonnet|haiku)-4(?!-[6-9])/.test(m)) return false
       return true
     }
     // External allowlist (firstParty already checked above).
-    return /^Claude-(opus|sonnet)-4-6/.test(m)
+    return /^claude-(opus|sonnet)-4-6/.test(m)
   }
   return false
 }
 
 /**
  * Get the correct tool search beta header for the current API provider.
- * - Claude API / Foundry: advanced-tool-use-2025-11-20
+ * - claude API / Foundry: advanced-tool-use-2025-11-20
  * - Vertex AI / Bedrock: tool-search-tool-2025-10-19
  */
 export function getToolSearchBetaHeader(): string {
@@ -342,7 +342,7 @@ export const getAllModelBetas = memoize((model: string): string[] => {
     betaHeaders.push(TOKEN_EFFICIENT_TOOLS_BETA_HEADER)
   }
 
-  // Add web search beta for Vertex Claude 4.0+ models only
+  // Add web search beta for Vertex claude 4.0+ models only
   if (provider === 'vertex' && vertexModelSupportsWebSearch(model)) {
     betaHeaders.push(WEB_SEARCH_BETA_HEADER)
   }
@@ -400,7 +400,7 @@ export function getMergedBetas(
 ): string[] {
   const baseBetas = [...getModelBetas(model)]
 
-  // Agentic queries always need Claude-code and cli-internal beta headers.
+  // Agentic queries always need claude-code and cli-internal beta headers.
   // For non-Haiku models these are already in baseBetas; for Haiku they're
   // excluded by getAllModelBetas() since non-agentic Haiku calls don't need them.
   if (options?.isAgenticQuery) {

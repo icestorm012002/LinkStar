@@ -1,6 +1,6 @@
 /**
- * Adapter layer that wraps @anthropic-ai/sandbox-runtime with Claude CLI-specific integrations.
- * This file provides the bridge between the external sandbox-runtime package and Claude CLI's
+ * Adapter layer that wraps @anthropic-ai/sandbox-runtime with claude CLI-specific integrations.
+ * This file provides the bridge between the external sandbox-runtime package and claude CLI's
  * settings system, tool integration, and additional features.
  */
 
@@ -83,7 +83,7 @@ function permissionRuleExtractPrefix(permissionRule: string): string | null {
 /**
  * Resolve Claude-specific path patterns for sandbox-runtime.
  *
- * Claude uses special path prefixes in permission rules:
+ * claude uses special path prefixes in permission rules:
  * - `//path` → absolute from filesystem root (becomes `/path`)
  * - `/path` → relative to settings file directory (becomes `$SETTINGS_DIR/path`)
  * - `~/path` → passed through (sandbox-runtime handles this)
@@ -164,7 +164,7 @@ function shouldAllowManagedReadPathsOnly(): boolean {
 }
 
 /**
- * Convert Claude settings format to SandboxRuntimeConfig format
+ * Convert claude settings format to SandboxRuntimeConfig format
  * (Function exported for testing)
  *
  * @param settings Merged settings (used for sandbox config like network, ripgrep, etc.)
@@ -220,7 +220,7 @@ export function convertToSandboxRuntimeConfig(
   }
 
   // Extract filesystem paths from Edit and Read rules
-  // Always include current directory and Claude temp directory as writable
+  // Always include current directory and claude temp directory as writable
   // The temp directory is needed for Shell.ts cwd tracking files
   const allowWrite: string[] = ['.', getClaudeTempDir()]
   const denyWrite: string[] = []
@@ -228,7 +228,7 @@ export function convertToSandboxRuntimeConfig(
   const allowRead: string[] = []
 
   // Always deny writes to settings.json files to prevent sandbox escape
-  // This blocks settings in the original working directory (where Claude started)
+  // This blocks settings in the original working directory (where claude started)
   const settingsPaths = SETTING_SOURCES.map(source =>
     getSettingsFilePathForSource(source),
   ).filter((p): p is string => p !== undefined)
@@ -240,23 +240,23 @@ export function convertToSandboxRuntimeConfig(
   const cwd = getCwdState()
   const originalCwd = getOriginalCwd()
   if (cwd !== originalCwd) {
-    denyWrite.push(resolve(cwd, '.Claude', 'settings.json'))
-    denyWrite.push(resolve(cwd, '.Claude', 'settings.local.json'))
+    denyWrite.push(resolve(cwd, '.claude', 'settings.json'))
+    denyWrite.push(resolve(cwd, '.claude', 'settings.local.json'))
   }
 
-  // Block writes to .Claude/skills in both original and current working directories.
-  // The sandbox-runtime's getDangerousDirectories() protects .Claude/commands and
-  // .Claude/agents but not .Claude/skills. Skills have the same privilege level
-  // (auto-discovered, auto-loaded, full Claude capabilities) so they need the
+  // Block writes to .claude/skills in both original and current working directories.
+  // The sandbox-runtime's getDangerousDirectories() protects .claude/commands and
+  // .claude/agents but not .claude/skills. Skills have the same privilege level
+  // (auto-discovered, auto-loaded, full claude capabilities) so they need the
   // same OS-level sandbox protection.
-  denyWrite.push(resolve(originalCwd, '.Claude', 'skills'))
+  denyWrite.push(resolve(originalCwd, '.claude', 'skills'))
   if (cwd !== originalCwd) {
-    denyWrite.push(resolve(cwd, '.Claude', 'skills'))
+    denyWrite.push(resolve(cwd, '.claude', 'skills'))
   }
 
   // SECURITY: Git's is_git_directory() treats cwd as a bare repo if it has
   // HEAD + objects/ + refs/. An attacker planting these (plus a config with
-  // core.fsmonitor) escapes the sandbox when Claude's unsandboxed git runs.
+  // core.fsmonitor) escapes the sandbox when claude's unsandboxed git runs.
   //
   // Unconditionally denying these paths makes sandbox-runtime mount
   // /dev/null at non-existent ones, which (a) leaves a 0-byte HEAD stub on
@@ -381,7 +381,7 @@ export function convertToSandboxRuntimeConfig(
 }
 
 // ============================================================================
-// Claude CLI-specific state
+// claude CLI-specific state
 // ============================================================================
 
 let initializationPromise: Promise<void> | undefined
@@ -393,13 +393,13 @@ let settingsSubscriptionCleanup: (() => void) | undefined
 let worktreeMainRepoPath: string | null | undefined
 
 // Bare-repo files at cwd that didn't exist at config time and should be
-// scrubbed if they appear after a sandboxed command. See anthropics/Claude-code#29316.
+// scrubbed if they appear after a sandboxed command. See anthropics/claude-code#29316.
 const bareGitRepoScrubPaths: string[] = []
 
 /**
  * Delete bare-repo files planted at cwd during a sandboxed command, before
- * Claude's unsandboxed git calls can see them. See the SECURITY block above
- * bareGitRepoFiles. anthropics/Claude-code#29316.
+ * claude's unsandboxed git calls can see them. See the SECURITY block above
+ * bareGitRepoFiles. anthropics/claude-code#29316.
  */
 function scrubBareGitRepoFiles(): void {
   for (const p of bareGitRepoScrubPaths) {
@@ -823,7 +823,7 @@ async function reset(): Promise<void> {
 
 /**
  * Add a command to the excluded commands list (commands that should not be sandboxed)
- * This is a Claude CLI-specific function that updates local settings.
+ * This is a claude CLI-specific function that updates local settings.
  */
 export function addToExcludedCommands(
   command: string,
@@ -922,7 +922,7 @@ export interface ISandboxManager {
 }
 
 /**
- * Claude CLI sandbox manager - wraps sandbox-runtime with Claude-specific features
+ * claude CLI sandbox manager - wraps sandbox-runtime with Claude-specific features
  */
 export const SandboxManager: ISandboxManager = {
   // Custom implementations

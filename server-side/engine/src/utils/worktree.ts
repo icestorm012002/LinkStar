@@ -1254,7 +1254,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
 
   // Mirror createWorktreeForSession(): hook takes precedence over git so the
   // WorktreeCreate hook substitutes the VCS backend for this fast-path too
-  // (anthropics/Claude-code#39281). Git path below runs only when no hook.
+  // (anthropics/claude-code#39281). Git path below runs only when no hook.
   let worktreeDir: string
   let repoName: string
   if (hasWorktreeCreateHook()) {
@@ -1341,7 +1341,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
 
   // Check if tmux prefix conflicts with Claude keybindings
   // Claude binds: ctrl+b (task:background), ctrl+c, ctrl+d, ctrl+t, ctrl+o, ctrl+r, ctrl+s, ctrl+g, ctrl+e
-  const ClaudeBindings = [
+  const claudeBindings = [
     'C-b',
     'C-c',
     'C-d',
@@ -1352,7 +1352,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     'C-g',
     'C-e',
   ]
-  const prefixConflicts = ClaudeBindings.includes(tmuxPrefix)
+  const prefixConflicts = claudeBindings.includes(tmuxPrefix)
 
   // Set env vars for the inner Claude to display tmux info in welcome message
   const tmuxEnv = {
@@ -1392,9 +1392,9 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     )
   }
 
-  // For ants in Claude-cli-internal, set up dev panes (watch + start)
+  // For ants in claude-cli-internal, set up dev panes (watch + start)
   const isAnt = process.env.USER_TYPE === 'ant'
-  const isClaudeCliInternal = repoName === 'Claude-cli-internal'
+  const isClaudeCliInternal = repoName === 'claude-cli-internal'
   const shouldSetupDevPanes = isAnt && isClaudeCliInternal && !sessionExists
 
   if (shouldSetupDevPanes) {

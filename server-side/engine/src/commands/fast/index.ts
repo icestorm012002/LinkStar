@@ -11,7 +11,7 @@ const fast = {
   get description() {
     return `Toggle fast mode (${FAST_MODE_MODEL_DISPLAY} only)`
   },
-  availability: ['Claude-ai', 'console'],
+  availability: ['claude-ai', 'console'],
   isEnabled: () => isFastModeEnabled(),
   get isHidden() {
     return !isFastModeEnabled()

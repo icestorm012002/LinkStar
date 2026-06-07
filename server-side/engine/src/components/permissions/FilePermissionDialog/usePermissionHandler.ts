@@ -57,7 +57,7 @@ export type PermissionHandlerOptions = {
   hasFeedback?: boolean
   feedback?: string
   enteredFeedbackMode?: boolean
-  scope?: 'Claude-folder' | 'global-Claude-folder'
+  scope?: 'claude-folder' | 'global-claude-folder'
 }
 
 function handleAcceptOnce(
@@ -101,13 +101,13 @@ function handleAcceptSession(
 
   logPermissionEvent('accept', completionType, languageName, messageId)
 
-  // For Claude-folder scope, grant session-level access to all .Claude/ files
+  // For claude-folder scope, grant session-level access to all .claude/ files
   if (
-    options?.scope === 'Claude-folder' ||
-    options?.scope === 'global-Claude-folder'
+    options?.scope === 'claude-folder' ||
+    options?.scope === 'global-claude-folder'
   ) {
     const pattern =
-      options.scope === 'global-Claude-folder'
+      options.scope === 'global-claude-folder'
         ? GLOBAL_CLAUDE_
         : CLAUDE_
     const suggestions: PermissionUpdate[] = [

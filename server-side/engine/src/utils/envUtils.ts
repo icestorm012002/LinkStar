@@ -168,18 +168,18 @@ export function isInProtectedNamespace(): boolean {
 /**
  * Model prefix → env var for Vertex region overrides.
  * Order matters: more specific prefixes must come before less specific ones
- * (e.g., 'Claude-opus-4-1' before 'Claude-opus-4').
+ * (e.g., 'claude-opus-4-1' before 'claude-opus-4').
  */
 const VERTEX_REGION_OVERRIDES: ReadonlyArray<[string, string]> = [
-  ['Claude-haiku-4-5', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-3-5-haiku', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-3-5-sonnet', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-3-7-sonnet', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-opus-4-1', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-opus-4', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-sonnet-4-6', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-sonnet-4-5', 'VERTEX_REGION_CLAUDE_'],
-  ['Claude-sonnet-4', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-haiku-4-5', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-3-5-haiku', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-3-5-sonnet', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-3-7-sonnet', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-opus-4-1', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-opus-4', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-sonnet-4-6', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-sonnet-4-5', 'VERTEX_REGION_CLAUDE_'],
+  ['claude-sonnet-4', 'VERTEX_REGION_CLAUDE_'],
 ]
 
 /**

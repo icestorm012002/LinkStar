@@ -249,8 +249,8 @@ export async function trackDatadogEvent(
       ddsource: 'nodejs',
       ddtags: tags.join(','),
       message: eventName,
-      service: 'Claude-code',
-      hostname: 'Claude-code',
+      service: 'claude-code',
+      hostname: 'claude-code',
       env: process.env.USER_TYPE,
     }
 

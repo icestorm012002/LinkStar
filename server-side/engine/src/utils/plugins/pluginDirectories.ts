@@ -48,12 +48,12 @@ function getPluginsDirectoryName(): string {
  *
  * Priority:
  * 1. CLAUDE_ env var (explicit override)
- * 2. Default: ~/.Claude/plugins or ~/.Claude/cowork_plugins
+ * 2. Default: ~/.claude/plugins or ~/.claude/cowork_plugins
  */
 export function getPluginsDirectory(): string {
   // expandTilde: when CLAUDE_ is set via settings.json
   // `env` (not shell), ~ is not expanded by the shell. Without this, a value
-  // like "~/.Claude/plugins" becomes a literal `~` directory created in the
+  // like "~/.claude/plugins" becomes a literal `~` directory created in the
   // cwd of every project (gh-30794 / CC-212).
   const envOverride = process.env.CLAUDE_
   if (envOverride) {

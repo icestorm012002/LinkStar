@@ -153,7 +153,7 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
     const attrs = metrics.resource.attributes
 
     const resourceAttributes: Record<string, string> = {
-      'service.name': (attrs['service.name'] as string) || 'Claude-code',
+      'service.name': (attrs['service.name'] as string) || 'claude-code',
       'service.version': (attrs['service.version'] as string) || 'unknown',
       'os.type': (attrs['os.type'] as string) || 'unknown',
       'os.version': (attrs['os.version'] as string) || 'unknown',
@@ -171,7 +171,7 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
 
     // Add customer type and subscription type
     if (isClaudeAISubscriber()) {
-      resourceAttributes['user.customer_type'] = 'Claude_ai'
+      resourceAttributes['user.customer_type'] = 'claude_ai'
       const subscriptionType = getSubscriptionType()
       if (subscriptionType) {
         resourceAttributes['user.subscription_type'] = subscriptionType

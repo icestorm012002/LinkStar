@@ -64,7 +64,7 @@ export async function ensureLocalPackageEnvironment(): Promise<boolean> {
     await writeIfMissing(
       join(localInstallDir, 'package.json'),
       jsonStringify(
-        { name: 'Claude-local', version: '0.0.1', private: true },
+        { name: 'claude-local', version: '0.0.1', private: true },
         null,
         2,
       ),

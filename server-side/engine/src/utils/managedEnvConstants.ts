@@ -8,7 +8,7 @@
  * terminal CLI that would break a host that only supports first-party auth.
  *
  * @[MODEL LAUNCH]: New models usually don't need changes here —
- * VERTEX_REGION_Claude_* is prefix-matched. New providers or new routing
+ * VERTEX_REGION_CLAUDE_* is prefix-matched. New providers or new routing
  * config vars (endpoint, project, region, auth) do.
  */
 const PROVIDER_MANAGED_ENV_VARS = new Set([
@@ -25,7 +25,7 @@ const PROVIDER_MANAGED_ENV_VARS = new Set([
   'ANTHROPIC_FOUNDRY_BASE_URL',
   'ANTHROPIC_FOUNDRY_RESOURCE',
   'ANTHROPIC_VERTEX_PROJECT_ID',
-  // Region routing (per-model VERTEX_REGION_Claude_* handled by prefix below)
+  // Region routing (per-model VERTEX_REGION_CLAUDE_* handled by prefix below)
   'CLOUD_ML_REGION',
   // Auth
   'ANTHROPIC_API_KEY',
@@ -58,7 +58,7 @@ const PROVIDER_MANAGED_ENV_VARS = new Set([
 const PROVIDER_MANAGED_ENV_PREFIXES = [
   // Per-model Vertex region overrides — scales with model releases, so
   // prefix-matched to avoid drift on each launch.
-  'VERTEX_REGION_Claude_',
+  'VERTEX_REGION_CLAUDE_',
 ]
 
 export function isProviderManagedEnvVar(key: string): boolean {

@@ -1,4 +1,4 @@
-// Critical system constants extracted to break circular dependencies
+﻿// Critical system constants extracted to break circular dependencies
 
 import { feature } from 'bun:bundle'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
@@ -7,13 +7,13 @@ import { isEnvDefinedFalsy } from '../utils/envUtils.js'
 import { getAPIProvider } from '../utils/model/providers.js'
 import { getWorkload } from '../utils/workloadContext.js'
 
-const DEFAULT_PREFIX = `You are CLAUDE, a state-of-the-art AI coding assistant developed by A1 Coder.`
-const AGENT_SDK_CLAUDE_ = `You are CLAUDE, a state-of-the-art AI coding assistant developed by A1 Coder, running within the A1 Coder Agent SDK.`
-const AGENT_SDK_PREFIX = `You are a CLAUDE agent, built on A1 Coder's Agent SDK.`
+const DEFAULT_PREFIX = `You are Claude, a state-of-the-art AI coding assistant developed by A1 Coder.`
+const AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX = `You are Claude, a state-of-the-art AI coding assistant developed by A1 Coder, running within the A1 Coder Agent SDK.`
+const AGENT_SDK_PREFIX = `You are a Claude agent, built on A1 Coder's Agent SDK.`
 
 const CLI_SYSPROMPT_PREFIX_VALUES = [
   DEFAULT_PREFIX,
-  AGENT_SDK_CLAUDE_,
+  AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX,
   AGENT_SDK_PREFIX,
 ] as const
 
@@ -38,7 +38,7 @@ export function getCLISyspromptPrefix(options?: {
 
   if (options?.isNonInteractive) {
     if (options.hasAppendSystemPrompt) {
-      return AGENT_SDK_CLAUDE_
+      return AGENT_SDK_CLAUDE_CODE_PRESET_PREFIX
     }
     return AGENT_SDK_PREFIX
   }
