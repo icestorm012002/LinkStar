@@ -2,7 +2,7 @@ import { isEnvDefinedFalsy, isEnvTruthy } from './envUtils.js'
 
 /**
  * Privacy level controls how much nonessential network traffic and telemetry
- * claude generates.
+ * Claude generates.
  *
  * Levels are ordered by restrictiveness:
  *   default < no-telemetry < essential-traffic
@@ -13,23 +13,23 @@ import { isEnvDefinedFalsy, isEnvTruthy } from './envUtils.js'
  *                       (telemetry + auto-updates, grove, release notes, model capabilities, etc.).
  *
  * The resolved level is the most restrictive signal from:
- *   CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC  →  essential-traffic
+ *   Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC  →  essential-traffic
  *   DISABLE_TELEMETRY                         →  no-telemetry
  */
 
 export type PrivacyLevel = 'default' | 'no-telemetry' | 'essential-traffic'
 export type PrivacyLevelSource =
-  | 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
+  | 'Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
   | 'DISABLE_TELEMETRY'
   | 'built-in-default'
   | 'explicit-opt-out'
 
 function isEssentialTrafficEnabled(): boolean {
-  return isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
+  return isEnvTruthy(process.env.Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
 }
 
 function isEssentialTrafficExplicitlyDisabled(): boolean {
-  return isEnvDefinedFalsy(process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
+  return isEnvDefinedFalsy(process.env.Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC)
 }
 
 export function getPrivacyLevel(): PrivacyLevel {
@@ -50,7 +50,7 @@ export function getPrivacyLevel(): PrivacyLevel {
 
 export function getPrivacyLevelSource(): PrivacyLevelSource {
   if (isEssentialTrafficEnabled()) {
-    return 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
+    return 'Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
   }
   if (isEssentialTrafficExplicitlyDisabled()) {
     return 'explicit-opt-out'
@@ -63,7 +63,7 @@ export function getPrivacyLevelSource(): PrivacyLevelSource {
 
 /**
  * True when all nonessential network traffic should be suppressed.
- * Equivalent to the old `process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` check.
+ * Equivalent to the old `process.env.Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC` check.
  */
 export function isEssentialTrafficOnly(): boolean {
   return getPrivacyLevel() === 'essential-traffic'
@@ -83,7 +83,7 @@ export function isTelemetryDisabled(): boolean {
  */
 export function getEssentialTrafficOnlyReason(): string | null {
   if (isEssentialTrafficEnabled()) {
-    return 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
+    return 'Claude_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
   }
   return null
 }

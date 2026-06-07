@@ -158,11 +158,11 @@ export function onGrowthBookRefresh(
 
 /**
  * Parse env var overrides for GrowthBook features.
- * Set claude_INTERNAL_FC_OVERRIDES to a JSON object mapping feature keys to values
+ * Set Claude_INTERNAL_FC_OVERRIDES to a JSON object mapping feature keys to values
  * to bypass remote eval and disk cache. Useful for eval harnesses that need to
  * test specific feature flag configurations. Only active when USER_TYPE is 'ant'.
  *
- * Example: claude_INTERNAL_FC_OVERRIDES='{"my_feature": true, "my_config": {"key": "val"}}'
+ * Example: Claude_INTERNAL_FC_OVERRIDES='{"my_feature": true, "my_config": {"key": "val"}}'
  */
 let envOverrides: Record<string, unknown> | null = null
 let envOverridesParsed = false
@@ -171,7 +171,7 @@ function getEnvOverrides(): Record<string, unknown> | null {
   if (!envOverridesParsed) {
     envOverridesParsed = true
     if (process.env.USER_TYPE === 'ant') {
-      const raw = process.env.claude_INTERNAL_FC_OVERRIDES
+      const raw = process.env.Claude_INTERNAL_FC_OVERRIDES
       if (raw) {
         try {
           envOverrides = JSON.parse(raw) as Record<string, unknown>
@@ -181,7 +181,7 @@ function getEnvOverrides(): Record<string, unknown> | null {
         } catch {
           logError(
             new Error(
-              `GrowthBook: Failed to parse claude_INTERNAL_FC_OVERRIDES: ${raw}`,
+              `GrowthBook: Failed to parse Claude_INTERNAL_FC_OVERRIDES: ${raw}`,
             ),
           )
         }
@@ -192,7 +192,7 @@ function getEnvOverrides(): Record<string, unknown> | null {
 }
 
 /**
- * Check if a feature has an env-var override (claude_INTERNAL_FC_OVERRIDES).
+ * Check if a feature has an env-var override (Claude_INTERNAL_FC_OVERRIDES).
  * When true, _CACHED_MAY_BE_STALE will return the override without touching
  * disk or network — callers can skip awaiting init for that feature.
  */
@@ -334,7 +334,7 @@ async function processRemoteEvalPayload(
   // Empty object is truthy — without the length check, `{features: {}}`
   // (transient server bug, truncated response) would pass, clear the maps
   // below, return true, and syncRemoteEvalToDisk would wholesale-write `{}`
-  // to disk: total flag blackout for every process sharing ~/.claude.json.
+  // to disk: total flag blackout for every process sharing ~/.Claude.json.
   if (!payload?.features || Object.keys(payload.features).length === 0) {
     return false
   }
@@ -502,7 +502,7 @@ const getGrowthBookClient = memoize(
     }
     const baseUrl =
       process.env.USER_TYPE === 'ant'
-        ? process.env.CLAUDE_CODE_GB_BASE_URL || 'https://api.anthropic.com/'
+        ? process.env.Claude_CODE_GB_BASE_URL || 'https://api.anthropic.com/'
         : 'https://api.anthropic.com/'
 
     // Skip auth if trust hasn't been established yet

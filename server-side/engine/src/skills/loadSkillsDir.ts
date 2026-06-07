@@ -73,7 +73,7 @@ export type LoadedFrom =
   | 'mcp'
 
 /**
- * Returns a claude config directory path for a given source.
+ * Returns a Claude config directory path for a given source.
  */
 export function getSkillsPath(
   source: SettingSource | 'plugin',
@@ -81,11 +81,11 @@ export function getSkillsPath(
 ): string {
   switch (source) {
     case 'policySettings':
-      return join(getManagedFilePath(), '.claude', dir)
+      return join(getManagedFilePath(), '.Claude', dir)
     case 'userSettings':
       return join(getClaudeConfigHomeDir(), dir)
     case 'projectSettings':
-      return `.claude/${dir}`
+      return `.Claude/${dir}`
     case 'plugin':
       return 'plugin'
     default:
@@ -113,7 +113,7 @@ export function estimateSkillFrontmatterTokens(skill: Command): number {
  * Uses realpath to resolve symlinks, which is filesystem-agnostic and avoids
  * issues with filesystems that report unreliable inode values (e.g., inode 0 on
  * some virtual/container/NFS filesystems, or precision loss on ExFAT).
- * See: https://github.com/anthropics/claude-code/issues/13893
+ * See: https://github.com/anthropics/Claude-code/issues/13893
  */
 async function getFileIdentity(filePath: string): Promise<string | null> {
   try {
@@ -153,7 +153,7 @@ function parseHooksFromFrontmatter(
 }
 
 /**
- * Parse paths frontmatter from a skill, using the same format as claude.md rules.
+ * Parse paths frontmatter from a skill, using the same format as Claude.md rules.
  * Returns undefined if no paths are specified or if all patterns are match-all.
  */
 function parseSkillPaths(frontmatter: FrontmatterData): string[] | undefined {
@@ -353,24 +353,24 @@ export function createSkillCommand({
         argumentNames,
       )
 
-      // Replace ${claude_SKILL_DIR} with the skill's own directory so bash
+      // Replace ${Claude_SKILL_DIR} with the skill's own directory so bash
       // injection (!`...`) can reference bundled scripts. Normalize backslashes
       // to forward slashes on Windows so shell commands don't treat them as escapes.
       if (baseDir) {
         const skillDir =
           process.platform === 'win32' ? baseDir.replace(/\\/g, '/') : baseDir
-        finalContent = finalContent.replace(/\$\{claude_SKILL_DIR\}/g, skillDir)
+        finalContent = finalContent.replace(/\$\{Claude_SKILL_DIR\}/g, skillDir)
       }
 
-      // Replace ${claude_SESSION_ID} with the current session ID
+      // Replace ${Claude_SESSION_ID} with the current session ID
       finalContent = finalContent.replace(
-        /\$\{claude_SESSION_ID\}/g,
+        /\$\{Claude_SESSION_ID\}/g,
         getSessionId(),
       )
 
       // Security: MCP skills are remote and untrusted — never execute inline
       // shell commands (!`…` / ```! … ```) from their markdown body.
-      // ${claude_SKILL_DIR} is meaningless for MCP skills anyway.
+      // ${Claude_SKILL_DIR} is meaningless for MCP skills anyway.
       if (loadedFrom !== 'mcp') {
         finalContent = await executeShellCommandsInPrompt(
           finalContent,
@@ -638,7 +638,7 @@ async function loadSkillsFromCommandsDir(
 export const getSkillDirCommands = memoize(
   async (cwd: string): Promise<Command[]> => {
     const userSkillsDir = join(getClaudeConfigHomeDir(), 'skills')
-    const managedSkillsDir = join(getManagedFilePath(), '.claude', 'skills')
+    const managedSkillsDir = join(getManagedFilePath(), '.Claude', 'skills')
     const projectSkillsDirs = getProjectDirsUpToHome('skills', cwd)
 
     logForDebugging(
@@ -665,7 +665,7 @@ export const getSkillDirCommands = memoize(
       const additionalSkillsNested = await Promise.all(
         additionalDirs.map(dir =>
           loadSkillsFromSkillsDir(
-            join(dir, '.claude', 'skills'),
+            join(dir, '.Claude', 'skills'),
             'projectSettings',
           ),
         ),
@@ -683,7 +683,7 @@ export const getSkillDirCommands = memoize(
       additionalSkillsNested,
       legacyCommands,
     ] = await Promise.all([
-      isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_POLICY_SKILLS)
+      isEnvTruthy(process.env.Claude_CODE_DISABLE_POLICY_SKILLS)
         ? Promise.resolve([])
         : loadSkillsFromSkillsDir(managedSkillsDir, 'policySettings'),
       isSettingSourceEnabled('userSettings') && !skillsLocked
@@ -700,7 +700,7 @@ export const getSkillDirCommands = memoize(
         ? Promise.all(
             additionalDirs.map(dir =>
               loadSkillsFromSkillsDir(
-                join(dir, '.claude', 'skills'),
+                join(dir, '.Claude', 'skills'),
                 'projectSettings',
               ),
             ),
@@ -874,7 +874,7 @@ export async function discoverSkillDirsForPaths(
     // CWD-level skills are already loaded at startup, so we only discover nested ones
     // Use prefix+separator check to avoid matching /project-backup when cwd is /project
     while (currentDir.startsWith(resolvedCwd + pathSep)) {
-      const skillDir = join(currentDir, '.claude', 'skills')
+      const skillDir = join(currentDir, '.Claude', 'skills')
 
       // Skip if we've already checked this path (hit or miss) — avoids
       // repeating the same failed stat on every Read/Write/Edit call when
@@ -884,7 +884,7 @@ export async function discoverSkillDirsForPaths(
         try {
           await fs.stat(skillDir)
           // Skills dir exists. Before loading, check if the containing dir
-          // is gitignored — blocks e.g. node_modules/pkg/.claude/skills from
+          // is gitignored — blocks e.g. node_modules/pkg/.Claude/skills from
           // loading silently. `git check-ignore` handles nested .gitignore,
           // .git/info/exclude, and global gitignore. Fails open outside a
           // git repo (exit 128 → false); the invocation-time trust dialog
@@ -988,7 +988,7 @@ export function getDynamicSkills(): Command[] {
  * dynamic skills map, making them available to the model.
  *
  * Uses the `ignore` library (gitignore-style matching), matching the behavior
- * of claude.md conditional rules.
+ * of Claude.md conditional rules.
  *
  * @param filePaths Array of file paths being operated on
  * @param cwd Current working directory (paths are matched relative to cwd)

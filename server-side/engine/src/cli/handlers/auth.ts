@@ -62,12 +62,12 @@ import {
 } from '../../utils/status.js'
 
 type AuthProvider =
-  | 'claude'
+  | 'Claude'
   | 'codex'
   | ApiKeyProviderId
 
 function isApiKeyProvider(provider: AuthProvider | undefined): provider is ApiKeyProviderId {
-  return provider !== undefined && provider !== 'claude' && provider !== 'codex'
+  return provider !== undefined && provider !== 'Claude' && provider !== 'codex'
 }
 
 /**
@@ -142,14 +142,14 @@ export async function authLogin({
   email,
   sso,
   console: useConsole,
-  claudeai,
+  Claudeai,
 }: {
   provider?: AuthProvider
   apiKey?: string
   email?: string
   sso?: boolean
   console?: boolean
-  claudeai?: boolean
+  Claudeai?: boolean
 }): Promise<void> {
   if (provider === 'google-gemini') {
     const normalizedApiKey = String(apiKey || '').trim()
@@ -186,7 +186,7 @@ export async function authLogin({
     const normalizedKey = String(apiKey || '').trim()
     if (!normalizedKey) {
       process.stderr.write(
-        `Missing API key. Run claude auth login --provider ${provider} --api-key <key> or use /login in the interactive UI.\n`,
+        `Missing API key. Run Claude auth login --provider ${provider} --api-key <key> or use /login in the interactive UI.\n`,
       )
       process.exit(1)
     }
@@ -221,31 +221,31 @@ export async function authLogin({
     }
   }
 
-  if (useConsole && claudeai) {
+  if (useConsole && Claudeai) {
     process.stderr.write(
-      'Error: --console and --claudeai cannot be used together.\n',
+      'Error: --console and --Claudeai cannot be used together.\n',
     )
     process.exit(1)
   }
 
   const settings = getInitialSettings()
   // forceLoginMethod is a hard constraint (enterprise setting) — matches ConsoleOAuthFlow behavior.
-  // Without it, --console selects Console; --claudeai (or no flag) selects claude.ai.
+  // Without it, --console selects Console; --Claudeai (or no flag) selects Claude.ai.
   const loginWithClaudeAi = settings.forceLoginMethod
-    ? settings.forceLoginMethod === 'claudeai'
+    ? settings.forceLoginMethod === 'Claudeai'
     : !useConsole
   const orgUUID = settings.forceLoginOrgUUID
 
   // Fast path: if a refresh token is provided via env var, skip the browser
   // OAuth flow and exchange it directly for tokens.
-  const envRefreshToken = process.env.CLAUDE_CODE_OAUTH_REFRESH_TOKEN
+  const envRefreshToken = process.env.Claude_CODE_OAUTH_REFRESH_TOKEN
   if (envRefreshToken) {
-    const envScopes = process.env.CLAUDE_CODE_OAUTH_SCOPES
+    const envScopes = process.env.Claude_CODE_OAUTH_SCOPES
     if (!envScopes) {
       process.stderr.write(
-        'CLAUDE_CODE_OAUTH_SCOPES is required when using CLAUDE_CODE_OAUTH_REFRESH_TOKEN.\n' +
+        'Claude_CODE_OAUTH_SCOPES is required when using Claude_CODE_OAUTH_REFRESH_TOKEN.\n' +
           'Set it to the space-separated scopes the refresh token was issued with\n' +
-          '(e.g. "user:inference" or "user:profile user:inference user:sessions:claude_code user:mcp_servers").\n',
+          '(e.g. "user:inference" or "user:profile user:inference user:sessions:Claude_code user:mcp_servers").\n',
       )
       process.exit(1)
     }
@@ -301,7 +301,7 @@ export async function authLogin({
           process.stdout.write(`Automatic (localhost redirect): ${automaticUrl}\n`)
         }
         if (directUrl) {
-          process.stdout.write(`Alternate (direct claude.ai): ${directUrl}\n`)
+          process.stdout.write(`Alternate (direct Claude.ai): ${directUrl}\n`)
         }
       },
       {
@@ -390,7 +390,7 @@ export async function authStatus(opts: {
       process.stdout.write(
         loggedIn
           ? `${definition?.label ?? opts.provider} API key is configured.\n`
-          : `${definition?.label ?? opts.provider} API key is not configured. Run claude auth login --provider ${opts.provider} --api-key <key>.\n`,
+          : `${definition?.label ?? opts.provider} API key is not configured. Run Claude auth login --provider ${opts.provider} --api-key <key>.\n`,
       )
     } else {
       process.stdout.write(
@@ -426,7 +426,7 @@ export async function authStatus(opts: {
         }
       } else {
         process.stdout.write(
-          'Not logged in to Codex. Run claude auth login --provider codex to authenticate.\n',
+          'Not logged in to Codex. Run Claude auth login --provider codex to authenticate.\n',
         )
       }
     } else {
@@ -465,8 +465,8 @@ export async function authStatus(opts: {
   let authMethod: string = 'none'
   if (using3P) {
     authMethod = 'third_party'
-  } else if (authTokenSource === 'claude.ai') {
-    authMethod = 'claude.ai'
+  } else if (authTokenSource === 'Claude.ai') {
+    authMethod = 'Claude.ai'
   } else if (authTokenSource === 'apiKeyHelper') {
     authMethod = 'api_key_helper'
   } else if (authTokenSource !== 'none') {
@@ -474,7 +474,7 @@ export async function authStatus(opts: {
   } else if (apiKeySource === 'ANTHROPIC_API_KEY' || hasApiKeyEnvVar) {
     authMethod = 'api_key'
   } else if (apiKeySource === '/login managed key') {
-    authMethod = 'claude.ai'
+    authMethod = 'Claude.ai'
   }
 
   if (opts.text) {
@@ -505,7 +505,7 @@ export async function authStatus(opts: {
     }
     if (!loggedIn) {
       process.stdout.write(
-        'Not logged in. Run claude auth login to authenticate.\n',
+        'Not logged in. Run Claude auth login to authenticate.\n',
       )
     }
   } else {
@@ -524,7 +524,7 @@ export async function authStatus(opts: {
     if (resolvedApiKeySource) {
       output.apiKeySource = resolvedApiKeySource
     }
-    if (authMethod === 'claude.ai') {
+    if (authMethod === 'Claude.ai') {
       output.email = oauthAccount?.emailAddress ?? null
       output.orgId = oauthAccount?.organizationUuid ?? null
       output.orgName = oauthAccount?.organizationName ?? null

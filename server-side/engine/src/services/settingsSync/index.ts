@@ -1,7 +1,7 @@
 /**
  * Settings Sync Service
  *
- * Syncs user settings and memory files across claude environments.
+ * Syncs user settings and memory files across Claude environments.
  *
  * - Interactive CLI: Uploads local settings to remote (incremental, only changed entries)
  * - CCR: Downloads remote settings to local before plugin installation
@@ -16,7 +16,7 @@ import pickBy from 'lodash-es/pickBy.js'
 import { dirname } from 'path'
 import { getIsInteractive } from '../../bootstrap/state.js'
 import {
-  ANTHROPIC_AI_INFERENCE_SCOPE,
+  Claude_AI_INFERENCE_SCOPE,
   getOauthConfig,
   OAUTH_BETA_HEADER,
 } from '../../constants/oauth.js'
@@ -24,7 +24,7 @@ import {
   checkAndRefreshOAuthTokenIfNeeded,
   getClaudeAIOAuthTokens,
 } from '../../utils/auth.js'
-import { clearMemoryFileCaches } from '../../utils/claudemd.js'
+import { clearMemoryFileCaches } from '../../utils/Claudemd.js'
 import { getMemoryPath } from '../../utils/config.js'
 import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
 import { classifyAxiosError } from '../../utils/errors.js'
@@ -216,12 +216,12 @@ function isUsingOAuth(): boolean {
 
   const tokens = getClaudeAIOAuthTokens()
   return Boolean(
-    tokens?.accessToken && tokens.scopes?.includes(ANTHROPIC_AI_INFERENCE_SCOPE),
+    tokens?.accessToken && tokens.scopes?.includes(Claude_AI_INFERENCE_SCOPE),
   )
 }
 
 function getSettingsSyncEndpoint(): string {
-  return `${getOauthConfig().BASE_API_URL}/api/claude_code/user_settings`
+  return `${getOauthConfig().BASE_API_URL}/api/Claude_code/user_settings`
 }
 
 function getSettingsSyncAuthHeaders(): {
@@ -483,7 +483,7 @@ async function writeFileForSync(
  *
  * After writing, invalidates relevant caches:
  * - resetSettingsCache() for settings files
- * - clearMemoryFileCaches() for memory files (claude.md)
+ * - clearMemoryFileCaches() for memory files (Claude.md)
  */
 async function applyRemoteEntriesToLocal(
   entries: Record<string, string>,

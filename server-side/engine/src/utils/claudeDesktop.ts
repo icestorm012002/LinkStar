@@ -15,7 +15,7 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
 
   if (!SUPPORTED_PLATFORMS.includes(platform)) {
     throw new Error(
-      `Unsupported platform: ${platform} - claude Desktop integration only works on macOS and WSL.`,
+      `Unsupported platform: ${platform} - Claude Desktop integration only works on macOS and WSL.`,
     )
   }
 
@@ -24,8 +24,8 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
       homedir(),
       'Library',
       'Application Support',
-      'claude',
-      'claude_desktop_config.json',
+      'Claude',
+      'Claude_desktop_config.json',
     )
   }
 
@@ -37,7 +37,7 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
   if (windowsHome) {
     // Remove drive letter and convert to WSL path format
     const wslPath = windowsHome.replace(/^[A-Z]:/, '')
-    const configPath = `/mnt/c${wslPath}/AppData/Roaming/claude/claude_desktop_config.json`
+    const configPath = `/mnt/c${wslPath}/AppData/Roaming/Claude/Claude_desktop_config.json`
 
     // Check if the file exists
     try {
@@ -56,7 +56,7 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
     try {
       const userDirs = await readdir(usersDir, { withFileTypes: true })
 
-      // Look for claude Desktop config in each user directory
+      // Look for Claude Desktop config in each user directory
       for (const user of userDirs) {
         if (
           user.name === 'Public' ||
@@ -72,8 +72,8 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
           user.name,
           'AppData',
           'Roaming',
-          'claude',
-          'claude_desktop_config.json',
+          'Claude',
+          'Claude_desktop_config.json',
         )
 
         try {
@@ -91,7 +91,7 @@ export async function getClaudeDesktopConfigPath(): Promise<string> {
   }
 
   throw new Error(
-    'Could not find claude Desktop config file in Windows. Make sure claude Desktop is installed on Windows.',
+    'Could not find Claude Desktop config file in Windows. Make sure Claude Desktop is installed on Windows.',
   )
 }
 
@@ -100,7 +100,7 @@ export async function readClaudeDesktopMcpServers(): Promise<
 > {
   if (!SUPPORTED_PLATFORMS.includes(getPlatform())) {
     throw new Error(
-      'Unsupported platform - claude Desktop integration only works on macOS and WSL.',
+      'Unsupported platform - Claude Desktop integration only works on macOS and WSL.',
     )
   }
   try {

@@ -2,7 +2,7 @@
  * SDK MCP Transport Bridge
  *
  * This file implements a transport bridge that allows MCP servers running in the SDK process
- * to communicate with the claude CLI process through control messages.
+ * to communicate with the Claude CLI process through control messages.
  *
  * ## Architecture Overview
  *

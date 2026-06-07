@@ -14,7 +14,7 @@ export const ConfigScopeSchema = lazySchema(() =>
     'project',
     'dynamic',
     'enterprise',
-    'claudeai',
+    'Claudeai',
     'managed',
   ]),
 )
@@ -112,10 +112,10 @@ export const McpSdkServerConfigSchema = lazySchema(() =>
   }),
 )
 
-// Config type for claude.ai proxy servers
+// Config type for Claude.ai proxy servers
 export const McpClaudeAIProxyServerConfigSchema = lazySchema(() =>
   z.object({
-    type: z.literal('claudeai-proxy'),
+    type: z.literal('Claudeai-proxy'),
     url: z.string(),
     id: z.string(),
   }),

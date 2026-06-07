@@ -238,7 +238,7 @@ function createPluginCommand(
         isSkill ? 'Plugin skill' : 'Plugin command',
       )
 
-    // Substitute ${claude_PLUGIN_ROOT} in allowed-tools before parsing
+    // Substitute ${Claude_PLUGIN_ROOT} in allowed-tools before parsing
     const rawAllowedTools = frontmatter['allowed-tools']
     const substitutedAllowedTools =
       typeof rawAllowedTools === 'string'
@@ -336,7 +336,7 @@ function createPluginCommand(
           argumentNames,
         )
 
-        // Replace ${claude_PLUGIN_ROOT} and ${claude_PLUGIN_DATA} with their paths
+        // Replace ${Claude_PLUGIN_ROOT} and ${Claude_PLUGIN_DATA} with their paths
         finalContent = substitutePluginVariables(finalContent, {
           path: pluginPath,
           source: sourceName,
@@ -353,10 +353,10 @@ function createPluginCommand(
           )
         }
 
-        // Replace ${claude_SKILL_DIR} with this specific skill's directory.
-        // Distinct from ${claude_PLUGIN_ROOT}: a plugin can contain multiple
-        // skills, so claude_PLUGIN_ROOT points to the plugin root while
-        // claude_SKILL_DIR points to the individual skill's subdirectory.
+        // Replace ${Claude_SKILL_DIR} with this specific skill's directory.
+        // Distinct from ${Claude_PLUGIN_ROOT}: a plugin can contain multiple
+        // skills, so Claude_PLUGIN_ROOT points to the plugin root while
+        // Claude_SKILL_DIR points to the individual skill's subdirectory.
         if (config.isSkillMode) {
           const rawSkillDir = dirname(file.filePath)
           const skillDir =
@@ -364,14 +364,14 @@ function createPluginCommand(
               ? rawSkillDir.replace(/\\/g, '/')
               : rawSkillDir
           finalContent = finalContent.replace(
-            /\$\{claude_SKILL_DIR\}/g,
+            /\$\{Claude_SKILL_DIR\}/g,
             skillDir,
           )
         }
 
-        // Replace ${claude_SESSION_ID} with the current session ID
+        // Replace ${Claude_SESSION_ID} with the current session ID
         finalContent = finalContent.replace(
-          /\$\{claude_SESSION_ID\}/g,
+          /\$\{Claude_SESSION_ID\}/g,
           getSessionId(),
         )
 

@@ -44,10 +44,10 @@ import {
   logEvent,
 } from '../analytics/index.js'
 import {
-  type claudeAILimits,
+  type ClaudeAILimits,
   getRateLimitErrorMessage,
   type OverageDisabledReason,
-} from '../claudeAiLimits.js'
+} from '../ClaudeAiLimits.js'
 import { shouldProcessRateLimits } from '../rateLimitMocking.js' // Used for /mock-limits command
 import { extractConnectionErrorDetails, formatAPIError } from './errorUtils.js'
 
@@ -195,27 +195,27 @@ export function getRequestTooLargeErrorMessage(): string {
     : `Request too large (${limits}). Double press esc to go back and try with a smaller file.`
 }
 export const OAUTH_ORG_NOT_ALLOWED_ERROR_MESSAGE =
-  'Your account does not have access to claude. Please run /login.'
+  'Your account does not have access to Claude. Please run /login.'
 
 export function getTokenRevokedErrorMessage(): string {
   return getIsNonInteractiveSession()
-    ? 'Your account does not have access to claude. Please login again or contact your administrator.'
+    ? 'Your account does not have access to Claude. Please login again or contact your administrator.'
     : TOKEN_REVOKED_ERROR_MESSAGE
 }
 
 export function getOauthOrgNotAllowedErrorMessage(): string {
   return getIsNonInteractiveSession()
-    ? 'Your organization does not have access to claude. Please login again or contact your administrator.'
+    ? 'Your organization does not have access to Claude. Please login again or contact your administrator.'
     : OAUTH_ORG_NOT_ALLOWED_ERROR_MESSAGE
 }
 
 /**
- * Check if we're in CCR (claude Remote) mode.
+ * Check if we're in CCR (Claude Remote) mode.
  * In CCR mode, auth is handled via JWTs provided by the infrastructure,
  * not via /login. Transient auth errors should suggest retrying, not logging in.
  */
 function isCCRMode(): boolean {
-  return isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)
+  return isEnvTruthy(process.env.Claude_CODE_REMOTE)
 }
 
 // Temp helper to log tool_use/tool_result mismatch errors
@@ -479,7 +479,7 @@ export function getAssistantMessageFromError(
     // If we have the new headers, use the new message generation
     if (rateLimitType || overageStatus) {
       // Build limits object from error headers to determine the appropriate message
-      const limits: claudeAILimits = {
+      const limits: ClaudeAILimits = {
         status: 'rejected',
         unifiedRateLimitFallbackAvailable: false,
         isUsingOverage: false,
@@ -527,7 +527,7 @@ export function getAssistantMessageFromError(
       // If getRateLimitErrorMessage returned null, it means the fallback mechanism
       // will handle this silently (e.g., Opus -> Sonnet fallback for eligible users).
       // Return NO_RESPONSE_REQUESTED so no error is shown to the user, but the
-      // message is still recorded in conversation history for claude to see.
+      // message is still recorded in conversation history for Claude to see.
       return createAssistantAPIErrorMessage({
         content: NO_RESPONSE_REQUESTED,
         error: 'rate_limit',
@@ -539,7 +539,7 @@ export function getAssistantMessageFromError(
     // (e.g. 1M context without Extra Usage) and infra capacity 429s land here.
     if (error.message.includes('Extra usage is required for long context')) {
       const hint = getIsNonInteractiveSession()
-        ? 'enable extra usage at claude.ai/settings/usage, or use --model to switch to standard context'
+        ? 'enable extra usage at Claude.ai/settings/usage, or use --model to switch to standard context'
         : 'run /extra-usage to enable, or /model to switch to standard context'
       return createAssistantAPIErrorMessage({
         content: `${API_ERROR_MESSAGE_PREFIX}: Extra usage is required for 1M context · ${hint}`,
@@ -742,12 +742,12 @@ export function getAssistantMessageFromError(
   ) {
     return createAssistantAPIErrorMessage({
       content:
-        'claude Opus is not available with the claude Pro plan. If you have updated your subscription plan recently, run /logout and /login for the plan to take effect.',
+        'Claude Opus is not available with the Claude Pro plan. If you have updated your subscription plan recently, run /logout and /login for the plan to take effect.',
       error: 'invalid_request',
     })
   }
 
-  // Check for invalid model name error for Ant users. claude may be
+  // Check for invalid model name error for Ant users. Claude may be
   // defaulting to a custom internal-only model for Ants, and there might be
   // Ants using new or unknown org IDs that haven't been gated in.
   if (
@@ -758,7 +758,7 @@ export function getAssistantMessageFromError(
   ) {
     // Get organization ID from config - only use OAuth account data when actively using OAuth
     const orgId = getOauthAccountInfo()?.organizationUuid
-    const baseMsg = `[ANT-ONLY] Your org isn't gated into the \`${model}\` model. Either run \`claude\` with \`ANTHROPIC_MODEL=${getDefaultMainLoopModelSetting()}\``
+    const baseMsg = `[ANT-ONLY] Your org isn't gated into the \`${model}\` model. Either run \`Claude\` with \`ANTHROPIC_MODEL=${getDefaultMainLoopModelSetting()}\``
     const msg = orgId
       ? `${baseMsg} or share your orgId (${orgId}) in ${MACRO.FEEDBACK_CHANNEL} for help getting access.`
       : `${baseMsg} or reach out in ${MACRO.FEEDBACK_CHANNEL} for help getting access.`
@@ -885,7 +885,7 @@ export function getAssistantMessageFromError(
   // Bedrock errors like "403 You don't have access to the model with the specified model ID."
   // don't contain the actual model ID
   if (
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) &&
+    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) &&
     error instanceof Error &&
     error.message.toLowerCase().includes('model id')
   ) {
@@ -1137,7 +1137,7 @@ export function classifyAPIError(error: unknown): string {
 
   // Bedrock-specific errors
   if (
-    isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK) &&
+    isEnvTruthy(process.env.Claude_CODE_USE_BEDROCK) &&
     error instanceof Error &&
     error.message.toLowerCase().includes('model id')
   ) {
@@ -1195,12 +1195,12 @@ export function getErrorMessageIfRefusal(
   logEvent('tengu_refusal_api_response', {})
 
   const baseMessage = getIsNonInteractiveSession()
-    ? `${API_ERROR_MESSAGE_PREFIX}: claude is unable to respond to this request, which appears to violate our Usage Policy (https://www.anthropic.com/legal/aup). Try rephrasing the request or attempting a different approach.`
-    : `${API_ERROR_MESSAGE_PREFIX}: claude is unable to respond to this request, which appears to violate our Usage Policy (https://www.anthropic.com/legal/aup). Please double press esc to edit your last message or start a new session for claude to assist with a different task.`
+    ? `${API_ERROR_MESSAGE_PREFIX}: Claude is unable to respond to this request, which appears to violate our Usage Policy (https://www.anthropic.com/legal/aup). Try rephrasing the request or attempting a different approach.`
+    : `${API_ERROR_MESSAGE_PREFIX}: Claude is unable to respond to this request, which appears to violate our Usage Policy (https://www.anthropic.com/legal/aup). Please double press esc to edit your last message or start a new session for Claude to assist with a different task.`
 
   const modelSuggestion =
-    model !== 'claude-sonnet-4-20250514'
-      ? ' If you are seeing this refusal repeatedly, try running /model claude-sonnet-4-20250514 to switch models.'
+    model !== 'Claude-sonnet-4-20250514'
+      ? ' If you are seeing this refusal repeatedly, try running /model Claude-sonnet-4-20250514 to switch models.'
       : ''
 
   return createAssistantAPIErrorMessage({

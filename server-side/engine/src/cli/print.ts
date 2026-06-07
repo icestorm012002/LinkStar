@@ -127,7 +127,7 @@ import type {
   SDKControlMcpSetServersResponse,
   SDKControlReloadPluginsResponse,
 } from 'src/entrypoints/sdk/controlTypes.js'
-import type { PermissionMode } from '@anthropic-ai/claude-agent-sdk'
+import type { PermissionMode } from '@anthropic-ai/Claude-agent-sdk'
 import type { PermissionMode as InternalPermissionMode } from 'src/types/permissions.js'
 import { cwd } from 'process'
 import { getCwd } from 'src/utils/cwd.js'
@@ -262,8 +262,8 @@ import { collectContextData } from 'src/commands/context/context-noninteractive.
 import { LOCAL_COMMAND_STDOUT_TAG } from 'src/constants/xml.js'
 import {
   statusListeners,
-  type claudeAILimits,
-} from 'src/services/claudeAiLimits.js'
+  type ClaudeAILimits,
+} from 'src/services/ClaudeAiLimits.js'
 import {
   getDefaultMainLoopModel,
   getMainLoopModel,
@@ -492,7 +492,7 @@ export async function runHeadless(
 ): Promise<void> {
   if (
     process.env.USER_TYPE === 'ant' &&
-    isEnvTruthy(process.env.CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER)
+    isEnvTruthy(process.env.Claude_CODE_EXIT_AFTER_FIRST_RENDER)
   ) {
     process.stderr.write(
       `\nStartup time: ${Math.round(process.uptime() * 1000)}ms\n`,
@@ -508,7 +508,7 @@ export async function runHeadless(
   // enabledPlugins.
   if (
     feature('DOWNLOAD_USER_SETTINGS') &&
-    (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) || getIsRemoteMode())
+    (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
   ) {
     void downloadUserSettings()
   }
@@ -532,13 +532,13 @@ export async function runHeadless(
 
   // Proactive activation is now handled in main.tsx before getTools() so
   // SleepTool passes isEnabled() filtering. This fallback covers the case
-  // where CLAUDE_CODE_PROACTIVE is set but main.tsx's check didn't fire
+  // where Claude_CODE_PROACTIVE is set but main.tsx's check didn't fire
   // (e.g. env was injected by the SDK transport after argv parsing).
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
     proactiveModule &&
     !proactiveModule.isProactiveActive() &&
-    isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE)
+    isEnvTruthy(process.env.Claude_CODE_PROACTIVE)
   ) {
     proactiveModule.activateProactive('command')
   }
@@ -850,11 +850,11 @@ export async function runHeadless(
   const needsFullArray = options.outputFormat === 'json' && options.verbose
   const messages: SDKMessage[] = []
   let lastMessage: SDKMessage | undefined
-  // Streamlined mode transforms messages when CLAUDE_CODE_STREAMLINED_OUTPUT=true and using stream-json
+  // Streamlined mode transforms messages when Claude_CODE_STREAMLINED_OUTPUT=true and using stream-json
   // Build flag gates this out of external builds; env var is the runtime opt-in for ant builds
   const transformToStreamlined =
     feature('STREAMLINED_OUTPUT') &&
-    isEnvTruthy(process.env.CLAUDE_CODE_STREAMLINED_OUTPUT) &&
+    isEnvTruthy(process.env.Claude_CODE_STREAMLINED_OUTPUT) &&
     options.outputFormat === 'stream-json'
       ? createStreamlinedTransformer()
       : null
@@ -1125,7 +1125,7 @@ function runHeadlessStreaming(
   // Set up rate limit status listener to emit SDKRateLimitEvent for all status changes.
   // Emitting for all statuses (including 'allowed') ensures consumers can clear warnings
   // when rate limits reset. The upstream emitStatusChange already deduplicates via isEqual.
-  const rateLimitListener = (limits: claudeAILimits) => {
+  const rateLimitListener = (limits: ClaudeAILimits) => {
     const rateLimitInfo = toSDKRateLimitInfo(limits)
     if (rateLimitInfo) {
       output.enqueue({
@@ -1168,7 +1168,7 @@ function runHeadlessStreaming(
   // Auto-resume interrupted turns on restart so CC continues from where it
   // left off without requiring the SDK to re-send the prompt.
   const resumeInterruptedTurnEnv =
-    process.env.CLAUDE_CODE_RESUME_INTERRUPTED_TURN
+    process.env.Claude_CODE_RESUME_INTERRUPTED_TURN
   if (
     turnInterruptionState &&
     turnInterruptionState.kind !== 'none' &&
@@ -1507,7 +1507,7 @@ function runHeadlessStreaming(
   let bridgeLastForwardedIndex = 0
 
   // Forward new messages from mutableMessages to the bridge.
-  // Called incrementally during each turn (so claude.ai sees progress
+  // Called incrementally during each turn (so Claude.ai sees progress
   // and stays alive during permission waits) and again after the turn.
   //
   // writeMessages has its own UUID-based dedup (initialMessageUUIDs,
@@ -1635,9 +1635,9 @@ function runHeadlessStreaming(
           headers: connection.config.headers,
           oauth: connection.config.oauth,
         }
-      } else if (connection.config.type === 'claudeai-proxy') {
+      } else if (connection.config.type === 'Claudeai-proxy') {
         config = {
-          type: 'claudeai-proxy' as const,
+          type: 'Claudeai-proxy' as const,
           url: connection.config.url,
           id: connection.config.id,
         }
@@ -1664,7 +1664,7 @@ function runHeadlessStreaming(
             }))
           : undefined
       // Capabilities passthrough with allowlist pre-filter. The IDE reads
-      // experimental['claude/channel'] to decide whether to show the
+      // experimental['Claude/channel'] to decide whether to show the
       // Enable-channel prompt — only echo it if channel_enable would
       // actually pass the allowlist. Not a security boundary (the
       // handler re-runs the full gate); just avoids dead buttons.
@@ -1676,11 +1676,11 @@ function runHeadlessStreaming(
       ) {
         const exp = { ...connection.capabilities.experimental }
         if (
-          exp['claude/channel'] &&
+          exp['Claude/channel'] &&
           (!isChannelsEnabled() ||
             !isChannelAllowlisted(connection.config.pluginSource))
         ) {
-          delete exp['claude/channel']
+          delete exp['Claude/channel']
         }
         if (Object.keys(exp).length > 0) {
           capabilities = { experimental: exp }
@@ -1708,7 +1708,7 @@ function runHeadlessStreaming(
       // its promise so this awaits the same in-flight request.
       await Promise.all([
         feature('DOWNLOAD_USER_SETTINGS') &&
-        (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) || getIsRemoteMode())
+        (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
           ? withDiagnosticsTiming('headless_user_settings_download', () =>
               downloadUserSettings(),
             )
@@ -1730,13 +1730,13 @@ function runHeadlessStreaming(
 
   // Background plugin installation for all headless users
   // Installs marketplaces from extraKnownMarketplaces and missing enabled plugins
-  // CLAUDE_CODE_SYNC_PLUGIN_INSTALL=true: resolved in run() before the first
+  // Claude_CODE_SYNC_PLUGIN_INSTALL=true: resolved in run() before the first
   // query so plugins are guaranteed available on the first ask().
   let pluginInstallPromise: Promise<void> | null = null
   // --bare / SIMPLE: skip plugin install. Scripted calls don't add plugins
   // mid-session; the next interactive run reconciles.
   if (!isBareMode()) {
-    if (isEnvTruthy(process.env.CLAUDE_CODE_SYNC_PLUGIN_INSTALL)) {
+    if (isEnvTruthy(process.env.Claude_CODE_SYNC_PLUGIN_INSTALL)) {
       pluginInstallPromise = installPluginsAndApplyMcpInBackground()
     } else {
       void installPluginsAndApplyMcpInBackground()
@@ -1751,7 +1751,7 @@ function runHeadlessStreaming(
   let currentAgents = agents
 
   // Clear all plugin-related caches, reload commands/agents/hooks.
-  // Called after CLAUDE_CODE_SYNC_PLUGIN_INSTALL completes (before first query)
+  // Called after Claude_CODE_SYNC_PLUGIN_INSTALL completes (before first query)
   // and after non-sync background install finishes.
   // refreshActivePlugins calls clearAllCaches() which is required because
   // loadAllPlugins() may have run during main.tsx startup BEFORE managed
@@ -1878,14 +1878,14 @@ function runHeadlessStreaming(
     await updateSdkMcp()
     headlessProfilerCheckpoint('after_updateSdkMcp')
 
-    // Resolve deferred plugin installation (CLAUDE_CODE_SYNC_PLUGIN_INSTALL).
+    // Resolve deferred plugin installation (Claude_CODE_SYNC_PLUGIN_INSTALL).
     // The promise was started eagerly so installation overlaps with other init.
     // Awaiting here guarantees plugins are available before the first ask().
-    // If CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS is set, races against that
+    // If Claude_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS is set, races against that
     // deadline and proceeds without plugins on timeout (logging an error).
     if (pluginInstallPromise) {
       const timeoutMs = parseInt(
-        process.env.CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS || '',
+        process.env.Claude_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS || '',
         10,
       )
       if (timeoutMs > 0) {
@@ -1894,7 +1894,7 @@ function runHeadlessStreaming(
         if (result === 'timeout') {
           logError(
             new Error(
-              `CLAUDE_CODE_SYNC_PLUGIN_INSTALL: plugin installation timed out after ${timeoutMs}ms`,
+              `Claude_CODE_SYNC_PLUGIN_INSTALL: plugin installation timed out after ${timeoutMs}ms`,
             ),
           )
           logEvent('tengu_sync_plugin_install_timeout', {
@@ -2210,7 +2210,7 @@ function runHeadlessStreaming(
               },
             })) {
               // Forward messages to bridge incrementally (mid-turn) so
-              // claude.ai sees progress and the connection stays alive
+              // Claude.ai sees progress and the connection stays alive
               // while blocked on permission requests.
               forwardMessagesToBridge()
 
@@ -2275,7 +2275,7 @@ function runHeadlessStreaming(
           // Generate and emit prompt suggestion for SDK consumers
           if (
             options.promptSuggestions &&
-            !isEnvDefinedFalsy(process.env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION)
+            !isEnvDefinedFalsy(process.env.Claude_CODE_ENABLE_PROMPT_SUGGESTION)
           ) {
             // TS narrows suggestionState to never in the while loop body;
             // cast via unknown to reset narrowing.
@@ -2795,12 +2795,12 @@ function runHeadlessStreaming(
   // extension via handleAuthDone → mcp_reconnect.
   const oauthAuthPromises = new Map<string, Promise<void>>()
 
-  // In-flight Anthropic OAuth flow (claude_authenticate). Single-slot: a
+  // In-flight Anthropic OAuth flow (Claude_authenticate). Single-slot: a
   // second authenticate request cleans up the first. The service holds the
   // PKCE verifier + localhost listener; the promise settles after
   // installOAuthTokens — after it resolves, the in-process memoized token
   // cache is already cleared and the next API call picks up the new creds.
-  let claudeOAuth: {
+  let ClaudeOAuth: {
     service: OAuthService
     flow: Promise<void>
   } | null = null
@@ -3067,7 +3067,7 @@ function runHeadlessStreaming(
           try {
             if (
               feature('DOWNLOAD_USER_SETTINGS') &&
-              (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) || getIsRemoteMode())
+              (isEnvTruthy(process.env.Claude_CODE_REMOTE) || getIsRemoteMode())
             ) {
               // Re-pull user settings so enabledPlugins pushed from the
               // user's local CLI take effect before the cache sweep.
@@ -3512,12 +3512,12 @@ function runHeadlessStreaming(
               `No active OAuth flow for server: ${serverName}`,
             )
           }
-        } else if (message.request.subtype === 'claude_authenticate') {
+        } else if (message.request.subtype === 'Claude_authenticate') {
           // Anthropic OAuth over the control channel. The SDK client owns
           // the user's browser (we're headless in -p mode); we hand back
           // both URLs and wait. Automatic URL → localhost listener catches
           // the redirect if the browser is on this host; manual URL → the
-          // success page shows "code#state" for claude_oauth_callback.
+          // success page shows "code#state" for Claude_oauth_callback.
           const { loginWithClaudeAi } = message.request
 
           // Clean up any prior flow. cleanup() closes the localhost listener
@@ -3525,7 +3525,7 @@ function runHeadlessStreaming(
           // pending (AuthCodeListener.close() does not reject) but its object
           // graph becomes unreachable once the server handle is released and
           // is GC'd — no fd or port is held.
-          claudeOAuth?.service.cleanup()
+          ClaudeOAuth?.service.cleanup()
 
           logEvent('tengu_oauth_flow_start', {
             loginWithClaudeAi: loginWithClaudeAi ?? true,
@@ -3568,19 +3568,19 @@ function runHeadlessStreaming(
             })
             .finally(() => {
               service.cleanup()
-              if (claudeOAuth?.service === service) {
-                claudeOAuth = null
+              if (ClaudeOAuth?.service === service) {
+                ClaudeOAuth = null
               }
             })
 
-          claudeOAuth = { service, flow }
+          ClaudeOAuth = { service, flow }
 
           // Attach the rejection handler before awaiting so a synchronous
           // startOAuthFlow failure doesn't surface as an unhandled rejection.
-          // The claude_oauth_callback handler re-awaits flow for the manual
+          // The Claude_oauth_callback handler re-awaits flow for the manual
           // path and surfaces the real error to the client.
           void flow.catch(err =>
-            logForDebugging(`claude_authenticate flow ended: ${err}`, {
+            logForDebugging(`Claude_authenticate flow ended: ${err}`, {
               level: 'info',
             }),
           )
@@ -3607,30 +3607,30 @@ function runHeadlessStreaming(
             sendControlResponseError(message, errorMessage(error))
           }
         } else if (
-          message.request.subtype === 'claude_oauth_callback' ||
-          message.request.subtype === 'claude_oauth_wait_for_completion'
+          message.request.subtype === 'Claude_oauth_callback' ||
+          message.request.subtype === 'Claude_oauth_wait_for_completion'
         ) {
-          if (!claudeOAuth) {
+          if (!ClaudeOAuth) {
             sendControlResponseError(
               message,
-              'No active claude_authenticate flow',
+              'No active Claude_authenticate flow',
             )
           } else {
             // Inject the manual code synchronously — must happen in stdin
-            // message order so a subsequent claude_authenticate doesn't
+            // message order so a subsequent Claude_authenticate doesn't
             // replace the service before this code lands.
-            if (message.request.subtype === 'claude_oauth_callback') {
-              claudeOAuth.service.handleManualAuthCodeInput({
+            if (message.request.subtype === 'Claude_oauth_callback') {
+              ClaudeOAuth.service.handleManualAuthCodeInput({
                 authorizationCode: message.request.authorizationCode,
                 state: message.request.state,
               })
             }
             // Detach the await — the stdin reader is serial and blocking
-            // here deadlocks claude_oauth_wait_for_completion: flow may
-            // only resolve via a future claude_oauth_callback on stdin,
+            // here deadlocks Claude_oauth_wait_for_completion: flow may
+            // only resolve via a future Claude_oauth_callback on stdin,
             // which can't be read while we're parked. Capture the binding;
-            // claudeOAuth is nulled in flow's own .finally.
-            const { flow } = claudeOAuth
+            // ClaudeOAuth is nulled in flow's own .finally.
+            const { flow } = ClaudeOAuth
             void flow.then(
               () => {
                 const accountInfo = getAccountInformation()
@@ -3757,7 +3757,7 @@ function runHeadlessStreaming(
         } else if (message.request.subtype === 'get_settings') {
           const currentAppState = getAppState()
           const model = getMainLoopModel()
-          // modelSupportsEffort gate matches claude.ts — applied.effort must
+          // modelSupportsEffort gate matches Claude.ts — applied.effort must
           // mirror what actually goes to the API, not just what's configured.
           const effort = modelSupportsEffort(model)
             ? resolveAppliedEffort(model, currentAppState.effortValue)
@@ -4653,7 +4653,7 @@ function handleSetPermissionMode(
  * handler that enqueues channel messages at priority:'next' — drainCommandQueue
  * picks them up between turns.
  *
- * Intentionally does NOT register the claude/channel/permission handler that
+ * Intentionally does NOT register the Claude/channel/permission handler that
  * useManageMCPConnections sets up for interactive mode. That handler resolves
  * a pending dialog inside handleInteractivePermission — but print.ts never
  * calls handleInteractivePermission. When SDK permission lands on 'ask', it
@@ -4740,7 +4740,7 @@ function handleChannelEnable(
       const { content, meta } = notification.params
       logMCPDebug(
         serverName,
-        `notifications/claude/channel: ${content.slice(0, 80)}`,
+        `notifications/Claude/channel: ${content.slice(0, 80)}`,
       )
       logEvent('tengu_mcp_channel_message', {
         content_length: content.length,
@@ -4816,7 +4816,7 @@ function reregisterChannelHandlerAfterReconnect(
       const { content, meta } = notification.params
       logMCPDebug(
         connection.name,
-        `notifications/claude/channel: ${content.slice(0, 80)}`,
+        `notifications/Claude/channel: ${content.slice(0, 80)}`,
       )
       logEvent('tengu_mcp_channel_message', {
         content_length: content.length,
@@ -5040,7 +5040,7 @@ async function loadInitialMessages(
       )
       if (!parsedSessionId) {
         let errorMessage =
-          'Error: --resume requires a valid session ID when used with --print. Usage: claude -p --resume <session-id>'
+          'Error: --resume requires a valid session ID when used with --print. Usage: Claude -p --resume <session-id>'
         if (typeof options.resume === 'string') {
           errorMessage += `. Session IDs must be in UUID format (e.g., 550e8400-e29b-41d4-a716-446655440000). Provided value "${options.resume}" is not a valid UUID`
         }
@@ -5050,7 +5050,7 @@ async function loadInitialMessages(
       }
 
       // Hydrate local transcript from remote before loading
-      if (isEnvTruthy(process.env.CLAUDE_CODE_USE_CCR_V2)) {
+      if (isEnvTruthy(process.env.Claude_CODE_USE_CCR_V2)) {
         // Await restore alongside hydration so SSE catchup lands on
         // restored state, not a fresh default.
         const [, metadata] = await Promise.all([
@@ -5089,7 +5089,7 @@ async function loadInitialMessages(
         // For URL-based or CCR v2 resume, start with empty session (it was hydrated but empty)
         if (
           parsedSessionId.isUrl ||
-          isEnvTruthy(process.env.CLAUDE_CODE_USE_CCR_V2)
+          isEnvTruthy(process.env.Claude_CODE_USE_CCR_V2)
         ) {
           // Execute SessionStart hooks for startup since we're starting a new session
           return {

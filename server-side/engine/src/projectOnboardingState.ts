@@ -18,21 +18,21 @@ export type Step = {
 
 export function getSteps(): Step[] {
   const hasClaudeMd = getFsImplementation().existsSync(
-    join(getCwd(), 'claude.md'),
+    join(getCwd(), 'Claude.md'),
   )
   const isWorkspaceDirEmpty = isDirEmpty(getCwd())
 
   return [
     {
       key: 'workspace',
-      text: 'Ask claude to create a new app or clone a repository',
+      text: 'Ask Claude to create a new app or clone a repository',
       isComplete: false,
       isCompletable: true,
       isEnabled: isWorkspaceDirEmpty,
     },
     {
-      key: 'claudemd',
-      text: 'Run /init to create a claude.md file with instructions for claude',
+      key: 'Claudemd',
+      text: 'Run /init to create a Claude.md file with instructions for Claude',
       isComplete: hasClaudeMd,
       isCompletable: true,
       isEnabled: !isWorkspaceDirEmpty,

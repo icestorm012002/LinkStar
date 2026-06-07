@@ -8,22 +8,22 @@
 import { homedir, userInfo } from 'os'
 import { join } from 'path'
 
-/** macOS preference domain for claude MDM profiles. */
-export const MACOS_PREFERENCE_DOMAIN = 'com.anthropic.claudecode'
+/** macOS preference domain for Claude MDM profiles. */
+export const MACOS_PREFERENCE_DOMAIN = 'com.anthropic.Claudecode'
 
 /**
- * Windows registry key paths for claude MDM policies.
+ * Windows registry key paths for Claude MDM policies.
  *
  * These keys live under SOFTWARE\Policies which is on the WOW64 shared key
  * list — both 32-bit and 64-bit processes see the same values without
- * redirection. Do not move these to SOFTWARE\claudeCode, as SOFTWARE is
+ * redirection. Do not move these to SOFTWARE\ClaudeCode, as SOFTWARE is
  * redirected and 32-bit processes would silently read from WOW6432Node.
  * See: https://learn.microsoft.com/en-us/windows/win32/winprog64/shared-registry-keys
  */
 export const WINDOWS_REGISTRY_KEY_PATH_HKLM =
-  'HKLM\\SOFTWARE\\Policies\\claudeCode'
+  'HKLM\\SOFTWARE\\Policies\\ClaudeCode'
 export const WINDOWS_REGISTRY_KEY_PATH_HKCU =
-  'HKCU\\SOFTWARE\\Policies\\claudeCode'
+  'HKCU\\SOFTWARE\\Policies\\ClaudeCode'
 
 /** Windows registry value name containing the JSON settings blob. */
 export const WINDOWS_REGISTRY_VALUE_NAME = 'Settings'

@@ -298,7 +298,7 @@ async function maybePersistLargeToolResult(
     return toolResultBlock
   }
 
-  // Skip persistence for image content blocks - they need to be sent as-is to claude
+  // Skip persistence for image content blocks - they need to be sent as-is to Claude
   if (hasImageBlock(content)) {
     return toolResultBlock
   }

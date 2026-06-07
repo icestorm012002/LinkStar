@@ -6,14 +6,14 @@ import { logError } from '../../utils/log.js'
 import { getClaudeCodeUserAgent } from '../../utils/userAgent.js'
 
 /**
- * Fetch the user's first claude token date and store in config.
- * This is called after successful login to cache when they started using claude.
+ * Fetch the user's first Claude token date and store in config.
+ * This is called after successful login to cache when they started using Claude.
  */
 export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
   try {
     const config = getGlobalConfig()
 
-    if (config.claudeCodeFirstTokenDate !== undefined) {
+    if (config.ClaudeCodeFirstTokenDate !== undefined) {
       return
     }
 
@@ -24,7 +24,7 @@ export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
     }
 
     const oauthConfig = getOauthConfig()
-    const url = `${oauthConfig.BASE_API_URL}/api/organization/claude_code_first_token_date`
+    const url = `${oauthConfig.BASE_API_URL}/api/organization/Claude_code_first_token_date`
 
     const response = await axios.get(url, {
       headers: {
@@ -52,7 +52,7 @@ export async function fetchAndStoreClaudeCodeFirstTokenDate(): Promise<void> {
 
     saveGlobalConfig(current => ({
       ...current,
-      claudeCodeFirstTokenDate: firstTokenDate,
+      ClaudeCodeFirstTokenDate: firstTokenDate,
     }))
   } catch (error) {
     logError(error)

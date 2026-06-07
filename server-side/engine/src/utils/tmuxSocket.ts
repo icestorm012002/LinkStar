@@ -1,21 +1,21 @@
 /**
  * TMUX SOCKET ISOLATION
  * =====================
- * This module manages an isolated tmux socket for claude's operations.
+ * This module manages an isolated tmux socket for Claude's operations.
  *
  * WHY THIS EXISTS:
- * Without isolation, claude could accidentally affect the user's tmux sessions.
+ * Without isolation, Claude could accidentally affect the user's tmux sessions.
  * For example, running `tmux kill-session` via the Bash tool would kill the
- * user's current session if they started claude from within tmux.
+ * user's current session if they started Claude from within tmux.
  *
  * HOW IT WORKS:
- * 1. claude creates its own tmux socket: `claude-<PID>` (e.g., `claude-12345`)
+ * 1. Claude creates its own tmux socket: `Claude-<PID>` (e.g., `Claude-12345`)
  * 2. ALL Tmux tool commands use this socket via the `-L` flag
  * 3. ALL Bash tool commands inherit TMUX env var pointing to this socket
  *    (set in Shell.ts via getClaudeTmuxEnv())
  *
- * This means ANY tmux command run through claude - whether via the Tmux tool
- * directly or via Bash - will operate on claude's isolated socket, NOT the
+ * This means ANY tmux command run through Claude - whether via the Tmux tool
+ * directly or via Bash - will operate on Claude's isolated socket, NOT the
  * user's tmux session.
  *
  * IMPORTANT: The user's original TMUX env var is NOT used. After socket
@@ -33,7 +33,7 @@ import { getPlatform } from './platform.js'
 
 // Constants for tmux socket management
 const TMUX_COMMAND = 'tmux'
-const claude_SOCKET_PREFIX = 'claude'
+const Claude_SOCKET_PREFIX = 'Claude'
 
 /**
  * Executes a tmux command, routing through WSL on Windows.
@@ -85,12 +85,12 @@ let tmuxAvailable = false
 let tmuxToolUsed = false
 
 /**
- * Gets the socket name for claude's isolated tmux session.
- * Format: claude-<PID>
+ * Gets the socket name for Claude's isolated tmux session.
+ * Format: Claude-<PID>
  */
 export function getClaudeSocketName(): string {
   if (!socketName) {
-    socketName = `${claude_SOCKET_PREFIX}-${process.pid}`
+    socketName = `${Claude_SOCKET_PREFIX}-${process.pid}`
   }
   return socketName
 }
@@ -120,14 +120,14 @@ export function isSocketInitialized(): boolean {
 }
 
 /**
- * Gets the TMUX environment variable value for claude's isolated socket.
+ * Gets the TMUX environment variable value for Claude's isolated socket.
  *
  * CRITICAL: This value is used by Shell.ts to override the TMUX env var
  * in ALL child processes. This ensures that any `tmux` command run via
- * the Bash tool will operate on claude's socket, NOT the user's session.
+ * the Bash tool will operate on Claude's socket, NOT the user's session.
  *
  * Format: "socket_path,server_pid,pane_index" (matches tmux's TMUX env var)
- * Example: "/tmp/tmux-501/claude-12345,54321,0"
+ * Example: "/tmp/tmux-501/Claude-12345,54321,0"
  *
  * Returns null if socket is not yet initialized.
  * When null, Shell.ts does not override TMUX, preserving user's environment.
@@ -246,7 +246,7 @@ export async function ensureSocketInitialized(): Promise<void> {
 }
 
 /**
- * Kills the tmux server for claude's isolated socket.
+ * Kills the tmux server for Claude's isolated socket.
  * Called during graceful shutdown to clean up resources.
  */
 async function killTmuxServer(): Promise<void> {
@@ -269,7 +269,7 @@ async function doInitialize(): Promise<void> {
   const socket = getClaudeSocketName()
 
   // Create a new session with our custom socket
-  // Pass CLAUDE_CODE_SKIP_PROMPT_HISTORY via -e so it's set in the initial shell environment
+  // Pass Claude_CODE_SKIP_PROMPT_HISTORY via -e so it's set in the initial shell environment
   //
   // On Windows, the tmux server inherits WSL_INTEROP from the short-lived
   // wsl.exe that spawns it; once `new-session -d` detaches and wsl.exe exits,
@@ -287,7 +287,7 @@ async function doInitialize(): Promise<void> {
     '-s',
     'base',
     '-e',
-    'CLAUDE_CODE_SKIP_PROMPT_HISTORY=true',
+    'Claude_CODE_SKIP_PROMPT_HISTORY=true',
     ...(getPlatform() === 'windows'
       ? ['-e', 'WSL_INTEROP=/run/WSL/1_interop']
       : []),
@@ -313,10 +313,10 @@ async function doInitialize(): Promise<void> {
   // Register cleanup to kill the tmux server on exit
   registerCleanup(killTmuxServer)
 
-  // Set CLAUDE_CODE_SKIP_PROMPT_HISTORY in the tmux GLOBAL environment (-g).
+  // Set Claude_CODE_SKIP_PROMPT_HISTORY in the tmux GLOBAL environment (-g).
   // Without -g this would only apply to the 'base' session, and new sessions
   // created by TungstenTool (e.g. 'test', 'verify') would not inherit it.
-  // Any claude instance spawned on this socket will inherit this env var,
+  // Any Claude instance spawned on this socket will inherit this env var,
   // preventing test/verification sessions from polluting the user's real
   // command history and --resume session list.
   await execTmux([
@@ -324,7 +324,7 @@ async function doInitialize(): Promise<void> {
     socket,
     'set-environment',
     '-g',
-    'CLAUDE_CODE_SKIP_PROMPT_HISTORY',
+    'Claude_CODE_SKIP_PROMPT_HISTORY',
     'true',
   ])
 

@@ -843,7 +843,7 @@ export function collapseReadSearchGroups(
         currentGroup.bashCount = (currentGroup.bashCount ?? 0) + count
         const input = toolInfo.input as { command?: string } | undefined
         if (input?.command) {
-          // Prefer the stripped `# comment` if present (it's what claude wrote
+          // Prefer the stripped `# comment` if present (it's what Claude wrote
           // for the human — same trigger as the comment-as-label tool-use render).
           currentGroup.latestDisplayHint =
             extractBashCommentLabel(input.command) ??

@@ -20,7 +20,7 @@ export const UserSyncContentSchema = lazySchema(() =>
 )
 
 /**
- * Full response from GET /api/claude_code/user_settings
+ * Full response from GET /api/Claude_code/user_settings
  */
 export const UserSyncDataSchema = lazySchema(() =>
   z.object({
@@ -59,9 +59,9 @@ export type SettingsSyncUploadResult = {
  * Keys used for sync entries
  */
 export const SYNC_KEYS = {
-  USER_SETTINGS: '~/.claude/settings.json',
-  USER_MEMORY: '~/.claude/claude.md',
+  USER_SETTINGS: '~/.Claude/settings.json',
+  USER_MEMORY: '~/.Claude/Claude.md',
   projectSettings: (projectId: string) =>
-    `projects/${projectId}/.claude/settings.local.json`,
-  projectMemory: (projectId: string) => `projects/${projectId}/claude.local.md`,
+    `projects/${projectId}/.Claude/settings.local.json`,
+  projectMemory: (projectId: string) => `projects/${projectId}/Claude.local.md`,
 } as const

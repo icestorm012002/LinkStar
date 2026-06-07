@@ -459,7 +459,7 @@ function buildMcpUserConfig(
 
 /**
  * Resolve environment variables for plugin MCP servers
- * Handles ${claude_PLUGIN_ROOT}, ${user_config.X}, and general ${VAR} substitution
+ * Handles ${Claude_PLUGIN_ROOT}, ${user_config.X}, and general ${VAR} substitution
  * Tracks missing environment variables for error reporting
  */
 export function resolvePluginMcpEnvironment(
@@ -507,14 +507,14 @@ export function resolvePluginMcpEnvironment(
         stdioConfig.args = stdioConfig.args.map(arg => resolveValue(arg))
       }
 
-      // Resolve environment variables and add claude_PLUGIN_ROOT / claude_PLUGIN_DATA
+      // Resolve environment variables and add Claude_PLUGIN_ROOT / Claude_PLUGIN_DATA
       const resolvedEnv: Record<string, string> = {
-        claude_PLUGIN_ROOT: plugin.path,
-        claude_PLUGIN_DATA: getPluginDataDir(plugin.source),
+        Claude_PLUGIN_ROOT: plugin.path,
+        Claude_PLUGIN_DATA: getPluginDataDir(plugin.source),
         ...(stdioConfig.env || {}),
       }
       for (const [key, value] of Object.entries(resolvedEnv)) {
-        if (key !== 'claude_PLUGIN_ROOT' && key !== 'claude_PLUGIN_DATA') {
+        if (key !== 'Claude_PLUGIN_ROOT' && key !== 'Claude_PLUGIN_DATA') {
           resolvedEnv[key] = resolveValue(value)
         }
       }
@@ -547,11 +547,11 @@ export function resolvePluginMcpEnvironment(
       break
     }
 
-    // For other types (sse-ide, ws-ide, sdk, claudeai-proxy), pass through unchanged
+    // For other types (sse-ide, ws-ide, sdk, Claudeai-proxy), pass through unchanged
     case 'sse-ide':
     case 'ws-ide':
     case 'sdk':
-    case 'claudeai-proxy':
+    case 'Claudeai-proxy':
       resolved = config
       break
   }

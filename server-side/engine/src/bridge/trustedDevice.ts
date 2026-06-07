@@ -44,7 +44,7 @@ function isGateEnabled(): boolean {
 // that a gate flip after GrowthBook refresh takes effect without a restart.
 const readStoredToken = memoize((): string | undefined => {
   // Env var takes precedence for testing/canary.
-  const envToken = process.env.claude_TRUSTED_DEVICE_TOKEN
+  const envToken = process.env.Claude_TRUSTED_DEVICE_TOKEN
   if (envToken) {
     return envToken
   }
@@ -106,12 +106,12 @@ export async function enrollTrustedDevice(): Promise<void> {
       )
       return
     }
-    // If claude_TRUSTED_DEVICE_TOKEN is set (e.g. by an enterprise wrapper),
+    // If Claude_TRUSTED_DEVICE_TOKEN is set (e.g. by an enterprise wrapper),
     // skip enrollment — the env var takes precedence in readStoredToken() so
     // any enrolled token would be shadowed and never used.
-    if (process.env.claude_TRUSTED_DEVICE_TOKEN) {
+    if (process.env.Claude_TRUSTED_DEVICE_TOKEN) {
       logForDebugging(
-        '[trusted-device] claude_TRUSTED_DEVICE_TOKEN env var is set, skipping enrollment (env var takes precedence)',
+        '[trusted-device] Claude_TRUSTED_DEVICE_TOKEN env var is set, skipping enrollment (env var takes precedence)',
       )
       return
     }
@@ -147,7 +147,7 @@ export async function enrollTrustedDevice(): Promise<void> {
         device_id?: string
       }>(
         `${baseUrl}/api/auth/trusted_devices`,
-        { display_name: `claude on ${hostname()} · ${process.platform}` },
+        { display_name: `Claude on ${hostname()} · ${process.platform}` },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

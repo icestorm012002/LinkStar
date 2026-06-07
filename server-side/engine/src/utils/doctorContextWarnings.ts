@@ -6,7 +6,7 @@ import {
   getLargeMemoryFiles,
   getMemoryFiles,
   MAX_MEMORY_CHARACTER_COUNT,
-} from './claudemd.js'
+} from './Claudemd.js'
 import { getMainLoopModel } from './model/model.js'
 import { permissionRuleValueToString } from './permissions/permissionRuleParser.js'
 import { detectUnreachableRules } from './permissions/shadowedRuleDetection.js'
@@ -22,7 +22,7 @@ const MCP_TOOLS_THRESHOLD = 25_000 // 15k tokens
 
 export type ContextWarning = {
   type:
-    | 'claudemd_files'
+    | 'Claudemd_files'
     | 'agent_descriptions'
     | 'mcp_tools'
     | 'unreachable_rules'
@@ -34,7 +34,7 @@ export type ContextWarning = {
 }
 
 export type ContextWarnings = {
-  claudeMdWarning: ContextWarning | null
+  ClaudeMdWarning: ContextWarning | null
   agentWarning: ContextWarning | null
   mcpWarning: ContextWarning | null
   unreachableRulesWarning: ContextWarning | null
@@ -54,11 +54,11 @@ async function checkClaudeMdFiles(): Promise<ContextWarning | null> {
 
   const message =
     largeFiles.length === 1
-      ? `Large claude.md file detected (${largeFiles[0]!.content.length.toLocaleString()} chars > ${MAX_MEMORY_CHARACTER_COUNT.toLocaleString()})`
-      : `${largeFiles.length} large claude.md files detected (each > ${MAX_MEMORY_CHARACTER_COUNT.toLocaleString()} chars)`
+      ? `Large Claude.md file detected (${largeFiles[0]!.content.length.toLocaleString()} chars > ${MAX_MEMORY_CHARACTER_COUNT.toLocaleString()})`
+      : `${largeFiles.length} large Claude.md files detected (each > ${MAX_MEMORY_CHARACTER_COUNT.toLocaleString()} chars)`
 
   return {
-    type: 'claudemd_files',
+    type: 'Claudemd_files',
     severity: 'warning',
     message,
     details,
@@ -248,7 +248,7 @@ export async function checkContextWarnings(
   agentInfo: AgentDefinitionsResult | null,
   getToolPermissionContext: () => Promise<ToolPermissionContext>,
 ): Promise<ContextWarnings> {
-  const [claudeMdWarning, agentWarning, mcpWarning, unreachableRulesWarning] =
+  const [ClaudeMdWarning, agentWarning, mcpWarning, unreachableRulesWarning] =
     await Promise.all([
       checkClaudeMdFiles(),
       checkAgentDescriptions(agentInfo),
@@ -257,7 +257,7 @@ export async function checkContextWarnings(
     ])
 
   return {
-    claudeMdWarning,
+    ClaudeMdWarning,
     agentWarning,
     mcpWarning,
     unreachableRulesWarning,

@@ -1,9 +1,9 @@
-export const PR_TITLE = 'Add claude GitHub Workflow'
+export const PR_TITLE = 'Add Claude GitHub Workflow'
 
 export const GITHUB_ACTION_SETUP_DOCS_URL =
-  'https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md'
+  'https://github.com/anthropics/Claude-code-action/blob/main/docs/setup.md'
 
-export const WORKFLOW_CONTENT = `name: claude
+export const WORKFLOW_CONTENT = `name: Claude
 
 on:
   issue_comment:
@@ -16,52 +16,52 @@ on:
     types: [submitted]
 
 jobs:
-  claude:
+  Claude:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@Claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@Claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@Claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@Claude') || contains(github.event.issue.title, '@Claude')))
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
       issues: read
       id-token: write
-      actions: read # Required for claude to read CI results on PRs
+      actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Run claude
-        id: claude
-        uses: anthropics/claude-code-action@v1
+      - name: Run Claude
+        id: Claude
+        uses: anthropics/Claude-code-action@v1
         with:
           anthropic_api_key: \${{ secrets.ANTHROPIC_API_KEY }}
 
-          # This is an optional setting that allows claude to read CI results on PRs
+          # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to claude. If this is not specified, claude will perform the instructions specified in the comment that tagged it.
+          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+          # Optional: Add Claude_args to customize behavior and configuration
+          # See https://github.com/anthropics/Claude-code-action/blob/main/docs/usage.md
+          # or https://code.Claude.com/docs/en/cli-reference for available options
+          # Claude_args: '--allowed-tools Bash(gh pr:*)'
 
 `
 
-export const PR_BODY = `## 🤖 Installing claude GitHub App
+export const PR_BODY = `## 🤖 Installing Claude GitHub App
 
-This PR adds a GitHub Actions workflow that enables claude integration in our repository.
+This PR adds a GitHub Actions workflow that enables Claude integration in our repository.
 
-### What is claude?
+### What is Claude?
 
-[claude](https://claude.com/claude-code) is an AI coding agent that can help with:
+[Claude](https://Claude.com/Claude-code) is an AI coding agent that can help with:
 - Bug fixes and improvements  
 - Documentation updates
 - Implementing new features
@@ -71,33 +71,33 @@ This PR adds a GitHub Actions workflow that enables claude integration in our re
 
 ### How it works
 
-Once this PR is merged, we'll be able to interact with claude by mentioning @claude in a pull request or issue comment.
-Once the workflow is triggered, claude will analyze the comment and surrounding context, and execute on the request in a GitHub action.
+Once this PR is merged, we'll be able to interact with Claude by mentioning @Claude in a pull request or issue comment.
+Once the workflow is triggered, Claude will analyze the comment and surrounding context, and execute on the request in a GitHub action.
 
 ### Important Notes
 
 - **This workflow won't take effect until this PR is merged**
-- **@claude mentions won't work until after the merge is complete**
-- The workflow runs automatically whenever claude is mentioned in PR or issue comments
-- claude gets access to the entire PR or issue context including files, diffs, and previous comments
+- **@Claude mentions won't work until after the merge is complete**
+- The workflow runs automatically whenever Claude is mentioned in PR or issue comments
+- Claude gets access to the entire PR or issue context including files, diffs, and previous comments
 
 ### Security
 
 - Our Anthropic API key is securely stored as a GitHub Actions secret
 - Only users with write access to the repository can trigger the workflow
-- All claude runs are stored in the GitHub Actions run history
-- claude's default tools are limited to reading/writing files and interacting with our repo by creating comments, branches, and commits.
+- All Claude runs are stored in the GitHub Actions run history
+- Claude's default tools are limited to reading/writing files and interacting with our repo by creating comments, branches, and commits.
 - We can add more allowed tools by adding them to the workflow file like:
 
 \`\`\`
 allowed_tools: Bash(npm install),Bash(npm run build),Bash(npm run lint),Bash(npm run test)
 \`\`\`
 
-There's more information in the [claude action repo](https://github.com/anthropics/claude-code-action).
+There's more information in the [Claude action repo](https://github.com/anthropics/Claude-code-action).
 
-After merging this PR, let's try mentioning @claude in a comment on any PR to get started!`
+After merging this PR, let's try mentioning @Claude in a comment on any PR to get started!`
 
-export const CODE_REVIEW_PLUGIN_WORKFLOW_CONTENT = `name: claude Review
+export const CODE_REVIEW_PLUGIN_WORKFLOW_CONTENT = `name: Claude Review
 
 on:
   pull_request:
@@ -110,7 +110,7 @@ on:
     #   - "src/**/*.jsx"
 
 jobs:
-  claude-review:
+  Claude-review:
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
@@ -130,15 +130,15 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Run claude Review
-        id: claude-review
-        uses: anthropics/claude-code-action@v1
+      - name: Run Claude Review
+        id: Claude-review
+        uses: anthropics/Claude-code-action@v1
         with:
           anthropic_api_key: \${{ secrets.ANTHROPIC_API_KEY }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
+          plugin_marketplaces: 'https://github.com/anthropics/Claude-code.git'
+          plugins: 'code-review@Claude-code-plugins'
           prompt: '/code-review:code-review \${{ github.repository }}/pull/\${{ github.event.pull_request.number }}'
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+          # See https://github.com/anthropics/Claude-code-action/blob/main/docs/usage.md
+          # or https://code.Claude.com/docs/en/cli-reference for available options
 
 `

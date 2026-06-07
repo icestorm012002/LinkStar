@@ -4,7 +4,7 @@
  */
 
 /**
- * A session ID uniquely identifies a claude session.
+ * A session ID uniquely identifies a Claude session.
  * Returned by getSessionId().
  */
 export type SessionId = string & { readonly __brand: 'SessionId' }

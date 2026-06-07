@@ -83,14 +83,14 @@ export function createMcpAuthTool(
       return { behavior: 'allow', updatedInput: input }
     },
     async call(_input, context) {
-      // claude.ai connectors use a separate auth flow (handleClaudeAIAuth in
+      // Claude.ai connectors use a separate auth flow (handleClaudeAIAuth in
       // MCPRemoteServerMenu) that we don't invoke programmatically here —
       // just point the user at /mcp.
-      if (config.type === 'claudeai-proxy') {
+      if (config.type === 'Claudeai-proxy') {
         return {
           data: {
             status: 'unsupported' as const,
-            message: `This is a claude.ai MCP connector. Ask the user to run /mcp and select "${serverName}" to authenticate.`,
+            message: `This is a Claude.ai MCP connector. Ask the user to run /mcp and select "${serverName}" to authenticate.`,
           },
         }
       }

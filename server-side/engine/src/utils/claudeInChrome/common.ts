@@ -9,7 +9,7 @@ import { execFileNoThrow } from '../execFileNoThrow.js'
 import { getPlatform } from '../platform.js'
 import { which } from '../which.js'
 
-export const claude_IN_CHROME_MCP_SERVER_NAME = 'claude-in-chrome'
+export const Claude_IN_CHROME_MCP_SERVER_NAME = 'Claude-in-chrome'
 
 // Re-export ChromiumBrowser type for setup.ts
 export type { ChromiumBrowser } from './setupPortable.js'
@@ -356,7 +356,7 @@ export async function detectAvailableBrowser(): Promise<ChromiumBrowser | null> 
           const stats = await stat(appPath)
           if (stats.isDirectory()) {
             logForDebugging(
-              `[claude in Chrome] Detected browser: ${config.name}`,
+              `[Claude in Chrome] Detected browser: ${config.name}`,
             )
             return browserId
           }
@@ -372,7 +372,7 @@ export async function detectAvailableBrowser(): Promise<ChromiumBrowser | null> 
         for (const binary of config.linux.binaries) {
           if (await which(binary).catch(() => null)) {
             logForDebugging(
-              `[claude in Chrome] Detected browser: ${config.name}`,
+              `[Claude in Chrome] Detected browser: ${config.name}`,
             )
             return browserId
           }
@@ -391,7 +391,7 @@ export async function detectAvailableBrowser(): Promise<ChromiumBrowser | null> 
             const stats = await stat(dataPath)
             if (stats.isDirectory()) {
               logForDebugging(
-                `[claude in Chrome] Detected browser: ${config.name}`,
+                `[Claude in Chrome] Detected browser: ${config.name}`,
               )
               return browserId
             }
@@ -409,7 +409,7 @@ export async function detectAvailableBrowser(): Promise<ChromiumBrowser | null> 
 }
 
 export function isClaudeInChromeMCPServer(name: string): boolean {
-  return normalizeNameForMCP(name) === claude_IN_CHROME_MCP_SERVER_NAME
+  return normalizeNameForMCP(name) === Claude_IN_CHROME_MCP_SERVER_NAME
 }
 
 const MAX_TRACKED_TABS = 200
@@ -433,7 +433,7 @@ export async function openInChrome(url: string): Promise<boolean> {
   const browser = await detectAvailableBrowser()
 
   if (!browser) {
-    logForDebugging('[claude in Chrome] No compatible browser found')
+    logForDebugging('[Claude in Chrome] No compatible browser found')
     return false
   }
 
@@ -472,7 +472,7 @@ export async function openInChrome(url: string): Promise<boolean> {
  * Get the socket directory path (Unix only)
  */
 export function getSocketDir(): string {
-  return `/tmp/claude-mcp-browser-bridge-${getUsername()}`
+  return `/tmp/Claude-mcp-browser-bridge-${getUsername()}`
 }
 
 /**
@@ -500,7 +500,7 @@ export function getAllSocketPaths(): string[] {
 
   // Scan for *.sock files in the socket directory
   try {
-    // eslint-disable-next-line custom-rules/no-sync-fs -- claudeForChromeContext.getSocketPaths (external @ant/claude-for-chrome-mcp) requires a sync () => string[] callback
+    // eslint-disable-next-line custom-rules/no-sync-fs -- ClaudeForChromeContext.getSocketPaths (external @ant/Claude-for-chrome-mcp) requires a sync () => string[] callback
     const files = readdirSync(socketDir)
     for (const file of files) {
       if (file.endsWith('.sock')) {
@@ -512,7 +512,7 @@ export function getAllSocketPaths(): string[] {
   }
 
   // Legacy fallback paths
-  const legacyName = `claude-mcp-browser-bridge-${getUsername()}`
+  const legacyName = `Claude-mcp-browser-bridge-${getUsername()}`
   const legacyTmpdir = join(tmpdir(), legacyName)
   const legacyTmp = `/tmp/${legacyName}`
 
@@ -527,8 +527,8 @@ export function getAllSocketPaths(): string[] {
 }
 
 function getSocketName(): string {
-  // NOTE: This must match the one used in the claude in Chrome MCP
-  return `claude-mcp-browser-bridge-${getUsername()}`
+  // NOTE: This must match the one used in the Claude in Chrome MCP
+  return `Claude-mcp-browser-bridge-${getUsername()}`
 }
 
 function getUsername(): string {

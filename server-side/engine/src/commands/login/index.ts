@@ -8,7 +8,7 @@ export default () =>
     name: 'login',
     description: hasAnthropicApiKeyAuth()
       ? 'Switch provider accounts'
-      : 'Connect claude, Codex, or provider API keys',
+      : 'Connect Claude, Codex, or provider API keys',
     isEnabled: () => !isEnvTruthy(process.env.DISABLE_LOGIN_COMMAND),
     load: () => import('./login.js'),
   }) satisfies Command

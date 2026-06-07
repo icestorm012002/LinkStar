@@ -16,7 +16,7 @@ import { getOAuthHeaders } from '../../teleport/api.js'
 import { fetchEnvironments } from '../../teleport/environments.js'
 
 /**
- * Checks if user needs to log in with claude.ai
+ * Checks if user needs to log in with Claude.ai
  * Extracted from getTeleportErrors() in TeleportError.tsx
  * @returns true if login is required, false otherwise
  */
@@ -72,7 +72,7 @@ export async function checkHasGitRemote(): Promise<boolean> {
 /**
  * Checks if GitHub app is installed on a specific repository
  * @param owner The repository owner (e.g., "anthropics")
- * @param repo The repository name (e.g., "claude-cli-internal")
+ * @param repo The repository name (e.g., "Claude-cli-internal")
  * @returns true if GitHub app is installed, false otherwise
  */
 export async function checkGithubAppInstalled(

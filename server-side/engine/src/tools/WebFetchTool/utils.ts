@@ -4,7 +4,7 @@ import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from '../../services/analytics/index.js'
-import { queryHaiku } from '../../services/api/claude.js'
+import { queryHaiku } from '../../services/api/Claude.js'
 import { AbortError } from '../../utils/errors.js'
 import { getWebFetchUserAgent } from '../../utils/http.js'
 import { logError } from '../../utils/log.js'
@@ -20,7 +20,7 @@ import { makeSecondaryModelPrompt } from './prompt.js'
 // Custom error classes for domain blocking
 class DomainBlockedError extends Error {
   constructor(domain: string) {
-    super(`claude is unable to fetch from ${domain}`)
+    super(`Claude is unable to fetch from ${domain}`)
     this.name = 'DomainBlockedError'
   }
 }
@@ -28,7 +28,7 @@ class DomainBlockedError extends Error {
 class DomainCheckFailedError extends Error {
   constructor(domain: string) {
     super(
-      `Unable to verify if domain ${domain} is safe to fetch. This may be due to network restrictions or enterprise security policies blocking claude.ai.`,
+      `Unable to verify if domain ${domain} is safe to fetch. This may be due to network restrictions or enterprise security policies blocking Claude.ai.`,
     )
     this.name = 'DomainCheckFailedError'
   }
@@ -100,7 +100,7 @@ function getTurndownService(): Promise<InstanceType<TurndownCtor>> {
 // for a data exfiltration. However, this is too restrictive for some customers'
 // legitimate use cases, such as JWT-signed URLs (e.g., cloud service signed URLs)
 // that can be much longer. We already require user approval for each domain,
-// which provides a primary security boundary. In addition, claude has
+// which provides a primary security boundary. In addition, Claude has
 // other data exfil channels, and this one does not seem relatively high risk,
 // so I'm removing that length restriction. -ab
 const MAX_URL_LENGTH = 2000
@@ -382,7 +382,7 @@ export async function getURLMarkdownContent(
 
     // Check if the user has opted to skip the blocklist check
     // This is for enterprise customers with restrictive security policies
-    // that prevent outbound connections to claude.ai
+    // that prevent outbound connections to Claude.ai
     const settings = getSettings_DEPRECATED()
     if (!settings.skipWebFetchPreflight) {
       const checkResult = await checkDomainBlocklist(hostname)
@@ -432,7 +432,7 @@ export async function getURLMarkdownContent(
   ;(response as { data: unknown }).data = null
   const contentType = response.headers['content-type'] ?? ''
 
-  // Binary content: save raw bytes to disk with a proper extension so claude
+  // Binary content: save raw bytes to disk with a proper extension so Claude
   // can inspect the file later. We still fall through to the utf-8 decode +
   // Haiku path below — for PDFs in particular the decoded string has enough
   // ASCII structure (/Title, text streams) that Haiku can summarize it, and

@@ -25,7 +25,7 @@ import {
   queryGoogleGeminiNativeWithoutStreaming,
   queryGoogleGeminiNativeWithStreaming,
 } from './googleGeminiNative.js'
-import type { Options } from './claude.js'
+import type { Options } from './Claude.js'
 
 type CompatibleTool = {
   type: 'function'

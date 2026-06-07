@@ -2,12 +2,12 @@ import figures from 'figures'
 import { logError } from 'src/utils/log.js'
 import { callIdeRpc } from '../services/mcp/client.js'
 import type { MCPServerConnection } from '../services/mcp/types.js'
-import { claudeError } from '../utils/errors.js'
+import { ClaudeError } from '../utils/errors.js'
 import { normalizePathForComparison, pathsEqual } from '../utils/file.js'
 import { getConnectedIdeClient } from '../utils/ide.js'
 import { jsonParse } from '../utils/slowOperations.js'
 
-class DiagnosticsTrackingError extends claudeError {}
+class DiagnosticsTrackingError extends ClaudeError {}
 
 const MAX_DIAGNOSTICS_SUMMARY_CHARS = 4000
 
@@ -79,8 +79,8 @@ export class DiagnosticTrackingService {
     // Remove our protocol prefixes
     const protocolPrefixes = [
       'file://',
-      '_claude_fs_right:',
-      '_claude_fs_left:',
+      '_Claude_fs_right:',
+      '_Claude_fs_left:',
     ]
 
     let normalized = fileUri
@@ -182,7 +182,7 @@ export class DiagnosticTrackingService {
   }
 
   /**
-   * Get new diagnostics from file://, _claude_fs_right, and _claude_fs_ URIs that aren't in the baseline.
+   * Get new diagnostics from file://, _Claude_fs_right, and _Claude_fs_ URIs that aren't in the baseline.
    * Only processes diagnostics for files that have been edited.
    */
   async getNewDiagnostics(): Promise<DiagnosticFile[]> {
@@ -217,7 +217,7 @@ export class DiagnosticTrackingService {
     >()
     allDiagnosticFiles
       .filter(file => this.baseline.has(this.normalizeFileUri(file.uri)))
-      .filter(file => file.uri.startsWith('_claude_fs_right:'))
+      .filter(file => file.uri.startsWith('_Claude_fs_right:'))
       .forEach(file => {
         diagnosticsForClaudeFsRightUrisWithBaselinesMap.set(
           this.normalizeFileUri(file.uri),
@@ -232,34 +232,34 @@ export class DiagnosticTrackingService {
       const normalizedPath = this.normalizeFileUri(file.uri)
       const baselineDiagnostics = this.baseline.get(normalizedPath) || []
 
-      // Get the _claude_fs_right file if it exists
-      const claudeFsRightFile =
+      // Get the _Claude_fs_right file if it exists
+      const ClaudeFsRightFile =
         diagnosticsForClaudeFsRightUrisWithBaselinesMap.get(normalizedPath)
 
       // Determine which file to use based on the state of right file diagnostics
       let fileToUse = file
 
-      if (claudeFsRightFile) {
+      if (ClaudeFsRightFile) {
         const previousRightDiagnostics =
           this.rightFileDiagnosticsState.get(normalizedPath)
 
-        // Use _claude_fs_right if:
+        // Use _Claude_fs_right if:
         // 1. We've never gotten right file diagnostics for this file (previousRightDiagnostics === undefined)
         // 2. OR the right file diagnostics have just changed
         if (
           !previousRightDiagnostics ||
           !this.areDiagnosticArraysEqual(
             previousRightDiagnostics,
-            claudeFsRightFile.diagnostics,
+            ClaudeFsRightFile.diagnostics,
           )
         ) {
-          fileToUse = claudeFsRightFile
+          fileToUse = ClaudeFsRightFile
         }
 
         // Update our tracking of right file diagnostics
         this.rightFileDiagnosticsState.set(
           normalizedPath,
-          claudeFsRightFile.diagnostics,
+          ClaudeFsRightFile.diagnostics,
         )
       }
 

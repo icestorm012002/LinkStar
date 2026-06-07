@@ -272,8 +272,8 @@ export function describeMcpConfigFilePath(scope: ConfigScope): string {
       return 'Dynamically configured'
     case 'enterprise':
       return getEnterpriseMcpFilePath()
-    case 'claudeai':
-      return 'claude.ai'
+    case 'Claudeai':
+      return 'Claude.ai'
     default:
       return scope
   }
@@ -291,8 +291,8 @@ export function getScopeLabel(scope: ConfigScope): string {
       return 'Dynamic config (from command line)'
     case 'enterprise':
       return 'Enterprise config (managed by your organization)'
-    case 'claudeai':
-      return 'claude.ai config'
+    case 'Claudeai':
+      return 'Claude.ai config'
     default:
       return scope
   }
@@ -378,7 +378,7 @@ export function getProjectMcpServerStatus(
   // the user has explicitly chosen to bypass all permission checks.
   // SECURITY: We intentionally only check skipDangerousModePermissionPrompt via
   // hasSkipDangerousModePermissionPrompt(), which reads from userSettings/localSettings/
-  // flagSettings/policySettings but NOT projectSettings (repo-level .claude/settings.json).
+  // flagSettings/policySettings but NOT projectSettings (repo-level .Claude/settings.json).
   // This is intentional: a repo should not be able to accept the bypass dialog on behalf of
   // users. We also do NOT check getSessionBypassPermissionsMode() here because
   // sessionBypassPermissionsMode can be set from project settings before the dialog is shown,
@@ -390,7 +390,7 @@ export function getProjectMcpServerStatus(
     return 'approved'
   }
 
-  // In non-interactive mode (SDK, claude -p, piped input), there's no way to
+  // In non-interactive mode (SDK, Claude -p, piped input), there's no way to
   // show an approval popup. Auto-approve if projectSettings is enabled since:
   // 1. The user/developer explicitly chose to run in this mode
   // 2. For SDK, projectSettings is off by default - they must explicitly enable it
@@ -426,10 +426,10 @@ export function getMcpServerScopeFromToolName(
   // Look up server config
   const serverConfig = getMcpConfigByName(mcpInfo.serverName)
 
-  // Fallback: claude.ai servers have normalized names starting with "claude_ai_"
+  // Fallback: Claude.ai servers have normalized names starting with "Claude_ai_"
   // but aren't in getMcpConfigByName (they're fetched async separately)
-  if (!serverConfig && mcpInfo.serverName.startsWith('claude_ai_')) {
-    return 'claudeai'
+  if (!serverConfig && mcpInfo.serverName.startsWith('Claude_ai_')) {
+    return 'Claudeai'
   }
 
   return serverConfig?.scope ?? null
@@ -545,7 +545,7 @@ export function extractAgentMcpServers(
         needsAuth: false,
       })
     }
-    // Skip unsupported transport types (sdk, claudeai-proxy, sse-ide, ws-ide)
+    // Skip unsupported transport types (sdk, Claudeai-proxy, sse-ide, ws-ide)
     // These are internal types not meant for agent MCP server display
   }
 

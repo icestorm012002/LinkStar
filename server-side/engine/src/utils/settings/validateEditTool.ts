@@ -16,7 +16,7 @@ export function validateInputForSettingsFileEdit(
   originalContent: string,
   getUpdatedContent: () => string,
 ): Extract<ValidationResult, { result: false }> | null {
-  // Only validate claude settings files
+  // Only validate Claude settings files
   if (!isClaudeSettingsPath(filePath)) {
     return null
   }
@@ -36,7 +36,7 @@ export function validateInputForSettingsFileEdit(
   if (!afterValidation.isValid) {
     return {
       result: false,
-      message: `claude settings.json validation failed after edit:\n${(afterValidation as any).error}\n\nFull schema:\n${(afterValidation as any).fullSchema}\nIMPORTANT: Do not update the env unless explicitly instructed to do so.`,
+      message: `Claude settings.json validation failed after edit:\n${(afterValidation as any).error}\n\nFull schema:\n${(afterValidation as any).fullSchema}\nIMPORTANT: Do not update the env unless explicitly instructed to do so.`,
       errorCode: 10,
     }
   }

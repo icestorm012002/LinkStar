@@ -136,7 +136,7 @@ export type ProjectConfig = {
     sessionId: string
     hookBased?: boolean
   }
-  /** Spawn mode for `claude remote-control` multi-session. Set by first-run dialog or `w` toggle. */
+  /** Spawn mode for `Claude remote-control` multi-session. Set by first-run dialog or `w` toggle. */
   remoteControlSpawnMode?: 'same-dir' | 'worktree'
 }
 
@@ -205,17 +205,17 @@ export type GlobalConfig = {
   lastOnboardingVersion?: string
   // Tracks the last version for which release notes were seen, used for managing release notes
   lastReleaseNotesSeen?: string
-  // Timestamp when changelog was last fetched (content stored in ~/.claude/cache/changelog.md)
+  // Timestamp when changelog was last fetched (content stored in ~/.Claude/cache/changelog.md)
   changelogLastFetched?: number
-  // @deprecated - Migrated to ~/.claude/cache/changelog.md. Keep for migration support.
+  // @deprecated - Migrated to ~/.Claude/cache/changelog.md. Keep for migration support.
   cachedChangelog?: string
   mcpServers?: Record<string, McpServerConfig>
-  // claude.ai MCP connectors that have successfully connected at least once.
+  // Claude.ai MCP connectors that have successfully connected at least once.
   // Used to gate "connector unavailable" / "needs auth" startup notifications:
   // a connector the user has actually used is worth flagging when it breaks,
   // but an org-configured connector that's been needs-auth since day one is
   // something the user has demonstrably ignored and shouldn't nag about.
-  claudeAiMcpEverConnected?: string[]
+  ClaudeAiMcpEverConnected?: string[]
   preferredNotifChannel: NotificationChannel
   /**
    * @deprecated. Use the Notification hook instead (docs/hooks.md).
@@ -385,9 +385,9 @@ export type GlobalConfig = {
   showSpinnerTree?: boolean // Whether to show the teammate spinner tree instead of pills
 
   // First start time tracking
-  firstStartTime?: string // ISO timestamp when claude was first started on this machine
+  firstStartTime?: string // ISO timestamp when Claude was first started on this machine
 
-  messageIdleNotifThresholdMs: number // How long the user has to have been idle to get a notification that claude is done generating
+  messageIdleNotifThresholdMs: number // How long the user has to have been idle to get a notification that Claude is done generating
 
   githubActionSetupCount?: number // Number of times the user has set up the GitHub Action
   slackAppInstallCount?: number // Number of times the user has clicked to install the Slack app
@@ -408,8 +408,8 @@ export type GlobalConfig = {
   inputNeededNotifEnabled?: boolean
   agentPushNotifEnabled?: boolean
 
-  // claude usage tracking
-  claudeCodeFirstTokenDate?: string // ISO timestamp of the user's first claude OAuth token
+  // Claude usage tracking
+  ClaudeCodeFirstTokenDate?: string // ISO timestamp of the user's first Claude OAuth token
 
   // Model switch callout tracking (ant-only)
   modelSwitchCalloutDismissed?: boolean // Whether user chose "Don't show again"
@@ -483,7 +483,7 @@ export type GlobalConfig = {
   // Key: "owner/repo" (lowercase), Value: array of absolute paths where repo is cloned
   githubRepoPaths?: Record<string, string[]>
 
-  // Terminal emulator to launch for claude-cli:// deep links. Captured from
+  // Terminal emulator to launch for Claude-cli:// deep links. Captured from
   // TERM_PROGRAM during interactive sessions since the deep link handler runs
   // headless (LaunchServices/xdg) with no TERM_PROGRAM set.
   deepLinkTerminal?: string
@@ -506,9 +506,9 @@ export type GlobalConfig = {
   officialMarketplaceAutoInstallLastAttemptTime?: number // Timestamp of last attempt
   officialMarketplaceAutoInstallNextRetryTime?: number // Earliest time to retry again
 
-  // claude in Chrome settings
-  hasCompletedClaudeInChromeOnboarding?: boolean // Whether claude in Chrome onboarding has been shown
-  claudeInChromeDefaultEnabled?: boolean // Whether claude in Chrome is enabled by default (undefined means platform default)
+  // Claude in Chrome settings
+  hasCompletedClaudeInChromeOnboarding?: boolean // Whether Claude in Chrome onboarding has been shown
+  ClaudeInChromeDefaultEnabled?: boolean // Whether Claude in Chrome is enabled by default (undefined means platform default)
   cachedChromeExtensionInstalled?: boolean // Cached result of whether Chrome extension is installed
 
   // Chrome extension pairing state (persisted across sessions)
@@ -522,10 +522,10 @@ export type GlobalConfig = {
   lspRecommendationNeverPlugins?: string[] // Plugin IDs to never suggest
   lspRecommendationIgnoredCount?: number // Track ignored recommendations (stops after 5)
 
-  // claude hint protocol state (<claude-code-hint /> tags from CLIs/SDKs).
+  // Claude hint protocol state (<Claude-code-hint /> tags from CLIs/SDKs).
   // Nested by hint type so future types (docs, mcp, ...) slot in without new
   // top-level keys.
-  claudeCodeHints?: {
+  ClaudeCodeHints?: {
     // Plugin IDs the user has already been prompted for. Show-once semantics:
     // recorded regardless of yes/no response, never re-prompted. Capped at
     // 100 entries to bound config growth — past that, hints stop entirely.
@@ -578,9 +578,9 @@ export type GlobalConfig = {
   // Additional model options for the model picker (fetched during bootstrap).
   additionalModelOptionsCache?: ModelOption[]
 
-  // Disk cache for /api/claude_code/organizations/metrics_enabled.
+  // Disk cache for /api/Claude_code/organizations/metrics_enabled.
   // Org-level settings change rarely; persisting across processes avoids a
-  // cold API call on every `claude -p` invocation.
+  // cold API call on every `Claude -p` invocation.
   metricsStatusCache?: {
     enabled: boolean
     timestamp: number
@@ -668,7 +668,7 @@ export const GLOBAL_CONFIG_KEYS = [
   'inputNeededNotifEnabled',
   'agentPushNotifEnabled',
   'respectGitignore',
-  'claudeInChromeDefaultEnabled',
+  'ClaudeInChromeDefaultEnabled',
   'hasCompletedClaudeInChromeOnboarding',
   'lspRecommendationDisabled',
   'lspRecommendationNeverPlugins',
@@ -986,7 +986,7 @@ let configCacheHits = 0
 let configCacheMisses = 0
 // Session-total count of actual disk writes to the global config file.
 // Exposed for ant-only dev diagnostics (see inc-4552) so anomalous write
-// rates surface in the UI before they corrupt ~/.claude.json.
+// rates surface in the UI before they corrupt ~/.Claude.json.
 let globalConfigWriteCount = 0
 
 export function getGlobalConfigWriteCount(): number {
@@ -1287,7 +1287,7 @@ function saveConfigWithLock<A extends object>(
     const lockTime = Date.now() - startTime
     if (lockTime > 100) {
       logForDebugging(
-        'Lock acquisition took longer than expected - another claude instance may be running',
+        'Lock acquisition took longer than expected - another Claude instance may be running',
       )
       logEvent('tengu_config_lock_contention', {
         lock_time_ms: lockTime,
@@ -1325,7 +1325,7 @@ function saveConfigWithLock<A extends object>(
     const currentConfig = getConfig(file, createDefault)
     if (file === getGlobalClaudeFile() && wouldLoseAuthState(currentConfig)) {
       logForDebugging(
-        'saveConfigWithLock: re-read config is missing auth that cache has; refusing to write to avoid wiping ~/.claude.json. See GH #3117.',
+        'saveConfigWithLock: re-read config is missing auth that cache has; refusing to write to avoid wiping ~/.Claude.json. See GH #3117.',
         { level: 'error' },
       )
       logEvent('tengu_config_auth_loss_prevented', {})
@@ -1349,7 +1349,7 @@ function saveConfigWithLock<A extends object>(
 
     // Create timestamped backup of existing config before writing
     // We keep multiple backups to prevent data loss if a reset/corrupted config
-    // overwrites a good backup. Backups are stored in ~/.claude/backups/ to
+    // overwrites a good backup. Backups are stored in ~/.Claude/backups/ to
     // keep the home directory clean.
     try {
       const fileBase = basename(file)
@@ -1466,7 +1466,7 @@ export function enableConfigs(): void {
 
 /**
  * Returns the directory where config backup files are stored.
- * Uses ~/.claude/backups/ to keep the home directory clean.
+ * Uses ~/.Claude/backups/ to keep the home directory clean.
  */
 function getConfigBackupDir(): string {
   return join(getClaudeConfigHomeDir(), 'backups')
@@ -1474,7 +1474,7 @@ function getConfigBackupDir(): string {
 
 /**
  * Find the most recent backup file for a given config file.
- * Checks ~/.claude/backups/ first, then falls back to the legacy location
+ * Checks ~/.Claude/backups/ first, then falls back to the legacy location
  * (next to the config file) for backwards compatibility.
  * Returns the full path to the most recent backup, or null if none exist.
  */
@@ -1563,7 +1563,7 @@ function getConfig<A>(
       const backupPath = findMostRecentBackup(file)
       if (backupPath) {
         process.stderr.write(
-          `\nclaude configuration file not found at: ${file}\n` +
+          `\nClaude configuration file not found at: ${file}\n` +
             `A backup file exists at: ${backupPath}\n` +
             `You can manually restore it by running: cp "${backupPath}" "${file}"\n\n`,
         )
@@ -1610,7 +1610,7 @@ function getConfig<A>(
       }
 
       process.stderr.write(
-        `\nclaude configuration file at ${file} is corrupted: ${error.message}\n`,
+        `\nClaude configuration file at ${file} is corrupted: ${error.message}\n`,
       )
 
       // Try to backup the corrupted config file (only if not already backed up)
@@ -1890,13 +1890,13 @@ export function getMemoryPath(memoryType: MemoryType): string {
 
   switch (memoryType) {
     case 'User':
-      return join(getClaudeConfigHomeDir(), 'claude.md')
+      return join(getClaudeConfigHomeDir(), 'Claude.md')
     case 'Local':
-      return join(cwd, 'claude.local.md')
+      return join(cwd, 'Claude.local.md')
     case 'Project':
-      return join(cwd, 'claude.md')
+      return join(cwd, 'Claude.md')
     case 'Managed':
-      return join(getManagedFilePath(), 'claude.md')
+      return join(getManagedFilePath(), 'Claude.md')
     case 'AutoMem':
       return getAutoMemEntrypoint()
   }
@@ -1908,7 +1908,7 @@ export function getMemoryPath(memoryType: MemoryType): string {
 }
 
 export function getManagedClaudeRulesDir(): string {
-  return join(getManagedFilePath(), '.claude', 'rules')
+  return join(getManagedFilePath(), '.Claude', 'rules')
 }
 
 export function getUserClaudeRulesDir(): string {

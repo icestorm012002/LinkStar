@@ -8,7 +8,7 @@ import { safeParseJSON } from '../../utils/json.js'
 import { createAssistantAPIErrorMessage, createAssistantMessage } from '../../utils/messages.js'
 import { sleep } from '../../utils/sleep.js'
 import type { Tools } from '../../Tool.js'
-import type { Options } from './claude.js'
+import type { Options } from './Claude.js'
 import {
   appendGoogleGeminiResponseBlocks,
   buildGoogleGeminiContents,

@@ -51,7 +51,7 @@ export type SessionStats = {
   timestamp: string
 }
 
-export type claudeCodeStats = {
+export type ClaudeCodeStats = {
   // Activity overview
   totalSessions: number
   totalMessages: number
@@ -488,12 +488,12 @@ async function getAllSessionFiles(): Promise<string[]> {
 }
 
 /**
- * Convert a PersistedStatsCache to claudeCodeStats by computing derived fields.
+ * Convert a PersistedStatsCache to ClaudeCodeStats by computing derived fields.
  */
 function cacheToStats(
   cache: PersistedStatsCache,
   todayStats: ProcessedStats | null,
-): claudeCodeStats {
+): ClaudeCodeStats {
   // Merge cache with today's stats
   const dailyActivityMap = new Map<string, DailyActivity>()
   for (const day of cache.dailyActivity) {
@@ -643,7 +643,7 @@ function cacheToStats(
     cache.totalSpeculationTimeSavedMs +
     (todayStats?.totalSpeculationTimeSavedMs || 0)
 
-  const result: claudeCodeStats = {
+  const result: ClaudeCodeStats = {
     totalSessions,
     totalMessages,
     totalDays,
@@ -687,10 +687,10 @@ function cacheToStats(
 }
 
 /**
- * Aggregates stats from all claude sessions across all projects.
+ * Aggregates stats from all Claude sessions across all projects.
  * Uses a disk cache to avoid reprocessing historical data.
  */
-export async function aggregateClaudeCodeStats(): Promise<claudeCodeStats> {
+export async function aggregateClaudeCodeStats(): Promise<ClaudeCodeStats> {
   const allSessionFiles = await getAllSessionFiles()
 
   if (allSessionFiles.length === 0) {
@@ -770,7 +770,7 @@ export type StatsDateRange = '7d' | '30d' | 'all'
  */
 export async function aggregateClaudeCodeStatsForRange(
   range: StatsDateRange,
-): Promise<claudeCodeStats> {
+): Promise<ClaudeCodeStats> {
   if (range === 'all') {
     return aggregateClaudeCodeStats()
   }
@@ -796,12 +796,12 @@ export async function aggregateClaudeCodeStatsForRange(
 }
 
 /**
- * Convert ProcessedStats to claudeCodeStats.
+ * Convert ProcessedStats to ClaudeCodeStats.
  * Used for filtered date ranges that bypass the cache.
  */
 function processedStatsToClaudeCodeStats(
   stats: ProcessedStats,
-): claudeCodeStats {
+): ClaudeCodeStats {
   const dailyActivitySorted = stats.dailyActivity
     .slice()
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -862,7 +862,7 @@ function processedStatsToClaudeCodeStats(
         ) + 1
       : 0
 
-  const result: claudeCodeStats = {
+  const result: ClaudeCodeStats = {
     totalSessions: stats.sessionStats.length,
     totalMessages: stats.totalMessages,
     totalDays,
@@ -1088,7 +1088,7 @@ export async function readSessionStartDate(
   }
 }
 
-function getEmptyStats(): claudeCodeStats {
+function getEmptyStats(): ClaudeCodeStats {
   return {
     totalSessions: 0,
     totalMessages: 0,

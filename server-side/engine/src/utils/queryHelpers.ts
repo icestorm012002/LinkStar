@@ -82,7 +82,7 @@ export function isResultSuccessful(
 
   // Carve-out: API completed (message_delta set stop_reason) but yielded
   // no assistant content — last(messages) is still this turn's prompt.
-  // claude.ts:2026 recognizes end_turn-with-zero-content-blocks as
+  // Claude.ts:2026 recognizes end_turn-with-zero-content-blocks as
   // legitimate and passes through without throwing. Observed on
   // task_notification drain turns: model returns stop_reason=end_turn,
   // outputTokens=4, textContentLength=0 — it saw the subagent result
@@ -160,10 +160,10 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         progressData.type === 'powershell_progress'
       ) {
         // Filter bash progress to send only one per minute
-        // Only emit for claude Remote for now
+        // Only emit for Claude Remote for now
         if (
-          !isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) &&
-          !process.env.CLAUDE_CODE_CONTAINER_ID
+          !isEnvTruthy(process.env.Claude_CODE_REMOTE) &&
+          !process.env.Claude_CODE_CONTAINER_ID
         ) {
           break
         }

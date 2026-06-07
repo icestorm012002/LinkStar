@@ -14,9 +14,9 @@ import {
 } from './openaiCodexProtocol.js'
 
 const SUCCESS_HTML =
-  '<!doctype html><html><body style="font-family:sans-serif;padding:24px"><h2>Codex login complete</h2><p>You can return to claude.</p></body></html>'
+  '<!doctype html><html><body style="font-family:sans-serif;padding:24px"><h2>Codex login complete</h2><p>You can return to Claude.</p></body></html>'
 const ERROR_HTML =
-  '<!doctype html><html><body style="font-family:sans-serif;padding:24px"><h2>Codex login failed</h2><p>You can close this tab and retry in claude.</p></body></html>'
+  '<!doctype html><html><body style="font-family:sans-serif;padding:24px"><h2>Codex login failed</h2><p>You can close this tab and retry in Claude.</p></body></html>'
 
 export class OpenAICodexOAuthService {
   private authCodeListener: AuthCodeListener | null = null

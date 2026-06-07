@@ -336,14 +336,14 @@ export const FileWriteTool = buildTool({
       limit: undefined,
     })
 
-    // Log when writing to claude.md
-    if (fullFilePath.endsWith(`${sep}claude.md`)) {
-      logEvent('tengu_write_claudemd', {})
+    // Log when writing to Claude.md
+    if (fullFilePath.endsWith(`${sep}Claude.md`)) {
+      logEvent('tengu_write_Claudemd', {})
     }
 
     let gitDiff: ToolUseDiff | undefined
     if (
-      isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) &&
+      isEnvTruthy(process.env.Claude_CODE_REMOTE) &&
       getFeatureValue_CACHED_MAY_BE_STALE('tengu_quartz_lantern', false)
     ) {
       const startTime = Date.now()

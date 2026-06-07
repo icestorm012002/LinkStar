@@ -1,9 +1,9 @@
-export const PRODUCT_URL = 'https://claude.com/claude-code'
+export const PRODUCT_URL = 'https://Claude.com/Claude-code'
 
-// claude Remote session URLs
-export const ANTHROPIC_AI_BASE_URL = 'https://claude.ai'
-export const ANTHROPIC_AI_STAGING_BASE_URL = 'https://claude-ai.staging.ant.dev'
-export const ANTHROPIC_AI_LOCAL_BASE_URL = 'http://localhost:4000'
+// Claude Remote session URLs
+export const Claude_AI_BASE_URL = 'https://Claude.ai'
+export const Claude_AI_STAGING_BASE_URL = 'https://Claude-ai.staging.ant.dev'
+export const Claude_AI_LOCAL_BASE_URL = 'http://localhost:4000'
 
 /**
  * Determine if we're in a staging environment for remote sessions.
@@ -34,19 +34,19 @@ export function isRemoteSessionLocal(
 }
 
 /**
- * Get the base URL for claude AI based on environment.
+ * Get the base URL for Claude AI based on environment.
  */
 export function getClaudeAiBaseUrl(
   sessionId?: string,
   ingressUrl?: string,
 ): string {
   if (isRemoteSessionLocal(sessionId, ingressUrl)) {
-    return ANTHROPIC_AI_LOCAL_BASE_URL
+    return Claude_AI_LOCAL_BASE_URL
   }
   if (isRemoteSessionStaging(sessionId, ingressUrl)) {
-    return ANTHROPIC_AI_STAGING_BASE_URL
+    return Claude_AI_STAGING_BASE_URL
   }
-  return ANTHROPIC_AI_BASE_URL
+  return Claude_AI_BASE_URL
 }
 
 /**
@@ -54,7 +54,7 @@ export function getClaudeAiBaseUrl(
  *
  * The cse_→session_ translation is a temporary shim gated by
  * tengu_bridge_repl_v2_cse_shim_enabled (see isCseShimEnabled). Worker
- * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the claude.ai
+ * endpoints (/v1/code/sessions/{id}/worker/*) want `cse_*` but the Claude.ai
  * frontend currently routes on `session_*` (compat/convert.go:27 validates
  * TagSession). Same UUID body, different tag prefix. Once the server tags by
  * environment_kind and the frontend accepts `cse_*` directly, flip the gate

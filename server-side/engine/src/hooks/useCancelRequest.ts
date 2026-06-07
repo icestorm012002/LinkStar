@@ -96,7 +96,7 @@ export function CancelRequestHandler(props: CancelRequestHandlerProps): null {
     }
 
     // Priority 1: If there's an active task running, cancel it first
-    // This takes precedence over queue management so users can always interrupt claude
+    // This takes precedence over queue management so users can always interrupt Claude
     if (abortSignal !== undefined && !abortSignal.aborted) {
       logEvent('tengu_cancel', cancelProps)
       setToolUseConfirmQueue(() => [])
@@ -104,7 +104,7 @@ export function CancelRequestHandler(props: CancelRequestHandlerProps): null {
       return
     }
 
-    // Priority 2: Pop queue when claude is idle (no running task to cancel)
+    // Priority 2: Pop queue when Claude is idle (no running task to cancel)
     if (hasCommandsInQueue()) {
       if (popCommandFromQueue) {
         popCommandFromQueue()

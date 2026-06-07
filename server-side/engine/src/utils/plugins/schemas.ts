@@ -7,19 +7,19 @@ import { lazySchema } from '../lazySchema.js'
  * First-layer defense against official marketplace impersonation.
  *
  * This validation blocks direct impersonation attempts like "anthropic-official",
- * "claude-marketplace", etc. Indirect variations (e.g., "my-claude-marketplace")
+ * "Claude-marketplace", etc. Indirect variations (e.g., "my-Claude-marketplace")
  * are not blocked intentionally to avoid false positives on legitimate names.
  * Source org verification provides additional protection at registration/install time.
  */
 
 /**
- * Official marketplace names that are reserved for Anthropic/claude official use.
+ * Official marketplace names that are reserved for Anthropic/Claude official use.
  * These names are allowed ONLY for official marketplaces and blocked for third parties.
  */
 export const ALLOWED_OFFICIAL_MARKETPLACE_NAMES = new Set([
-  'claude-code-marketplace',
-  'claude-code-plugins',
-  'claude-plugins-official',
+  'Claude-code-marketplace',
+  'Claude-code-plugins',
+  'Claude-plugins-official',
   'anthropic-marketplace',
   'anthropic-plugins',
   'agent-skills',
@@ -58,18 +58,18 @@ export function isMarketplaceAutoUpdate(
 }
 
 /**
- * Pattern to detect names that impersonate official Anthropic/claude marketplaces.
+ * Pattern to detect names that impersonate official Anthropic/Claude marketplaces.
  *
  * Matches names containing variations like:
- * - "official" combined with "anthropic" or "claude" (e.g., "official-claude-plugins")
- * - "anthropic" or "claude" combined with "official" (e.g., "claude-official")
- * - Names starting with "anthropic" or "claude" followed by official-sounding terms
- *   like "marketplace", "plugins" (e.g., "anthropic-marketplace-new", "claude-plugins-v2")
+ * - "official" combined with "anthropic" or "Claude" (e.g., "official-Claude-plugins")
+ * - "anthropic" or "Claude" combined with "official" (e.g., "Claude-official")
+ * - Names starting with "anthropic" or "Claude" followed by official-sounding terms
+ *   like "marketplace", "plugins" (e.g., "anthropic-marketplace-new", "Claude-plugins-v2")
  *
  * The pattern is case-insensitive.
  */
 export const BLOCKED_OFFICIAL_NAME_PATTERN =
-  /(?:official[^a-z0-9]*(anthropic|claude)|(?:anthropic|claude)[^a-z0-9]*official|^(?:anthropic|claude)[^a-z0-9]*(marketplace|plugins|official))/i
+  /(?:official[^a-z0-9]*(anthropic|Claude)|(?:anthropic|Claude)[^a-z0-9]*official|^(?:anthropic|Claude)[^a-z0-9]*(marketplace|plugins|official))/i
 
 /**
  * Pattern to detect non-ASCII characters that could be used for homograph attacks.
@@ -79,7 +79,7 @@ export const BLOCKED_OFFICIAL_NAME_PATTERN =
 const NON_ASCII_PATTERN = /[^\u0020-\u007E]/
 
 /**
- * Check if a marketplace name impersonates an official Anthropic/claude marketplace.
+ * Check if a marketplace name impersonates an official Anthropic/Claude marketplace.
  *
  * @param name - The marketplace name to check
  * @returns true if the name is blocked (impersonates official), false if allowed
@@ -234,7 +234,7 @@ const MarketplaceNameSchema = lazySchema(() =>
     )
     .refine(name => !isBlockedOfficialName(name), {
       message:
-        'Marketplace name impersonates an official Anthropic/claude marketplace',
+        'Marketplace name impersonates an official Anthropic/Claude marketplace',
     })
     .refine(name => name.toLowerCase() !== 'inline', {
       message:
@@ -323,7 +323,7 @@ const PluginManifestMetadataSchema = lazySchema(() =>
  * Schema for plugin hooks configuration (hooks.json)
  *
  * Defines the hooks that a plugin can provide to intercept and modify
- * claude behavior at various lifecycle events.
+ * Claude behavior at various lifecycle events.
  */
 export const PluginHooksSchema = lazySchema(() =>
   z.object({
@@ -637,7 +637,7 @@ const PluginManifestUserConfigSchema = lazySchema(() =>
           .string()
           .regex(
             /^[A-Za-z_]\w*$/,
-            'Option keys must be valid identifiers (letters, digits, underscore; no leading digit) — they become claude_PLUGIN_OPTION_<KEY> env vars in hooks',
+            'Option keys must be valid identifiers (letters, digits, underscore; no leading digit) — they become Claude_PLUGIN_OPTION_<KEY> env vars in hooks',
           ),
         PluginUserConfigOptionSchema(),
       )
@@ -656,7 +656,7 @@ const PluginManifestUserConfigSchema = lazySchema(() =>
 /**
  * Schema for channel declarations in plugin manifest.
  *
- * A channel is an MCP server that emits `notifications/claude/channel` to
+ * A channel is an MCP server that emits `notifications/Claude/channel` to
  * inject messages into the conversation (Telegram, Slack, Discord, etc.).
  * Declaring it here lets the plugin prompt for user config (bot tokens,
  * owner IDs) at install time via the PluginOptionsFlow prompt,
@@ -879,7 +879,7 @@ const PluginManifestSettingsSchema = lazySchema(() =>
  * still fail, since a typo there is more likely to be an author mistake
  * than a vendor extension. Type mismatches and other validation errors
  * still fail at all levels. For developer feedback on unknown top-level
- * fields, use `claude plugin validate`.
+ * fields, use `Claude plugin validate`.
  */
 export const PluginManifestSchema = lazySchema(() =>
   z.object({
@@ -926,7 +926,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
         .string()
         .optional()
         .describe(
-          'Path to marketplace.json within repo (defaults to .claude-plugin/marketplace.json)',
+          'Path to marketplace.json within repo (defaults to .Claude-plugin/marketplace.json)',
         ),
       sparsePaths: z
         .array(z.string())
@@ -934,7 +934,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
         .describe(
           'Directories to include via git sparse-checkout (cone mode). ' +
             'Use for monorepos where the marketplace lives in a subdirectory. ' +
-            'Example: [".claude-plugin", "plugins"]. ' +
+            'Example: [".Claude-plugin", "plugins"]. ' +
             'If omitted, the full repository is cloned.',
         ),
     }),
@@ -958,7 +958,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
         .string()
         .optional()
         .describe(
-          'Path to marketplace.json within repo (defaults to .claude-plugin/marketplace.json)',
+          'Path to marketplace.json within repo (defaults to .Claude-plugin/marketplace.json)',
         ),
       sparsePaths: z
         .array(z.string())
@@ -966,7 +966,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
         .describe(
           'Directories to include via git sparse-checkout (cone mode). ' +
             'Use for monorepos where the marketplace lives in a subdirectory. ' +
-            'Example: [".claude-plugin", "plugins"]. ' +
+            'Example: [".Claude-plugin", "plugins"]. ' +
             'If omitted, the full repository is cloned.',
         ),
     }),
@@ -984,7 +984,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
       source: z.literal('directory'),
       path: z
         .string()
-        .describe('Local directory containing .claude-plugin/marketplace.json'),
+        .describe('Local directory containing .Claude-plugin/marketplace.json'),
     }),
     z.object({
       source: z.literal('hostPattern'),
@@ -1062,7 +1062,7 @@ export const gitSha = lazySchema(() =>
 export const PluginSourceSchema = lazySchema(() =>
   z.union([
     RelativePath().describe(
-      'Path to the plugin root, relative to the marketplace root (the directory containing .claude-plugin/, not .claude-plugin/ itself)',
+      'Path to the plugin root, relative to the marketplace root (the directory containing .Claude-plugin/, not .Claude-plugin/ itself)',
     ),
     z
       .object({
@@ -1140,7 +1140,7 @@ export const PluginSourceSchema = lazySchema(() =>
           .string()
           .min(1)
           .describe(
-            'Subdirectory within the repo containing the plugin (e.g., "tools/claude-plugin"). ' +
+            'Subdirectory within the repo containing the plugin (e.g., "tools/Claude-plugin"). ' +
               'Cloned sparsely using partial clone (--filter=tree:0) to minimize bandwidth for monorepos.',
           ),
         ref: z
@@ -1228,7 +1228,7 @@ export function isLocalPluginSource(source: PluginSource): source is string {
  * For local sources (`file`/`directory`), `installLocation` IS the user's path —
  * it lives outside the plugins cache dir and marketplace operations on it are
  * read-only. For remote sources (`github`/`git`/`url`/`npm`), `installLocation`
- * is a cache-dir entry managed by claude and subject to rm/re-clone.
+ * is a cache-dir entry managed by Claude and subject to rm/re-clone.
  *
  * Contrast with isLocalPluginSource, which operates on PluginSource (the
  * per-plugin source inside a marketplace entry) and checks for `./` prefix.
@@ -1440,7 +1440,7 @@ export const SettingsPluginEntrySchema = lazySchema(() =>
  *   "version": "1.2.0",
  *   "installedAt": "2024-01-15T10:30:00Z",
  *   "marketplace": "anthropic-tools",
- *   "installPath": "/home/user/.claude/plugins/installed/anthropic-tools/code-formatter"
+ *   "installPath": "/home/user/.Claude/plugins/installed/anthropic-tools/code-formatter"
  * }
  */
 export const InstalledPluginSchema = lazySchema(() =>
@@ -1465,10 +1465,10 @@ export const InstalledPluginSchema = lazySchema(() =>
  * Schema for the installed_plugins.json file (V1 format)
  *
  * Contains a version number and maps plugin IDs to their installation metadata.
- * Maintained automatically by claude, not edited by users.
+ * Maintained automatically by Claude, not edited by users.
  *
  * The version field tracks schema changes. When the version doesn't match
- * the current schema version, claude will update the file on next startup.
+ * the current schema version, Claude will update the file on next startup.
  *
  * Example file:
  * {
@@ -1496,9 +1496,9 @@ export const InstalledPluginsFileSchemaV1 = lazySchema(() =>
  *
  * Plugins can be installed at different scopes:
  * - managed: Enterprise/system-wide (read-only, platform-specific paths)
- * - user: User's global settings (~/.claude/settings.json)
- * - project: Shared project settings ($project/.claude/settings.json)
- * - local: Personal project overrides ($project/.claude/settings.local.json)
+ * - user: User's global settings (~/.Claude/settings.json)
+ * - project: Shared project settings ($project/.Claude/settings.json)
+ * - local: Personal project overrides ($project/.Claude/settings.local.json)
  *
  * Note: 'flag' scope plugins (from --settings) are session-only and
  * are NOT persisted to installed_plugins.json.
@@ -1584,8 +1584,8 @@ export const InstalledPluginsFileSchema = lazySchema(() =>
  *
  * Example entry:
  * {
- *   "source": { "source": "github", "repo": "anthropic/claude-plugins" },
- *   "installLocation": "/home/user/.claude/plugins/cached/marketplaces/anthropic-tools",
+ *   "source": { "source": "github", "repo": "anthropic/Claude-plugins" },
+ *   "installLocation": "/home/user/.Claude/plugins/cached/marketplaces/anthropic-tools",
  *   "lastUpdated": "2024-01-15T10:30:00Z"
  * }
  */

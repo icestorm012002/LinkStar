@@ -189,7 +189,7 @@ const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp'])
 
 /**
  * Detects if a file path is a session-related file for analytics logging.
- * Only matches files within the claude config directory (e.g., ~/.claude).
+ * Only matches files within the Claude config directory (e.g., ~/.Claude).
  * Returns the type of session file or null if not a session file.
  */
 function detectSessionFileType(
@@ -197,7 +197,7 @@ function detectSessionFileType(
 ): 'session_memory' | 'session_transcript' | null {
   const configDir = getClaudeConfigHomeDir()
 
-  // Only match files within the claude config directory
+  // Only match files within the Claude config directory
   if (!filePath.startsWith(configDir)) {
     return null
   }
@@ -205,7 +205,7 @@ function detectSessionFileType(
   // Normalize path to use forward slashes for consistent matching across platforms
   const normalizedPath = filePath.split(win32.sep).join(posix.sep)
 
-  // Session memory files: ~/.claude/session-memory/*.md (including summary.md)
+  // Session memory files: ~/.Claude/session-memory/*.md (including summary.md)
   if (
     normalizedPath.includes('/session-memory/') &&
     normalizedPath.endsWith('.md')
@@ -213,7 +213,7 @@ function detectSessionFileType(
     return 'session_memory'
   }
 
-  // Session JSONL transcript files: ~/.claude/projects/*/*.jsonl
+  // Session JSONL transcript files: ~/.Claude/projects/*/*.jsonl
   if (
     normalizedPath.includes('/projects/') &&
     normalizedPath.endsWith('.jsonl')
@@ -575,7 +575,7 @@ export const FileReadTool = buildTool({
     // Discover skills from this file's path (fire-and-forget, non-blocking)
     // Skip in simple mode - no skills available
     const cwd = getCwd()
-    if (!isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
+    if (!isEnvTruthy(process.env.Claude_CODE_SIMPLE)) {
       const newSkillDirs = await discoverSkillDirsForPaths([fullFilePath], cwd)
       if (newSkillDirs.length > 0) {
         // Store discovered dirs for attachment display
@@ -730,7 +730,7 @@ export const CYBER_RISK_MITIGATION_REMINDER =
   '\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n'
 
 // Models where cyber risk mitigation should be skipped
-const MITIGATION_EXEMPT_MODELS = new Set(['claude-opus-4-6'])
+const MITIGATION_EXEMPT_MODELS = new Set(['Claude-opus-4-6'])
 
 function shouldIncludeFileReadMitigation(): boolean {
   const shortName = getCanonicalName(getMainLoopModel())

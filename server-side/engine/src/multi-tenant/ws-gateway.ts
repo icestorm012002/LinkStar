@@ -265,12 +265,7 @@ export class WsGateway {
 
   private async handleBrowseDirectory(ctx: ClientContext, msg: Extract<ClientMessage, { type: 'browse_directory' }>): Promise<void> {
     try {
-      let targetPath = msg.path || process.env.CLAUDE_WORKSPACE_BASE || process.cwd()
-      
-      // If the frontend passed an absolute Windows path that doesn't exist on the server, fallback to the server root
-      if (!existsSync(targetPath)) {
-        targetPath = process.cwd()
-      }
+      const targetPath = msg.path || process.env.CLAUDE_WORKSPACE_BASE || 'E:\\'
       
       let entries: { name: string; isDir: boolean; path: string }[] = []
       try {
@@ -362,7 +357,7 @@ export class WsGateway {
   private async handleTestConnection(ctx: ClientContext, msg: Extract<ClientMessage, { type: 'test_api_connection' }>): Promise<void> {
     const { provider, apiKey, baseUrl, model } = msg
     const userId = ctx.user?.userId || 'anonymous'
-    console.log(`[WsGateway] Testing API connection via claude-code for tenant: ${userId}, provider: ${provider}, model: ${model}`)
+    console.log(`[WsGateway] Testing API connection via Claude-code for tenant: ${userId}, provider: ${provider}, model: ${model}`)
 
     // 辅助：向同一用户的所有当前活跃连接发送结果（防止异步期间旧连接关闭导致消息丢失）
     const sendResultToUser = (result: any) => {
@@ -385,7 +380,7 @@ export class WsGateway {
       // 构建环境变量，注入对应的 API 密钥和基准地址
       const testEnv: Record<string, string> = {
         ...process.env,
-        CLAUDE_CONFIG_DIR: join(userDir, '.claude'),
+        Claude_CONFIG_DIR: join(userDir, '.Claude'),
         HOME: userDir,
         USERPROFILE: userDir,
       }

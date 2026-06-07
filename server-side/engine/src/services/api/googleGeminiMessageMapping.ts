@@ -7,7 +7,7 @@ import type { Message } from '../../types/message.js'
 import { normalizeToolInputForAPI, toolToAPISchema } from '../../utils/api.js'
 import { safeParseJSON } from '../../utils/json.js'
 import { normalizeMessagesForAPI } from '../../utils/messages.js'
-import type { Options } from './claude.js'
+import type { Options } from './Claude.js'
 import { projectToolDeclarationsForGoogleGemini } from './googleGeminiTools.js'
 
 type GeminiPart =

@@ -1,9 +1,9 @@
 import {
-  type claudeForChromeContext,
+  type ClaudeForChromeContext,
   createClaudeForChromeMcpServer,
   type Logger,
   type PermissionMode,
-} from '@ant/claude-for-chrome-mcp'
+} from '@ant/Claude-for-chrome-mcp'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { format } from 'util'
 import { shutdownDatadog } from '../../services/analytics/datadog.js'
@@ -21,9 +21,9 @@ import { isEnvTruthy } from '../envUtils.js'
 import { sideQuery } from '../sideQuery.js'
 import { getAllSocketPaths, getSecureSocketPath } from './common.js'
 
-const EXTENSION_DOWNLOAD_URL = 'https://claude.ai/chrome'
+const EXTENSION_DOWNLOAD_URL = 'https://Claude.ai/chrome'
 const BUG_REPORT_URL =
-  'https://github.com/anthropics/claude-code/issues/new?labels=bug,claude-in-chrome'
+  'https://github.com/anthropics/Claude-code/issues/new?labels=bug,Claude-in-chrome'
 
 // String metadata keys safe to forward to analytics. Keys like error_message
 // are excluded because they could contain page content or user data.
@@ -65,10 +65,10 @@ function getChromeBridgeUrl(): string | undefined {
   }
 
   if (isEnvTruthy(process.env.USE_STAGING_OAUTH)) {
-    return 'wss://bridge-staging.claudeusercontent.com'
+    return 'wss://bridge-staging.Claudeusercontent.com'
   }
 
-  return 'wss://bridge.claudeusercontent.com'
+  return 'wss://bridge.Claudeusercontent.com'
 }
 
 function isLocalBridge(): boolean {
@@ -79,41 +79,41 @@ function isLocalBridge(): boolean {
 }
 
 /**
- * Build the claudeForChromeContext used by both the subprocess MCP server
+ * Build the ClaudeForChromeContext used by both the subprocess MCP server
  * and the in-process path in the MCP client.
  */
 export function createChromeContext(
   env?: Record<string, string>,
-): claudeForChromeContext {
+): ClaudeForChromeContext {
   const logger = new DebugLogger()
   const chromeBridgeUrl = getChromeBridgeUrl()
   logger.info(`Bridge URL: ${chromeBridgeUrl ?? 'none (using native socket)'}`)
   const rawPermissionMode =
-    env?.claude_CHROME_PERMISSION_MODE ??
-    process.env.claude_CHROME_PERMISSION_MODE
+    env?.Claude_CHROME_PERMISSION_MODE ??
+    process.env.Claude_CHROME_PERMISSION_MODE
   let initialPermissionMode: PermissionMode | undefined
   if (rawPermissionMode) {
     if (isPermissionMode(rawPermissionMode)) {
       initialPermissionMode = rawPermissionMode
     } else {
       logger.warn(
-        `Invalid claude_CHROME_PERMISSION_MODE "${rawPermissionMode}". Valid values: ${PERMISSION_MODES.join(', ')}`,
+        `Invalid Claude_CHROME_PERMISSION_MODE "${rawPermissionMode}". Valid values: ${PERMISSION_MODES.join(', ')}`,
       )
     }
   }
   return {
-    serverName: 'claude in Chrome',
+    serverName: 'Claude in Chrome',
     logger,
     socketPath: getSecureSocketPath(),
     getSocketPaths: getAllSocketPaths,
-    clientTypeId: 'claude-code',
+    clientTypeId: 'Claude-code',
     onAuthenticationError: () => {
       logger.warn(
-        'Authentication error occurred. Please ensure you are logged into the claude browser extension with the same claude.ai account as claude.',
+        'Authentication error occurred. Please ensure you are logged into the Claude browser extension with the same Claude.ai account as Claude.',
       )
     },
     onToolCallDisconnected: () => {
-      return `Browser extension is not connected. Please ensure the claude browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}), and that you are logged into claude.ai with the same account as claude. If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
+      return `Browser extension is not connected. Please ensure the Claude browser extension is installed and running (${EXTENSION_DOWNLOAD_URL}), and that you are logged into Claude.ai with the same account as Claude. If this is your first time connecting to Chrome, you may need to restart Chrome for the installation to take effect. If you continue to experience issues, please report a bug: ${BUG_REPORT_URL}`
     },
     onExtensionPaired: (deviceId: string, name: string) => {
       saveGlobalConfig(config => {
@@ -161,9 +161,9 @@ export function createChromeContext(
     // users never see the tools advertised. Three independent gates.
     //
     // Types inlined: AnthropicMessagesRequest/Response live in
-    // @ant/claude-for-chrome-mcp@0.4.0 which isn't published yet. CI installs
+    // @ant/Claude-for-chrome-mcp@0.4.0 which isn't published yet. CI installs
     // 0.3.0. The callAnthropicMessages field is also 0.4.0-only, but spreading
-    // an extra property into claudeForChromeContext is fine against either
+    // an extra property into ClaudeForChromeContext is fine against either
     // version — 0.3.0 sees an unknown field (allowed in spread), 0.4.0 sees a
     // structurally-matching one. Once 0.4.0 is published, this can switch to
     // the package's exported types and the dep can be bumped.
@@ -269,9 +269,9 @@ export async function runClaudeInChromeMcpServer(): Promise<void> {
   process.stdin.on('end', () => void shutdownAndExit())
   process.stdin.on('error', () => void shutdownAndExit())
 
-  logForDebugging('[claude in Chrome] Starting MCP server')
+  logForDebugging('[Claude in Chrome] Starting MCP server')
   await server.connect(transport)
-  logForDebugging('[claude in Chrome] MCP server started')
+  logForDebugging('[Claude in Chrome] MCP server started')
 }
 
 class DebugLogger implements Logger {

@@ -4,17 +4,17 @@ import { logEvent } from 'src/services/analytics/index.js'
 import { setHasUnknownModelCost } from '../bootstrap/state.js'
 import { isFastModeEnabled } from './fastMode.js'
 import {
-  claude_3_5_HAIKU_CONFIG,
-  claude_3_5_V2_SONNET_CONFIG,
-  claude_3_7_SONNET_CONFIG,
-  claude_HAIKU_4_5_CONFIG,
-  claude_OPUS_4_1_CONFIG,
-  claude_OPUS_4_5_CONFIG,
-  claude_OPUS_4_6_CONFIG,
-  claude_OPUS_4_CONFIG,
-  claude_SONNET_4_5_CONFIG,
-  claude_SONNET_4_6_CONFIG,
-  claude_SONNET_4_CONFIG,
+  Claude_3_5_HAIKU_CONFIG,
+  Claude_3_5_V2_SONNET_CONFIG,
+  Claude_3_7_SONNET_CONFIG,
+  Claude_HAIKU_4_5_CONFIG,
+  Claude_OPUS_4_1_CONFIG,
+  Claude_OPUS_4_5_CONFIG,
+  Claude_OPUS_4_6_CONFIG,
+  Claude_OPUS_4_CONFIG,
+  Claude_SONNET_4_5_CONFIG,
+  Claude_SONNET_4_6_CONFIG,
+  Claude_SONNET_4_CONFIG,
 } from './model/configs.js'
 import {
   firstPartyNameToCanonical,
@@ -23,7 +23,7 @@ import {
   type ModelShortName,
 } from './model/model.js'
 
-// @see https://platform.claude.com/docs/en/about-claude/pricing
+// @see https://platform.Claude.com/docs/en/about-Claude/pricing
 export type ModelCosts = {
   inputTokens: number
   outputTokens: number
@@ -99,29 +99,29 @@ export function getOpus46CostTier(fastMode: boolean): ModelCosts {
 }
 
 // @[MODEL LAUNCH]: Add a pricing entry for the new model below.
-// Costs from https://platform.claude.com/docs/en/about-claude/pricing
+// Costs from https://platform.Claude.com/docs/en/about-Claude/pricing
 // Web search cost: $10 per 1000 requests = $0.01 per request
 export const MODEL_COSTS: Record<ModelShortName, ModelCosts> = {
-  [firstPartyNameToCanonical(claude_3_5_HAIKU_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_3_5_HAIKU_CONFIG.firstParty)]:
     COST_HAIKU_35,
-  [firstPartyNameToCanonical(claude_HAIKU_4_5_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_HAIKU_4_5_CONFIG.firstParty)]:
     COST_HAIKU_45,
-  [firstPartyNameToCanonical(claude_3_5_V2_SONNET_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_3_5_V2_SONNET_CONFIG.firstParty)]:
     COST_TIER_3_15,
-  [firstPartyNameToCanonical(claude_3_7_SONNET_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_3_7_SONNET_CONFIG.firstParty)]:
     COST_TIER_3_15,
-  [firstPartyNameToCanonical(claude_SONNET_4_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_SONNET_4_CONFIG.firstParty)]:
     COST_TIER_3_15,
-  [firstPartyNameToCanonical(claude_SONNET_4_5_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_SONNET_4_5_CONFIG.firstParty)]:
     COST_TIER_3_15,
-  [firstPartyNameToCanonical(claude_SONNET_4_6_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_SONNET_4_6_CONFIG.firstParty)]:
     COST_TIER_3_15,
-  [firstPartyNameToCanonical(claude_OPUS_4_CONFIG.firstParty)]: COST_TIER_15_75,
-  [firstPartyNameToCanonical(claude_OPUS_4_1_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_OPUS_4_CONFIG.firstParty)]: COST_TIER_15_75,
+  [firstPartyNameToCanonical(Claude_OPUS_4_1_CONFIG.firstParty)]:
     COST_TIER_15_75,
-  [firstPartyNameToCanonical(claude_OPUS_4_5_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_OPUS_4_5_CONFIG.firstParty)]:
     COST_TIER_5_25,
-  [firstPartyNameToCanonical(claude_OPUS_4_6_CONFIG.firstParty)]:
+  [firstPartyNameToCanonical(Claude_OPUS_4_6_CONFIG.firstParty)]:
     COST_TIER_5_25,
 }
 
@@ -146,7 +146,7 @@ export function getModelCosts(model: string, usage: Usage): ModelCosts {
 
   // Check if this is an Opus 4.6 model with fast mode active.
   if (
-    shortName === firstPartyNameToCanonical(claude_OPUS_4_6_CONFIG.firstParty)
+    shortName === firstPartyNameToCanonical(Claude_OPUS_4_6_CONFIG.firstParty)
   ) {
     const isFastMode = usage.speed === 'fast'
     return getOpus46CostTier(isFastMode)

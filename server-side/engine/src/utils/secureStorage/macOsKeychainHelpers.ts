@@ -34,21 +34,21 @@ export function getMacOsKeychainStorageServiceName(
 ): string {
   const configDir = getClaudeConfigHomeDir()
   const authNamespace = getClaudeAuthNamespace()
-  const isDefaultDir = !process.env.CLAUDE_CONFIG_DIR
+  const isDefaultDir = !process.env.Claude_CONFIG_DIR
 
   // Use a hash of the config dir path to create a unique but stable suffix
   // Only add suffix for non-default directories to maintain backwards compatibility
   const scopeHash = isDefaultDir && !authNamespace
     ? ''
     : `-${createHash('sha256').update(`${configDir}\0${authNamespace}`).digest('hex').substring(0, 8)}`
-  return `claude${getOauthConfig().OAUTH_FILE_SUFFIX}${serviceSuffix}${scopeHash}`
+  return `Claude${getOauthConfig().OAUTH_FILE_SUFFIX}${serviceSuffix}${scopeHash}`
 }
 
 export function getUsername(): string {
   try {
     return process.env.USER || userInfo().username
   } catch {
-    return 'claude-code-user'
+    return 'Claude-code-user'
   }
 }
 
@@ -59,7 +59,7 @@ export function getUsername(): string {
 // refreshing/invalidating tokens) without forcing a blocking spawnSync on
 // every read. In-process writes invalidate via clearKeychainCache() directly.
 //
-// The sync read() path takes ~500ms per `security` spawn. With 50+ claude.ai
+// The sync read() path takes ~500ms per `security` spawn. With 50+ Claude.ai
 // MCP connectors authenticating at startup, a short TTL expires mid-storm and
 // triggers repeat sync reads — observed as a 5.5s event-loop stall
 // (go/ccshare/adamj-20260326-212235). 30s of cross-process staleness is fine:

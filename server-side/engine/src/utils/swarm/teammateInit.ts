@@ -1,7 +1,7 @@
 /**
  * Teammate Initialization Module
  *
- * Handles initialization for claude instances running as teammates in a swarm.
+ * Handles initialization for Claude instances running as teammates in a swarm.
  * Registers a Stop hook to notify the team leader when the teammate becomes idle.
  */
 

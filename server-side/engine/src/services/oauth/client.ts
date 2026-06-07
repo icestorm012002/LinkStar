@@ -1,4 +1,4 @@
-// OAuth client for handling authentication flows with claude services
+// OAuth client for handling authentication flows with Claude services
 import axios from 'axios'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -6,8 +6,8 @@ import {
 } from 'src/services/analytics/index.js'
 import {
   ALL_OAUTH_SCOPES,
-  ANTHROPIC_AI_INFERENCE_SCOPE,
-  ANTHROPIC_AI_OAUTH_SCOPES,
+  Claude_AI_INFERENCE_SCOPE,
+  Claude_AI_OAUTH_SCOPES,
   getOauthConfig,
 } from '../../constants/oauth.js'
 import {
@@ -32,11 +32,11 @@ import type {
 } from './types.js'
 
 /**
- * Check if the user has claude.ai authentication scope
+ * Check if the user has Claude.ai authentication scope
  * @private Only call this if you're OAuth / auth related code!
  */
 export function shouldUseClaudeAIAuth(scopes: string[] | undefined): boolean {
-  return Boolean(scopes?.includes(ANTHROPIC_AI_INFERENCE_SCOPE))
+  return Boolean(scopes?.includes(Claude_AI_INFERENCE_SCOPE))
 }
 
 export function parseScopes(scopeString?: string): string[] {
@@ -69,11 +69,11 @@ export function buildAuthUrl({
   const authUrlBase =
     authorizeUrlOverride ??
     (loginWithClaudeAi
-      ? getOauthConfig().ANTHROPIC_AI_AUTHORIZE_URL
+      ? getOauthConfig().Claude_AI_AUTHORIZE_URL
       : getOauthConfig().CONSOLE_AUTHORIZE_URL)
 
   const authUrl = new URL(authUrlBase)
-  authUrl.searchParams.append('code', 'true') // this tells the login page to show claude Max upsell
+  authUrl.searchParams.append('code', 'true') // this tells the login page to show Claude Max upsell
   authUrl.searchParams.append('client_id', getOauthConfig().CLIENT_ID)
   authUrl.searchParams.append('response_type', 'code')
   authUrl.searchParams.append(
@@ -83,7 +83,7 @@ export function buildAuthUrl({
       : `http://localhost:${port}/callback`,
   )
   const scopesToUse = inferenceOnly
-    ? [ANTHROPIC_AI_INFERENCE_SCOPE] // Long-lived inference-only tokens
+    ? [Claude_AI_INFERENCE_SCOPE] // Long-lived inference-only tokens
     : ALL_OAUTH_SCOPES
   authUrl.searchParams.append('scope', scopesToUse.join(' '))
   authUrl.searchParams.append('code_challenge', codeChallenge)
@@ -155,14 +155,14 @@ export async function refreshOAuthToken(
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
     client_id: getOauthConfig().CLIENT_ID,
-    // Request specific scopes, defaulting to the full claude AI set. The
+    // Request specific scopes, defaulting to the full Claude AI set. The
     // backend's refresh-token grant allows scope expansion beyond what the
     // initial authorize granted (see ALLOWED_SCOPE_EXPANSIONS), so this is
     // safe even for tokens issued before scopes were added to the app's
     // registered oauth_scope.
     scope: (requestedScopes?.length
       ? requestedScopes
-      : ANTHROPIC_AI_OAUTH_SCOPES
+      : Claude_AI_OAUTH_SCOPES
     ).join(' '),
   }
 
@@ -193,7 +193,7 @@ export async function refreshOAuthToken(
     // Routine refreshes satisfy both, so we cut ~7M req/day fleet-wide.
     //
     // Checking secure storage (not just config) matters for the
-    // CLAUDE_CODE_OAUTH_REFRESH_TOKEN re-login path: installOAuthTokens runs
+    // Claude_CODE_OAUTH_REFRESH_TOKEN re-login path: installOAuthTokens runs
     // performLogout() AFTER we return, wiping secure storage. If we returned
     // null for subscriptionType here, saveOAuthTokensIfNeeded would persist
     // null ?? (wiped) ?? null = null, and every future refresh would see the
@@ -372,16 +372,16 @@ export async function fetchProfileInfo(accessToken: string): Promise<{
   // Reuse the logic from fetchSubscriptionType
   let subscriptionType: SubscriptionType | null = null
   switch (orgType) {
-    case 'claude_max':
+    case 'Claude_max':
       subscriptionType = 'max'
       break
-    case 'claude_pro':
+    case 'Claude_pro':
       subscriptionType = 'pro'
       break
-    case 'claude_enterprise':
+    case 'Claude_enterprise':
       subscriptionType = 'enterprise'
       break
-    case 'claude_team':
+    case 'Claude_team':
       subscriptionType = 'team'
       break
     default:
@@ -458,9 +458,9 @@ export async function populateOAuthAccountInfoIfNeeded(): Promise<boolean> {
   // eliminates the race condition where early telemetry events lack account info.
   // NB: If/when adding additional SDK-relevant functionality requiring _other_ OAuth account properties,
   // please reach out to #proj-cowork so the team can add additional env var fallbacks.
-  const envAccountUuid = process.env.CLAUDE_CODE_ACCOUNT_UUID
-  const envUserEmail = process.env.CLAUDE_CODE_USER_EMAIL
-  const envOrganizationUuid = process.env.CLAUDE_CODE_ORGANIZATION_UUID
+  const envAccountUuid = process.env.Claude_CODE_ACCOUNT_UUID
+  const envUserEmail = process.env.Claude_CODE_USER_EMAIL
+  const envOrganizationUuid = process.env.Claude_CODE_ORGANIZATION_UUID
   const hasEnvVars = Boolean(
     envAccountUuid && envUserEmail && envOrganizationUuid,
   )

@@ -46,7 +46,7 @@ export class OAuthService {
       /**
        * Don't call openBrowser(). Caller takes both URLs via authURLHandler
        * and decides how/where to open them. Used by the SDK control protocol
-       * (claude_authenticate) where the SDK client owns the user's display,
+       * (Claude_authenticate) where the SDK client owns the user's display,
        * not this process.
        */
       skipBrowserOpen?: boolean
@@ -77,7 +77,7 @@ export class OAuthService {
       ? client.buildAuthUrl({
           ...opts,
           isManual: false,
-          authorizeUrlOverride: `${getOauthConfig().ANTHROPIC_AI_ORIGIN.replace(/\/$/, '')}/oauth/authorize`,
+          authorizeUrlOverride: `${getOauthConfig().Claude_AI_ORIGIN.replace(/\/$/, '')}/oauth/authorize`,
         })
       : undefined
 

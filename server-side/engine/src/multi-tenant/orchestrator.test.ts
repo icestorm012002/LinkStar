@@ -41,7 +41,7 @@ function createMockServerScript(dataRoot: string): string {
   // 这个 mock 脚本：
   //   1. 从 stdin 读取 JSON 配置
   //   2. 输出 NDJSON 事件到 stdout
-  //   3. 验证自己的 CLAUDE_CONFIG_DIR 是否被正确隔离
+  //   3. 验证自己的 Claude_CONFIG_DIR 是否被正确隔离
   writeFileSync(
     scriptPath,
     `
@@ -63,7 +63,7 @@ process.stdin.on('end', () => {
     }) + '\\n');
 
     // 验证环境隔离
-    const configDir = process.env.CLAUDE_CONFIG_DIR || 'NOT_SET';
+    const configDir = process.env.Claude_CONFIG_DIR || 'NOT_SET';
     process.stdout.write(JSON.stringify({
       type: 'engine_event',
       data: {
@@ -143,14 +143,14 @@ describe('initializeUserDirectory', () => {
   it('应该创建完整的用户目录结构', () => {
     const userDir = initializeUserDirectory(dataRoot, 'user-001')
 
-    expect(existsSync(join(userDir, '.claude'))).toBe(true)
+    expect(existsSync(join(userDir, '.Claude'))).toBe(true)
     expect(existsSync(join(userDir, 'workspace'))).toBe(true)
     expect(existsSync(join(userDir, 'logs'))).toBe(true)
   })
 
   it('应该写入 tenant-meta.json', () => {
     const userDir = initializeUserDirectory(dataRoot, 'user-002')
-    const metaPath = join(userDir, '.claude', 'tenant-meta.json')
+    const metaPath = join(userDir, '.Claude', 'tenant-meta.json')
 
     expect(existsSync(metaPath)).toBe(true)
 
@@ -176,13 +176,13 @@ describe('initializeUserDirectory', () => {
   it('重复初始化同一用户不应报错也不应覆盖元数据', () => {
     const dir1 = initializeUserDirectory(dataRoot, 'user-repeat')
     const meta1 = JSON.parse(
-      readFileSync(join(dir1, '.claude', 'tenant-meta.json'), 'utf-8'),
+      readFileSync(join(dir1, '.Claude', 'tenant-meta.json'), 'utf-8'),
     )
 
     // 再次初始化
     const dir2 = initializeUserDirectory(dataRoot, 'user-repeat')
     const meta2 = JSON.parse(
-      readFileSync(join(dir2, '.claude', 'tenant-meta.json'), 'utf-8'),
+      readFileSync(join(dir2, '.Claude', 'tenant-meta.json'), 'utf-8'),
     )
 
     expect(dir1).toBe(dir2)
@@ -259,7 +259,7 @@ describe('SessionOrchestrator', () => {
     expect(pids['iso-A']).not.toBe(pids['iso-B'])
   })
 
-  it('不同用户的 CLAUDE_CONFIG_DIR 应该指向各自的隔离目录', async () => {
+  it('不同用户的 Claude_CONFIG_DIR 应该指向各自的隔离目录', async () => {
     const configDirs: Record<string, string> = {}
 
     orchestrator.on('session:event', (_sid: string, uid: string, event: any) => {

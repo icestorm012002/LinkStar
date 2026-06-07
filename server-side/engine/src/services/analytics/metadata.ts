@@ -30,7 +30,7 @@ import {
 } from '../../utils/platform.js'
 import type { CoreUserData } from 'src/utils/user.js'
 import { getAgentContext } from '../../utils/agentContext.js'
-import type { EnvironmentMetadata } from '../../types/generated/events_mono/claude_code/v1/claude_code_internal_event.js'
+import type { EnvironmentMetadata } from '../../types/generated/events_mono/Claude_code/v1/Claude_code_internal_event.js'
 import type { PublicApiAuth } from '../../types/generated/events_mono/common/v1/auth.js'
 import { jsonStringify } from '../../utils/slowOperations.js'
 import {
@@ -93,9 +93,9 @@ export function isToolDetailsLoggingEnabled(): boolean {
  *
  * Per go/taxonomy, MCP names are medium PII. We log them for:
  * - Cowork (entrypoint=local-agent) — no ZDR concept, log all MCPs
- * - claude.ai-proxied connectors — always official (from claude.ai's list)
+ * - Claude.ai-proxied connectors — always official (from Claude.ai's list)
  * - Servers whose URL matches the official MCP registry — directory
- *   connectors added via `claude mcp add`, not customer-specific config
+ *   connectors added via `Claude mcp add`, not customer-specific config
  *
  * Custom/user-configured MCPs stay sanitized (toolName='mcp_tool').
  */
@@ -103,10 +103,10 @@ export function isAnalyticsToolDetailsLoggingEnabled(
   mcpServerType: string | undefined,
   mcpServerBaseUrl: string | undefined,
 ): boolean {
-  if (process.env.CLAUDE_CODE_ENTRYPOINT === 'local-agent') {
+  if (process.env.Claude_CODE_ENTRYPOINT === 'local-agent') {
     return true
   }
-  if (mcpServerType === 'claudeai-proxy') {
+  if (mcpServerType === 'Claudeai-proxy') {
     return true
   }
   if (mcpServerBaseUrl && isOfficialMcpUrl(mcpServerBaseUrl)) {
@@ -430,8 +430,8 @@ export type EnvContext = {
   isConductor: boolean
   remoteEnvironmentType?: string
   coworkerType?: string
-  claudeCodeContainerId?: string
-  claudeCodeRemoteSessionId?: string
+  ClaudeCodeContainerId?: string
+  ClaudeCodeRemoteSessionId?: string
   tags?: string
   isGithubAction: boolean
   isClaudeCodeAction: boolean
@@ -484,8 +484,8 @@ export type EventMetadata = {
   sweBenchInstanceId: string
   sweBenchTaskId: string
   // Swarm/team agent identification for analytics attribution
-  agentId?: string // CLAUDE_CODE_AGENT_ID (format: agentName@teamName) or subagent UUID
-  parentSessionId?: string // CLAUDE_CODE_PARENT_SESSION_ID (team lead's session)
+  agentId?: string // Claude_CODE_AGENT_ID (format: agentName@teamName) or subagent UUID
+  parentSessionId?: string // Claude_CODE_PARENT_SESSION_ID (team lead's session)
   agentType?: 'teammate' | 'subagent' | 'standalone' // Distinguishes swarm teammates, Agent tool subagents, and standalone agents
   teamName?: string // Team name for swarm agents (from env var or AsyncLocalStorage)
   subscriptionType?: string // OAuth subscription tier (max, pro, enterprise, team)
@@ -583,8 +583,8 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
     platform: getHostPlatformForAnalytics(),
     // Raw process.platform so freebsd/openbsd/aix/sunos are visible in BQ.
     // getHostPlatformForAnalytics() buckets those into 'linux'; here we want
-    // the truth. CLAUDE_CODE_HOST_PLATFORM still overrides for container/remote.
-    platformRaw: process.env.CLAUDE_CODE_HOST_PLATFORM || process.platform,
+    // the truth. Claude_CODE_HOST_PLATFORM still overrides for container/remote.
+    platformRaw: process.env.Claude_CODE_HOST_PLATFORM || process.platform,
     arch: env.arch,
     nodeVersion: env.nodeVersion,
     terminal: envDynamic.terminal,
@@ -593,29 +593,29 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
     isRunningWithBun: env.isRunningWithBun(),
     isCi: isEnvTruthy(process.env.CI),
     isClaubbit: isEnvTruthy(process.env.CLAUBBIT),
-    isClaudeCodeRemote: isEnvTruthy(process.env.CLAUDE_CODE_REMOTE),
-    isLocalAgentMode: process.env.CLAUDE_CODE_ENTRYPOINT === 'local-agent',
+    isClaudeCodeRemote: isEnvTruthy(process.env.Claude_CODE_REMOTE),
+    isLocalAgentMode: process.env.Claude_CODE_ENTRYPOINT === 'local-agent',
     isConductor: env.isConductor(),
-    ...(process.env.CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE && {
-      remoteEnvironmentType: process.env.CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE,
+    ...(process.env.Claude_CODE_REMOTE_ENVIRONMENT_TYPE && {
+      remoteEnvironmentType: process.env.Claude_CODE_REMOTE_ENVIRONMENT_TYPE,
     }),
     // Gated by feature flag to prevent leaking "coworkerType" string in external builds
     ...(feature('COWORKER_TYPE_TELEMETRY')
-      ? process.env.CLAUDE_CODE_COWORKER_TYPE
-        ? { coworkerType: process.env.CLAUDE_CODE_COWORKER_TYPE }
+      ? process.env.Claude_CODE_COWORKER_TYPE
+        ? { coworkerType: process.env.Claude_CODE_COWORKER_TYPE }
         : {}
       : {}),
-    ...(process.env.CLAUDE_CODE_CONTAINER_ID && {
-      claudeCodeContainerId: process.env.CLAUDE_CODE_CONTAINER_ID,
+    ...(process.env.Claude_CODE_CONTAINER_ID && {
+      ClaudeCodeContainerId: process.env.Claude_CODE_CONTAINER_ID,
     }),
-    ...(process.env.CLAUDE_CODE_REMOTE_SESSION_ID && {
-      claudeCodeRemoteSessionId: process.env.CLAUDE_CODE_REMOTE_SESSION_ID,
+    ...(process.env.Claude_CODE_REMOTE_SESSION_ID && {
+      ClaudeCodeRemoteSessionId: process.env.Claude_CODE_REMOTE_SESSION_ID,
     }),
-    ...(process.env.CLAUDE_CODE_TAGS && {
-      tags: process.env.CLAUDE_CODE_TAGS,
+    ...(process.env.Claude_CODE_TAGS && {
+      tags: process.env.Claude_CODE_TAGS,
     }),
     isGithubAction: isEnvTruthy(process.env.GITHUB_ACTIONS),
-    isClaudeCodeAction: isEnvTruthy(process.env.CLAUDE_CODE_ACTION),
+    isClaudeCodeAction: isEnvTruthy(process.env.Claude_CODE_ACTION),
     isClaudeAiAuth: isClaudeAISubscriber(),
     version: MACRO.VERSION,
     versionBase: getVersionBase(),
@@ -626,9 +626,9 @@ const buildEnvContext = memoize(async (): Promise<EnvContext> => {
       githubActionsRunnerEnvironment: process.env.RUNNER_ENVIRONMENT,
       githubActionsRunnerOs: process.env.RUNNER_OS,
       githubActionRef: process.env.GITHUB_ACTION_PATH?.includes(
-        'claude-code-action/',
+        'Claude-code-action/',
       )
-        ? process.env.GITHUB_ACTION_PATH.split('claude-code-action/')[1]
+        ? process.env.GITHUB_ACTION_PATH.split('Claude-code-action/')[1]
         : undefined,
     }),
     ...(getWslVersion() && { wslVersion: getWslVersion() }),
@@ -710,11 +710,11 @@ export async function getEventMetadata(
     userType: process.env.USER_TYPE || '',
     ...(betas.length > 0 ? { betas: betas } : {}),
     envContext,
-    ...(process.env.CLAUDE_CODE_ENTRYPOINT && {
-      entrypoint: process.env.CLAUDE_CODE_ENTRYPOINT,
+    ...(process.env.Claude_CODE_ENTRYPOINT && {
+      entrypoint: process.env.Claude_CODE_ENTRYPOINT,
     }),
-    ...(process.env.claude_AGENT_SDK_VERSION && {
-      agentSdkVersion: process.env.claude_AGENT_SDK_VERSION,
+    ...(process.env.Claude_AGENT_SDK_VERSION && {
+      agentSdkVersion: process.env.Claude_AGENT_SDK_VERSION,
     }),
     isInteractive: String(getIsInteractive()),
     clientType: getClientType(),
@@ -771,14 +771,14 @@ export type FirstPartyEventLoggingCoreMetadata = {
 export type FirstPartyEventLoggingMetadata = {
   env: EnvironmentMetadata
   process?: string
-  // auth is a top-level field on claudeCodeInternalEvent (proto PublicApiAuth).
+  // auth is a top-level field on ClaudeCodeInternalEvent (proto PublicApiAuth).
   // account_id is intentionally omitted — only UUID fields are populated client-side.
   auth?: PublicApiAuth
-  // core fields correspond to the top level of claudeCodeInternalEvent.
+  // core fields correspond to the top level of ClaudeCodeInternalEvent.
   // They get directly exported to their individual columns in the BigQuery tables
   core: FirstPartyEventLoggingCoreMetadata
   // additional fields are populated in the additional_metadata field of the
-  // claudeCodeInternalEvent proto. Includes but is not limited to information
+  // ClaudeCodeInternalEvent proto. Includes but is not limited to information
   // that differs by event type.
   additional: Record<string, unknown>
 }
@@ -815,7 +815,7 @@ export function to1PEventFormat(
   // parallel type previously let #11318, #13924, #19448, and coworker_type all
   // ship fields that never reached BQ.
   // Adding a field? Update the monorepo proto first (go/cc-logging):
-  //   event_schemas/.../claude_code/v1/claude_code_internal_event.proto
+  //   event_schemas/.../Claude_code/v1/Claude_code_internal_event.proto
   // then run `bun run generate:proto` here.
   const env: EnvironmentMetadata = {
     platform: envContext.platform,
@@ -828,12 +828,12 @@ export function to1PEventFormat(
     is_running_with_bun: envContext.isRunningWithBun,
     is_ci: envContext.isCi,
     is_claubbit: envContext.isClaubbit,
-    is_claude_code_remote: envContext.isClaudeCodeRemote,
+    is_Claude_code_remote: envContext.isClaudeCodeRemote,
     is_local_agent_mode: envContext.isLocalAgentMode,
     is_conductor: envContext.isConductor,
     is_github_action: envContext.isGithubAction,
-    is_claude_code_action: envContext.isClaudeCodeAction,
-    is_claude_ai_auth: envContext.isClaudeAiAuth,
+    is_Claude_code_action: envContext.isClaudeCodeAction,
+    is_Claude_ai_auth: envContext.isClaudeAiAuth,
     version: envContext.version,
     build_time: envContext.buildTime,
     deployment_environment: envContext.deploymentEnvironment,
@@ -846,11 +846,11 @@ export function to1PEventFormat(
   if (feature('COWORKER_TYPE_TELEMETRY') && envContext.coworkerType) {
     env.coworker_type = envContext.coworkerType
   }
-  if (envContext.claudeCodeContainerId) {
-    env.claude_code_container_id = envContext.claudeCodeContainerId
+  if (envContext.ClaudeCodeContainerId) {
+    env.Claude_code_container_id = envContext.ClaudeCodeContainerId
   }
-  if (envContext.claudeCodeRemoteSessionId) {
-    env.claude_code_remote_session_id = envContext.claudeCodeRemoteSessionId
+  if (envContext.ClaudeCodeRemoteSessionId) {
+    env.Claude_code_remote_session_id = envContext.ClaudeCodeRemoteSessionId
   }
   if (envContext.tags) {
     env.tags = envContext.tags
@@ -934,10 +934,10 @@ export function to1PEventFormat(
 
   // Map userMetadata to output fields.
   // Based on src/utils/user.ts getUser(), but with fields present in other
-  // parts of claudeCodeInternalEvent deduplicated.
+  // parts of ClaudeCodeInternalEvent deduplicated.
   // Convert camelCase GitHubActionsMetadata to snake_case for 1P API
   // Note: github_actions_metadata is placed inside env (EnvironmentMetadata)
-  // rather than at the top level of claudeCodeInternalEvent
+  // rather than at the top level of ClaudeCodeInternalEvent
   if (userMetadata.githubActionsMetadata) {
     const ghMeta = userMetadata.githubActionsMetadata
     env.github_actions_metadata = {
