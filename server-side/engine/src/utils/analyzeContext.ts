@@ -322,7 +322,7 @@ async function countMemoryFileTokens(): Promise<{
   claudeMdTokens: number
 }> {
   // Simple mode disables claude.md loading, so don't report tokens for them
-  if (isEnvTruthy(process.env.CLAUDE_)) {
+  if (isEnvTruthy(process.env.CLAUDE_CODE_SIMPLE)) {
     return { memoryFileDetails: [], claudeMdTokens: 0 }
   }
 

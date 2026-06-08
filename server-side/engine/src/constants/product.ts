@@ -1,9 +1,9 @@
 export const PRODUCT_URL = 'https://Claude.com/claude-code'
 
 // Claude Remote session URLs
-export const CLAUDE_ = 'https://Claude.ai'
-export const CLAUDE_ = 'https://claude-ai.staging.ant.dev'
-export const CLAUDE_ = 'http://localhost:4000'
+export const CLAUDE_AI_BASE_URL = 'https://Claude.ai'
+export const CLAUDE_AI_STAGING_BASE_URL = 'https://claude-ai.staging.ant.dev'
+export const CLAUDE_AI_LOCAL_BASE_URL = 'http://localhost:4000'
 
 /**
  * Determine if we're in a staging environment for remote sessions.
@@ -41,12 +41,12 @@ export function getClaudeAiBaseUrl(
   ingressUrl?: string,
 ): string {
   if (isRemoteSessionLocal(sessionId, ingressUrl)) {
-    return CLAUDE_
+    return CLAUDE_AI_LOCAL_BASE_URL
   }
   if (isRemoteSessionStaging(sessionId, ingressUrl)) {
-    return CLAUDE_
+    return CLAUDE_AI_STAGING_BASE_URL
   }
-  return CLAUDE_
+  return CLAUDE_AI_BASE_URL
 }
 
 /**

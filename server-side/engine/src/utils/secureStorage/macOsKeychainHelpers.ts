@@ -34,7 +34,7 @@ export function getMacOsKeychainStorageServiceName(
 ): string {
   const configDir = getClaudeConfigHomeDir()
   const authNamespace = getClaudeAuthNamespace()
-  const isDefaultDir = !process.env.CLAUDE_
+  const isDefaultDir = !process.env.CLAUDE_CONFIG_DIR
 
   // Use a hash of the config dir path to create a unique but stable suffix
   // Only add suffix for non-default directories to maintain backwards compatibility

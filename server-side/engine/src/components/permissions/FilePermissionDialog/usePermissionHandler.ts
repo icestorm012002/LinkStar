@@ -5,7 +5,7 @@ import {
 import { sanitizeToolNameForAnalytics } from '../../../services/analytics/metadata.js'
 import type { ToolPermissionContext } from '../../../Tool.js'
 import {
-  CLAUDE_,
+  CLAUDE_FOLDER_PERMISSION_PATTERN,
   FILE_EDIT_TOOL_NAME,
   GLOBAL_CLAUDE_,
 } from '../../../tools/FileEditTool/constants.js'
@@ -109,7 +109,7 @@ function handleAcceptSession(
     const pattern =
       options.scope === 'global-claude-folder'
         ? GLOBAL_CLAUDE_
-        : CLAUDE_
+        : CLAUDE_FOLDER_PERMISSION_PATTERN
     const suggestions: PermissionUpdate[] = [
       {
         type: 'addRules',

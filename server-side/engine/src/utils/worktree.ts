@@ -1357,9 +1357,9 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   // Set env vars for the inner Claude to display tmux info in welcome message
   const tmuxEnv = {
     ...process.env,
-    CLAUDE_: tmuxSessionName,
-    CLAUDE_: tmuxPrefix,
-    CLAUDE_: prefixConflicts ? '1' : '',
+    CLAUDE_CODE_TMUX_SESSION: tmuxSessionName,
+    CLAUDE_CODE_TMUX_PREFIX: tmuxPrefix,
+    CLAUDE_CODE_TMUX_PREFIX_CONFLICTS: prefixConflicts ? '1' : '',
   }
 
   // Check if session already exists

@@ -229,7 +229,7 @@ const command = {
   get description() {
     return feature('NEW_INIT') &&
       (process.env.USER_TYPE === 'ant' ||
-        isEnvTruthy(process.env.CLAUDE_))
+        isEnvTruthy(process.env.CLAUDE_CODE_NEW_INIT))
       ? 'Initialize new claude.md file(s) and optional skills/hooks with codebase documentation'
       : 'Initialize a new claude.md file with codebase documentation'
   },
@@ -245,7 +245,7 @@ const command = {
         text:
           feature('NEW_INIT') &&
           (process.env.USER_TYPE === 'ant' ||
-            isEnvTruthy(process.env.CLAUDE_))
+            isEnvTruthy(process.env.CLAUDE_CODE_NEW_INIT))
             ? NEW_INIT_PROMPT
             : OLD_INIT_PROMPT,
       },

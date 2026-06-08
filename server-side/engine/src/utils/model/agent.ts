@@ -40,8 +40,8 @@ export function getAgentModel(
   toolSpecifiedModel?: ModelAlias,
   permissionMode?: PermissionMode,
 ): string {
-  if (process.env.CLAUDE_) {
-    return parseUserSpecifiedModel(process.env.CLAUDE_)
+  if (process.env.CLAUDE_CODE_SUBAGENT_MODEL) {
+    return parseUserSpecifiedModel(process.env.CLAUDE_CODE_SUBAGENT_MODEL)
   }
 
   // Extract Bedrock region prefix from parent model to inherit for subagents.

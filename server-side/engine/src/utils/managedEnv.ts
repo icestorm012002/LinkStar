@@ -29,7 +29,7 @@ function withoutSSHTunnelVars(
     ANTHROPIC_BASE_URL: _2,
     ANTHROPIC_API_KEY: _3,
     ANTHROPIC_AUTH_TOKEN: _4,
-    CLAUDE_: _5,
+    CLAUDE_CODE_OAUTH_TOKEN: _5,
     ...rest
   } = env
   return rest
@@ -37,7 +37,7 @@ function withoutSSHTunnelVars(
 
 /**
  * When the host owns inference routing (sets
- * CLAUDE_ in spawn env), strip
+ * CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST in spawn env), strip
  * provider-selection / model-default vars from settings-sourced env so a
  * user's ~/.claude/settings.json can't redirect requests away from the
  * host-configured provider.
@@ -46,7 +46,7 @@ function withoutHostManagedProviderVars(
   env: Record<string, string> | undefined,
 ): Record<string, string> {
   if (!env) return {}
-  if (!isEnvTruthy(process.env.CLAUDE_)) {
+  if (!isEnvTruthy(process.env.CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST)) {
     return env
   }
   const out: Record<string, string> = {}
@@ -109,11 +109,11 @@ const TRUSTED_SETTING_SOURCES = [
 ] as const
 
 function applyDefaultPrivacyEnvironmentVariable(): void {
-  if (process.env.CLAUDE_ === undefined) {
-    process.env.CLAUDE_ = '1'
+  if (process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC === undefined) {
+    process.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = '1'
   }
-  if (process.env.CLAUDE_ === undefined) {
-    process.env.CLAUDE_ = '0'
+  if (process.env.CLAUDE_CODE_ATTRIBUTION_HEADER === undefined) {
+    process.env.CLAUDE_CODE_ATTRIBUTION_HEADER = '0'
   }
 }
 
@@ -134,7 +134,7 @@ export function applySafeConfigEnvironmentVariables(): void {
   // Capture CCD spawn-env keys before any settings.env is applied (once).
   if (ccdSpawnEnvKeys === undefined) {
     ccdSpawnEnvKeys =
-      process.env.CLAUDE_ === 'claude-desktop'
+      process.env.CLAUDE_CODE_ENTRYPOINT === 'claude-desktop'
         ? new Set(Object.keys(process.env))
         : null
   }
@@ -158,7 +158,7 @@ export function applySafeConfigEnvironmentVariables(): void {
   }
 
   // Compute remote-managed-settings eligibility now, with userSettings and
-  // flagSettings env applied. Eligibility reads CLAUDE_,
+  // flagSettings env applied. Eligibility reads CLAUDE_CODE_USE_BEDROCK,
   // ANTHROPIC_BASE_URL — both settable via settings.env.
   // getSettingsForSource('policySettings') below consults the remote cache,
   // which guards on this. The two-phase structure makes the ordering
@@ -177,7 +177,7 @@ export function applySafeConfigEnvironmentVariables(): void {
   // in the safe allowlist. Only policySettings values are guaranteed to survive
   // unchanged (it has the highest merge priority in both loops) — except
   // provider-routing vars, which filterSettingsEnv strips from every source
-  // when CLAUDE_ is set.
+  // when CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST is set.
   const settingsEnv = filterSettingsEnv(getSettings_DEPRECATED()?.env)
   for (const [key, value] of Object.entries(settingsEnv)) {
     if (SAFE_ENV_VARS.has(key.toUpperCase())) {
@@ -191,7 +191,7 @@ export function applySafeConfigEnvironmentVariables(): void {
 /**
  * Apply environment variables from settings to process.env.
  * This applies ALL environment variables (except provider-routing vars when
- * CLAUDE_ is set — see filterSettingsEnv) and
+ * CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST is set — see filterSettingsEnv) and
  * should only be called after trust is established. This applies potentially
  * dangerous environment variables such as LD_PRELOAD, PATH, etc.
  */

@@ -8,7 +8,7 @@ import {
 import { settingsChangeDetector } from '../../utils/settings/changeDetector.js'
 import { updateSettingsForSource } from '../../utils/settings/settings.js'
 
-const NONESSENTIAL_TRAFFIC_ENV = 'CLAUDE_'
+const NONESSENTIAL_TRAFFIC_ENV = 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
 
 function getStatusText(): string {
   const level = getPrivacyLevel()

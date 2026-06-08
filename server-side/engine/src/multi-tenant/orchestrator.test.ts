@@ -1,4 +1,4 @@
-/**
+﻿/**
  * orchestrator.test.ts — 多租户编排器的隔离性与并发性测试
  *
  * 验证目标：
@@ -41,7 +41,7 @@ function createMockServerScript(dataRoot: string): string {
   // 这个 mock 脚本：
   //   1. 从 stdin 读取 JSON 配置
   //   2. 输出 NDJSON 事件到 stdout
-  //   3. 验证自己的 CLAUDE_ 是否被正确隔离
+  //   3. 验证自己的 CLAUDE_CODE_CONFIG_DIR 是否被正确隔离
   writeFileSync(
     scriptPath,
     `
@@ -63,7 +63,7 @@ process.stdin.on('end', () => {
     }) + '\\n');
 
     // 验证环境隔离
-    const configDir = process.env.CLAUDE_ || 'NOT_SET';
+    const configDir = process.env.CLAUDE_CODE_CONFIG_DIR || 'NOT_SET';
     process.stdout.write(JSON.stringify({
       type: 'engine_event',
       data: {
@@ -259,7 +259,7 @@ describe('SessionOrchestrator', () => {
     expect(pids['iso-A']).not.toBe(pids['iso-B'])
   })
 
-  it('不同用户的 CLAUDE_ 应该指向各自的隔离目录', async () => {
+  it('不同用户的 CLAUDE_CODE_CONFIG_DIR 应该指向各自的隔离目录', async () => {
     const configDirs: Record<string, string> = {}
 
     orchestrator.on('session:event', (_sid: string, uid: string, event: any) => {

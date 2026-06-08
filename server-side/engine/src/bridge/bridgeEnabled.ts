@@ -62,7 +62,7 @@ export async function isBridgeEnabledBlocking(): Promise<boolean> {
  * The GrowthBook gate targets on organizationUUID, which comes from
  * config.oauthAccount — populated by /api/oauth/profile during login.
  * That endpoint requires the user:profile scope. Tokens without it
- * (setup-token, CLAUDE_ env var, or pre-scope-expansion
+ * (setup-token, CLAUDE_CODE_OAUTH_TOKEN env var, or pre-scope-expansion
  * logins) leave oauthAccount unpopulated, so the gate falls back to
  * false and users see a dead-end "not enabled" message with no hint
  * that re-login would fix it. See CC-1165 / gh-33105.
@@ -73,7 +73,7 @@ export async function getBridgeDisabledReason(): Promise<string | null> {
       return 'Remote Control requires a Claude.ai subscription. Run `Claude auth login` to sign in with your Claude.ai account.'
     }
     if (!hasProfileScope()) {
-      return 'Remote Control requires a full-scope login token. Long-lived tokens (from `Claude setup-token` or CLAUDE_) are limited to inference-only for security reasons. Run `Claude auth login` to use Remote Control.'
+      return 'Remote Control requires a full-scope login token. Long-lived tokens (from `Claude setup-token` or CLAUDE_CODE_OAUTH_TOKEN) are limited to inference-only for security reasons. Run `Claude auth login` to use Remote Control.'
     }
     if (!getOauthAccountInfo()?.organizationUuid) {
       return 'Unable to determine your organization for Remote Control eligibility. Run `Claude auth login` to refresh your account information.'
@@ -196,7 +196,7 @@ export function getCcrAutoConnectDefault(): boolean {
  */
 export function isCcrMirrorEnabled(): boolean {
   return feature('CCR_MIRROR')
-    ? isEnvTruthy(process.env.CLAUDE_) ||
+    ? isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) ||
         getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
     : false
 }

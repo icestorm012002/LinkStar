@@ -945,8 +945,8 @@ export const connectToServer = memoize(
       } else if ((serverRef as ScopedMcpServerConfig).type === 'stdio' || !(serverRef as ScopedMcpServerConfig).type) {
         const stdioRef = serverRef as McpStdioServerConfig
         const finalCommand =
-          process.env.CLAUDE_ || stdioRef.command
-        const finalArgs = process.env.CLAUDE_
+          process.env.CLAUDE_CODE_SHELL_PREFIX || stdioRef.command
+        const finalArgs = process.env.CLAUDE_CODE_SHELL_PREFIX
           ? [[stdioRef.command, ...stdioRef.args].join(' ')]
           : stdioRef.args
         transport = new StdioClientTransport({
@@ -1762,7 +1762,7 @@ export const fetchToolsForClient = memoizeWithLRU(
       // Check if we should skip the mcp__ prefix for SDK MCP servers
       const skipPrefix =
         client.config.type === 'sdk' &&
-        isEnvTruthy(process.env.CLAUDE_)
+        isEnvTruthy(process.env.CLAUDE_AGENT_SDK_MCP_NO_PREFIX)
 
       // Convert MCP tools to our Tool format
       return toolsToProcess

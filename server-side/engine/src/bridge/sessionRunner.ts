@@ -307,18 +307,18 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
         ...deps.env,
         // Strip the bridge's OAuth token so the child CC process uses
         // the session access token for inference instead.
-        CLAUDE_: undefined,
-        CLAUDE_: 'bridge',
-        ...(deps.sandbox && { CLAUDE_: '1' }),
-        CLAUDE_: opts.accessToken,
+        CLAUDE_CODE_OAUTH_TOKEN: undefined,
+        CLAUDE_CODE_ENVIRONMENT_KIND: 'bridge',
+        ...(deps.sandbox && { CLAUDE_CODE_FORCE_SANDBOX: '1' }),
+        CLAUDE_CODE_SESSION_ACCESS_TOKEN: opts.accessToken,
         // v1: HybridTransport (WS reads + POST writes) to Session-Ingress.
-        // Harmless in v2 mode — transportUtils checks CLAUDE_ first.
-        CLAUDE_: '1',
+        // Harmless in v2 mode — transportUtils checks CLAUDE_CODE_USE_CCR_V2 first.
+        CLAUDE_CODE_POST_FOR_SESSION_INGRESS_V2: '1',
         // v2: SSETransport + CCRClient to CCR's /v1/code/sessions/* endpoints.
         // Same env vars environment-manager sets in the container path.
         ...(opts.useCcrV2 && {
-          CLAUDE_: '1',
-          CLAUDE_: String(opts.workerEpoch),
+          CLAUDE_CODE_USE_CCR_V2: '1',
+          CLAUDE_CODE_WORKER_EPOCH: String(opts.workerEpoch),
         }),
       }
 
@@ -533,7 +533,7 @@ export function createSessionSpawner(deps: SessionSpawnerDeps): SessionSpawner {
           handle.writeStdin(
             jsonStringify({
               type: 'update_environment_variables',
-              variables: { CLAUDE_: token },
+              variables: { CLAUDE_CODE_SESSION_ACCESS_TOKEN: token },
             }) + '\n',
           )
           deps.onDebug(

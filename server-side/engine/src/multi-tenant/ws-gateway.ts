@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ws-gateway.ts — WebSocket 网关服务
  *
  * 职责：
@@ -380,7 +380,7 @@ export class WsGateway {
       // 构建环境变量，注入对应的 API 密钥和基准地址
       const testEnv: Record<string, string> = {
         ...process.env,
-        CLAUDE_: join(userDir, '.CLAUDE'),
+        CLAUDE_CODE_CONFIG_DIR: join(userDir, '.CLAUDE'),
         HOME: userDir,
         USERPROFILE: userDir,
       }

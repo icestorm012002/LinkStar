@@ -30,7 +30,7 @@ function getSessionsDir(): string {
  */
 function envSessionKind(): SessionKind | undefined {
   if (feature('BG_SESSIONS')) {
-    const k = process.env.CLAUDE_
+    const k = process.env.CLAUDE_CODE_SESSION_KIND
     if (k === 'bg' || k === 'daemon' || k === 'daemon-worker') return k
   }
   return undefined
@@ -82,15 +82,15 @@ export async function registerSession(): Promise<boolean> {
         cwd: getOriginalCwd(),
         startedAt: Date.now(),
         kind,
-        entrypoint: process.env.CLAUDE_,
+        entrypoint: process.env.CLAUDE_CODE_ENTRYPOINT,
         ...(feature('UDS_INBOX')
-          ? { messagingSocketPath: process.env.CLAUDE_ }
+          ? { messagingSocketPath: process.env.CLAUDE_CODE_MESSAGING_SOCKET }
           : {}),
         ...(feature('BG_SESSIONS')
           ? {
-              name: process.env.CLAUDE_,
-              logPath: process.env.CLAUDE_,
-              agent: process.env.CLAUDE_,
+              name: process.env.CLAUDE_CODE_SESSION_NAME,
+              logPath: process.env.CLAUDE_CODE_SESSION_LOG,
+              agent: process.env.CLAUDE_CODE_AGENT,
             }
           : {}),
       }),
@@ -194,7 +194,7 @@ export async function countConcurrentSessions(): Promise<number> {
     } else if (getPlatform() !== 'wsl') {
       // Stale file from a crashed session — sweep it. Skip on WSL: if
       // ~/.Claude/sessions/ is shared with Windows-native Claude (symlink
-      // or CLAUDE_), a Windows PID won't be probeable from WSL
+      // or CLAUDE_CONFIG_DIR), a Windows PID won't be probeable from WSL
       // and we'd falsely delete a live session's file. This is just
       // telemetry so conservative undercount is acceptable.
       void unlink(join(dir, file)).catch(() => {})

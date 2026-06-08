@@ -1,4 +1,4 @@
-/**
+﻿/**
  * orchestrator.ts — 多租户会话编排器
  *
  * 职责：
@@ -52,7 +52,7 @@ export type UserIdentity = {
   displayName?: string
   clientOS: 'win32' | 'darwin' | 'linux'
   clientShell?: string
-  /** 用户自带的 API 配置（如 ANTHROPIC_API_KEY, CLAUDE_ 等） */
+  /** 用户自带的 API 配置（如 ANTHROPIC_API_KEY, CLAUDE_CODE_CONFIG_DIR 等） */
   envOverrides?: Record<string, string>
 }
 
@@ -216,7 +216,7 @@ export class SessionOrchestrator extends EventEmitter {
       env: {
         ...process.env,
         // 覆盖关键隔离变量
-        CLAUDE_: join(userDir, '.CLAUDE'),
+        CLAUDE_CODE_CONFIG_DIR: join(userDir, '.CLAUDE'),
         HOME: userDir,
         USERPROFILE: userDir,
       },

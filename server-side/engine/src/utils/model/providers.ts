@@ -16,11 +16,11 @@ export function getDefaultOpenAICodexModel(): string {
 }
 
 export function getAPIProvider(): APIProvider {
-  return isEnvTruthy(process.env.CLAUDE_)
+  return isEnvTruthy(process.env.CLAUDE_CODE_USE_BEDROCK)
     ? 'bedrock'
-    : isEnvTruthy(process.env.CLAUDE_)
+    : isEnvTruthy(process.env.CLAUDE_CODE_USE_VERTEX)
       ? 'vertex'
-      : isEnvTruthy(process.env.CLAUDE_)
+      : isEnvTruthy(process.env.CLAUDE_CODE_USE_FOUNDRY)
         ? 'foundry'
         : 'firstParty'
 }
